@@ -11,6 +11,13 @@ class CribbageHand extends Array {
         var jackOfCutSuitIsInHand = this.some((x) => x[0] == JACK && x[1] == cutSuit);
         return jackOfCutSuitIsInHand;
     }
+
+    hasFlush() {
+        var suits = this.map((x) => x[1]);
+        suits = suits.reduce((x,y) => x == y && y);
+        var hasFlush = suits != false;
+        return hasFlush;
+    }
 }
 
 export function handFromString(s) {
@@ -19,7 +26,3 @@ export function handFromString(s) {
     hand = CribbageHand.from(hand);
     return hand;
 }
-
-export function handAllSameSuit(hand) {
-}
-
