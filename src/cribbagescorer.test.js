@@ -1,12 +1,30 @@
 'use strict';
 
-import { handFromString } from './cribbagescorer.js';
+import { CribbageHand } from './cribbagescorer.js';
+
+describe('testing Hand.fromString', () => {
+    const expectHandsEqual = (v, e) => {
+        v = CribbageHand.fromString(v).cards;
+        v = Array.from(v.entries());
+        e = Object.entries(e);
+        expect(v).toEqual(expect.arrayContaining(e));
+    };
+
+    test('returns hand matching string', () => {
+        var hand = "AC 2C JD 4C";
+        expectHandsEqual(hand, {'A': ['C'], '2': ['C'], 'J': ['D'], '4': ['C']});
+    });
+
+    test('returns hand matching string with 10', () => {
+        var hand = "AC 2C JD 10C";
+        expectHandsEqual(hand, {'A': ['C'], '2': ['C'], 'J': ['D'], '10': ['C']});
+    });
+});
 
 describe('testing Hand.hasHisNobs', () => {
-
     const expectHasNobs = (p, e) => {
         var [h, c] = p;
-        h = handFromString(h);
+        h = CribbageHand.fromString(h);
         var hasNobs = h.hasHisNobs(c);
         expect(hasNobs).toBe(e);
     }
@@ -31,7 +49,7 @@ describe('testing Hand.hasHisNobs', () => {
 describe('testing Hand.hasFlush', () => {
 
     const expectHasFlush = (h, e) => {
-        h = handFromString(h);
+        h = CribbageHand.fromString(h);
         var hasFlush = h.hasFlush();
         expect(hasFlush).toBe(e);
     }
@@ -51,7 +69,7 @@ describe('testing Hand.findMultiples', () => {
 
     const findMultiples = (p) => {
         var [h, c] = p;
-        h = handFromString(h);
+        h = CribbageHand.fromString(h);
         var multiples = h.findMultiples(c);
         return multiples;
     }

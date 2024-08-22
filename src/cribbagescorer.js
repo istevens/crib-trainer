@@ -6,11 +6,20 @@ const SUITS = ('D', 'C', 'H', 'S');
 
 const extendExistingOrCreate = (m,v) => m.set(v[0], (m.get(v[0]) || []).concat(v[1]));
 
-class CribbageHand {
+export class CribbageHand {
 
     constructor(cards) {
         cards = cards.map((x) => [x[0], [x[1]]])
         this.cards = cards.reduce(extendExistingOrCreate, new Map());
+    }
+
+    static fromString(s) {
+        var hand = s.split(' ');
+        console.log(hand);
+        hand = hand.map((x) => [x.slice(0,-1), x.slice(-1)]);
+        console.log(hand);
+        hand = new CribbageHand(hand);
+        return hand;
     }
 
     hasHisNobs(cutCard) {
@@ -35,11 +44,5 @@ class CribbageHand {
         multiples = multiples.map((x) => x[1].map((y) => x[0] + y));
         return multiples;
     }
-}
 
-export function handFromString(s) {
-    var hand = s.split(' ');
-    hand = hand.map((x) => Array.from(x));
-    hand = new CribbageHand(hand);
-    return hand;
 }
