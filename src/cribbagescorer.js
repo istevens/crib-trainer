@@ -1,9 +1,10 @@
 'use strict';
 
 const JACK = 'J';
-const FACES = ('A', '2', '3', '4', '5', '6', '7', '8', '9', '10', JACK, 'Q', 'K');
-const SUITS = ('D', 'C', 'H', 'S');
-
+const FACES = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', JACK, 'Q', 'K'];
+const SUITS = ['D', 'C', 'H', 'S'];
+const fv = (a) => FACES.indexOf(a[0]);
+const cardCompare = (a,b) => fv(a) < fv(b) && -1 || fv(a) > fv(b) && 1 || 0;
 const extendExistingOrCreate = (m,v) => m.set(v[0], (m.get(v[0]) || []).concat(v[1]));
 
 export class CribbageHand {
@@ -15,9 +16,7 @@ export class CribbageHand {
 
     static fromString(s) {
         var hand = s.split(' ');
-        console.log(hand);
         hand = hand.map((x) => [x.slice(0,-1), x.slice(-1)]);
-        console.log(hand);
         hand = new CribbageHand(hand);
         return hand;
     }
@@ -36,13 +35,30 @@ export class CribbageHand {
         return hasFlush;
     }
 
-    findMultiples(cutCard) {
+    _includeCutCardWithHand(hand, cutCard) {
         var hand = new Map(this.cards);
         extendExistingOrCreate(hand, cutCard);
         hand = Array.from(hand);
+        return hand;
+    }
+
+    findMultiples(cutCard) {
+        var hand = this._includeCutCardWithHand(this.cards, cutCard);
         var multiples = hand.filter((x) => x[1].length > 1);
         multiples = multiples.map((x) => x[1].map((y) => x[0] + y));
         return multiples;
     }
 
+    findRuns(cutCard) {
+        var isInRun = (a, x) => a.length == 0 || fv(a.at(-1)) + 1 == fv(x);
+        var addIfInRun = (a, x) => isInRun(a, x) && a.concat([x]) || a;
+
+        var hand = this._includeCutCardWithHand(this.cards, cutCard);
+        hand = hand.toSorted(cardCompare);
+
+        var runs = hand.reduce((a, x) => addIfInRun(a, x) || (a.length < 3 && []), []);
+        runs = runs.map((x) => x[1].map((y) => x[0]+y));
+        runs = runs.flat();
+        return runs;
+    }
 }
