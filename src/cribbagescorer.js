@@ -52,13 +52,23 @@ export class CribbageHand {
     findRuns(cutCard) {
         var isInRun = (a, x) => a.length == 0 || fv(a.at(-1)) + 1 == fv(x);
         var addIfInRun = (a, x) => isInRun(a, x) && a.concat([x]) || a;
+        var resetRun = (a) => (a.length < 3 && []);
 
         var hand = this._includeCutCardWithHand(this.cards, cutCard);
         hand = hand.toSorted(cardCompare);
 
-        var runs = hand.reduce((a, x) => addIfInRun(a, x) || (a.length < 3 && []), []);
+        var runs = hand.reduce((a, x) => addIfInRun(a, x) || resetRun(a), []);
         runs = runs.map((x) => x[1].map((y) => x[0]+y));
-        runs = runs.flat();
+
+        // fill out arrays so they are same size
+        // copy elements within array to fill it
+        // zip arrays for final runs
+        var runCount = runs.reduce((a, x) => a * x.length, 1);
+        var concatCards = (x, times) => new Array(times).fill().map((y) => x).flat();
+        var copyCardsToRuns = (x) => concatCards(x, 1+(runCount - x.length)/x.length);
+        var collateRun = (x, i, a) => a.map((y, j, a) => a[j][i]).flat();
+        var zipRuns = (x) => x.map(copyCardsToRuns).map(collateRun);
+        runs = zipRuns(runs);
         return runs;
     }
 }
