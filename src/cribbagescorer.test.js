@@ -155,10 +155,22 @@ describe('testing Hand.findRuns', () => {
         expectRunsToContain(play, ["AC", "2C", "3C"]);
     });
 
-    test('returns two runs of three if card repeats', () => {
+    test('returns two runs of three if middle card repeats', () => {
         var play = ["AC 2C 3C 2D", "5D"];
         expectRunsToContain(play, ["AC", "2C", "3C"]);
         expectRunsToContain(play, ["AC", "2D", "3C"]);
+    });
+
+    test('returns two runs of three if first card repeats', () => {
+        var play = ["AC 2C 3C AD", "5D"];
+        expectRunsToContain(play, ["AC", "2C", "3C"]);
+        expectRunsToContain(play, ["AD", "2C", "3C"]);
+    });
+
+    test('returns two runs of three if last card repeats', () => {
+        var play = ["AC 2C 3C AD", "3D"];
+        expectRunsToContain(play, ["AC", "2C", "3D"]);
+        expectRunsToContain(play, ["AC", "2C", "3C"]);
     });
 
     test('returns four runs of three if two cards repeat', () => {
