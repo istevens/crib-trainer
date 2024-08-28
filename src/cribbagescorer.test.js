@@ -140,66 +140,85 @@ describe('testing Hand.findRuns', () => {
         return runs;
     }
 
-    const expectRunsToContain = (p, e) => {
+    const expectRunsToBe = (p, e) => {
         var m = findRuns(p);
-        expect(m).toContainEqual(e);
+        expect(m).toEqual(e);
     }
 
     test('returns only one run of three if in hand', () => {
         var play = ["AC 2C 3C 6D", "5D"];
-        expectRunsToContain(play, ["AC", "2C", "3C"]);
+        expectRunsToBe(play, [["AC", "2C", "3C"]]);
     });
 
     test('returns only one run of three if in hand and cut card', () => {
         var play = ["2C AC 5C 6D", "3C"];
-        expectRunsToContain(play, ["AC", "2C", "3C"]);
+        expectRunsToBe(play, [["AC", "2C", "3C"]]);
     });
 
     test('returns two runs of three if middle card repeats', () => {
         var play = ["AC 2C 3C 2D", "5D"];
-        expectRunsToContain(play, ["AC", "2C", "3C"]);
-        expectRunsToContain(play, ["AC", "2D", "3C"]);
+        expectRunsToBe(
+            play, [
+                ["AC", "2C", "3C"],
+                ["AC", "2D", "3C"]]
+        );
     });
 
     test('returns two runs of three if first card repeats', () => {
         var play = ["AC 2C 3C AD", "5D"];
-        expectRunsToContain(play, ["AC", "2C", "3C"]);
-        expectRunsToContain(play, ["AD", "2C", "3C"]);
+        expectRunsToBe(
+            play, [
+                ["AC", "2C", "3C"],
+                ["AD", "2C", "3C"]]
+        );
     });
 
     test('returns two runs of three if last card repeats', () => {
         var play = ["AC 2C 3C AD", "3D"];
-        expectRunsToContain(play, ["AC", "2C", "3D"]);
-        expectRunsToContain(play, ["AC", "2C", "3C"]);
+        expectRunsToBe(
+            play, [
+                ["AC", "2C", "3D"],
+                ["AC", "2C", "3C"]]
+        );
     });
 
     test('returns four runs of three if two cards repeat', () => {
         var play = ["2C AC 3C 2D", "3D"];
-        expectRunsToContain(play, ["AC", "2C", "3C"]);
-        expectRunsToContain(play, ["AC", "2D", "3C"]);
-        expectRunsToContain(play, ["AC", "2C", "3D"]);
-        expectRunsToContain(play, ["AC", "2D", "3D"]);
+        expectRunsToBe(
+            play, [
+                ["AC", "2C", "3C"],
+                ["AC", "2D", "3C"],
+                ["AC", "2C", "3D"],
+                ["AC", "2D", "3D"]]
+        );
     });
 
     test('returns only one run of four if in hand', () => {
         var play = ["AC 2C 3C 4D", "6D"];
-        expectRunsToContain(play, ["AC", "2C", "3C", "4D"]);
+        expectRunsToBe(play, [["AC", "2C", "3C", "4D"]]);
     });
 
     test('returns only one run of four if in hand and cut card', () => {
         var play = ["AC 2C 3C 6D", "4D"];
-        expectRunsToContain(play, ["AC", "2C", "3C", "4D"]);
+        expectRunsToBe(play, [["AC", "2C", "3C", "4D"]]);
     });
 
     test('returns two runs of four if one card repeats', () => {
         var play = ["AC 2C 3C 2D", "4D"];
-        expectRunsToContain(play, ["AC", "2C", "3C", "4D"]);
-        expectRunsToContain(play, ["AC", "2D", "3C", "4D"]);
+        expectRunsToBe(
+            play, [
+                ["AC", "2C", "3C", "4D"],
+                ["AC", "2D", "3C", "4D"]]
+        );
     });
 
     test('returns only one run of five if in hand and cut card', () => {
         var play = ["AC 2C 3C 4D", "5D"];
-        expectRunsToContain(play, ["AC", "2C", "3C", "4D", "5D"]);
+        expectRunsToBe(play, [["AC", "2C", "3C", "4D", "5D"]]);
+    });
+
+});
+
     });
 
 });
