@@ -49,9 +49,15 @@ export class CribbageHand {
         return multiples;
     }
 
-    findRuns(cutCard) {
-        var hand = this._includeCutCardWithHand(this.cards, cutCard);
+    _completeAndSortHand(cards, cutCard, reverse=false) {
+        var hand = this._includeCutCardWithHand(cards, cutCard);
         hand = hand.toSorted(cardCompare);
+        hand = reverse && hand.toReversed() || hand;
+        return hand;
+    }
+
+    findRuns(cutCard) {
+        var hand = this._completeAndSortHand(this.cards, cutCard);
 
         var isInRun = (a, x) => a.length == 0 || fv(a.at(-1)) + 1 == fv(x);
         var addIfInRun = (a, x) => isInRun(a, x) && a.concat([x]) || a;
@@ -62,10 +68,26 @@ export class CribbageHand {
 
         var addToNewRun = (runs, cards) => runs.length == 0 && [[cards]];
         var addCardToRuns = (runs, card) => runs.map((y) => y.concat(card));
-        var combineRuns = (runs, cards) => cards.map(
-            (card) => addToNewRun(runs, card) || addCardToRuns(runs, card)
-        ).flat();
+        var combineRuns = (runs, cards) =>
+            cards.flatMap((card) =>
+                addToNewRun(runs, card) || addCardToRuns(runs, card)
+            );
         runs = runs.reduce(combineRuns, []);
         return runs;
+    }
+
+    findFifteens(cutCard) {
+        var hand = this._completeAndSortHand(this.cards, cutCard, true);
+        var combineFaceAndSuits = (x) => x[1].map((y) => x[0]+y);
+        hand = hand.flatMap(combineFaceAndSuits);
+
+        var addCardToAll = (a, v) => a.concat(a.map(x => [v].concat(x)));
+        var cardScore = (x) => Math.min(10, 1 + FACES.indexOf(x[0]));
+        var handTotal = (a) => a.reduce((x, y) => x + cardScore(y), 0);
+        var cardsAddToFifteen = (a) => handTotal(a) == 15;
+        var fifteens = hand.reduce(addCardToAll, [[]]);
+        fifteens = fifteens.filter(cardsAddToFifteen);
+
+        return fifteens;
     }
 }

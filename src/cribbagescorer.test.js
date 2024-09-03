@@ -174,11 +174,11 @@ describe('testing Hand.findRuns', () => {
     });
 
     test('returns two runs of three if last card repeats', () => {
-        var play = ["AC 2C 3C AD", "3D"];
+        var play = ["AC 2C 3C 5D", "3D"];
         expectRunsToBe(
             play, [
-                ["AC", "2C", "3D"],
-                ["AC", "2C", "3C"]]
+                ["AC", "2C", "3C"],
+                ["AC", "2C", "3D"]]
         );
     });
 
@@ -213,12 +213,104 @@ describe('testing Hand.findRuns', () => {
     });
 
     test('returns only one run of five if in hand and cut card', () => {
-        var play = ["AC 2C 3C 4D", "5D"];
+        var play = ["5D 2C 3C 4D", "AC"];
         expectRunsToBe(play, [["AC", "2C", "3C", "4D", "5D"]]);
     });
 
 });
 
+describe('testing Hand.findFifteens', () => {
+    const findFifteens = (p) => {
+        var [h, c] = p;
+        h = CribbageHand.fromString(h);
+        var fifteens = h.findFifteens(c);
+        return fifteens;
+    }
+
+    const expectFifteensToBe = (p, e) => {
+        var f = findFifteens(p);
+        expect(f.length).toBe(e.length);
+        expect(f).toEqual(
+            expect.arrayContaining(e.map(expect.arrayContaining))
+        );
+    }
+
+    test('returns three fifteens with one five and three face cards', () => {
+        var play = ["5C KC JC QD", "2D"];
+        expectFifteensToBe(
+            play, [
+                ["5C", "KC"],
+                ["5C", "JC"],
+                ["5C", "QD"]]
+        );
     });
 
+    test('returns six fifteens with two fives and three face cards', () => {
+        var play = ["5C KC JC QD", "5D"];
+        expectFifteensToBe(
+            play, [
+                ["5C", "KC"],
+                ["5C", "JC"],
+                ["5C", "QD"],
+                ["5D", "KC"],
+                ["5D", "JC"],
+                ["5D", "QD"]]
+        );
+    });
+
+    test('returns seven fifteens with three fives and two face cards', () => {
+        var play = ["5C 5S JC QD", "5D"];
+        expectFifteensToBe(
+            play, [
+                ["5C", "JC"],
+                ["5C", "QD"],
+                ["5S", "JC"],
+                ["5S", "QD"],
+                ["5D", "JC"],
+                ["5D", "QD"],
+                ["5C", "5S", "5D"]]
+        );
+    });
+
+    test('returns six fifteens with three eights and two sevens', () => {
+        var play = ["8C 8S 7C 7D", "8D"];
+        expectFifteensToBe(
+            play, [
+                ["8C", "7C"],
+                ["8C", "7D"],
+                ["8S", "7C"],
+                ["8S", "7D"],
+                ["8D", "7C"],
+                ["8D", "7D"]]
+        );
+    });
+
+    test('returns six fifteens with three nines and two sixes', () => {
+        var play = ["9C 9S 6C 6D", "9D"];
+        expectFifteensToBe(
+            play, [
+                ["9C", "6C"],
+                ["9C", "6D"],
+                ["9S", "6C"],
+                ["9S", "6D"],
+                ["9D", "6C"],
+                ["9D", "6D"]]
+        );
+    });
+
+    test('returns one fifteen with three threes and a six', () => {
+        var play = ["3C 6S 3S 3D", "KD"];
+        expectFifteensToBe(play, [["3C", "6S", "3S", "3D"]]);
+    });
+
+    test('returns one fifteen with four threes and a six', () => {
+        var play = ["3C 6S 3S 3D", "3H"];
+        var fifteens = findFifteens(play);
+        expectFifteensToBe(play, [
+            ["3C", "6S", "3S", "3D"],
+            ["6S", "3S", "3D", "3H"],
+            ["6S", "3C", "3D", "3H"],
+            ["6S", "3C", "3S", "3H"]
+        ]);
+    });
 });
