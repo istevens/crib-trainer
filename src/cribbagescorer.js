@@ -2,6 +2,8 @@
 
 const JACK = 'J';
 const FACES = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', JACK, 'Q', 'K'];
+const SUITS = ['C', 'D', 'S', 'H'];
+const DECK = SUITS.flatMap(s => FACES.map(f => f+s));
 const fv = a => !a && -1 || FACES.indexOf(a.slice(0, -1));
 const cardCompare = (a, b) => fv(a) < fv(b) && -1 || fv(a) > fv(b) && 1 || 0;
 
@@ -15,6 +17,28 @@ export class CribbageHand {
         var hand = s.split(' ');
         hand = new CribbageHand(hand);
         return hand;
+    }
+
+    static randomPlay() {
+        function* dealCards(d) {
+            var drawRandomCard = () => {
+                var n = Math.random() * d.length;
+                var card = d.at(n);
+                d = d.toSpliced(n, 1);
+                return card;
+            }
+
+            while(d.length > 0) {
+                yield drawRandomCard();
+            }
+        }
+
+        var cards = dealCards(DECK);
+        var hand = new Array(4).fill().map(() => cards.next().value);
+        hand = new CribbageHand(hand);
+        var cutCard = cards.next().value;
+
+        return {hand: hand, cutCard: cutCard};
     }
 
     hasHisNobs(cutCard) {
@@ -64,9 +88,9 @@ export class CribbageHand {
             var addedToRun = false;
             var cardFollowsRun = r => r.slice(-1).every(x => 1 + fv(x) == fv(card[0]));
             var addToRun = (c, r) => {addedToRun = true; return c.map(x => r.concat(x));};
-            var newRuns = runs.flatMap(r => cardFollowsRun(r) && addToRun(card, r) || [r]);
-            newRuns = addedToRun && newRuns || newRuns.concat(addToRun(card, []));
-            return newRuns;
+            runs = runs.flatMap(r => cardFollowsRun(r) && addToRun(card, r) || [r]);
+            runs = addedToRun && runs || runs.concat(addToRun(card, []));
+            return runs;
         }
         var runs = hand.reduce(collateRuns, [[]]);
         runs = runs.filter(r => r.length > 2);

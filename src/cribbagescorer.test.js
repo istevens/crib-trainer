@@ -19,6 +19,32 @@ describe('testing Hand.fromString', () => {
     });
 });
 
+describe('testing Hand.randomPlay', () => {
+    test('returns play with four cards in hand', () => {
+        var play = CribbageHand.randomPlay();
+        expect(play.hand.cards.length).toBe(4);
+    });
+
+    test('returns play with four cards have values', () => {
+        var play = CribbageHand.randomPlay();
+        expect(play.hand.cards).toEqual(
+            expect.arrayContaining([
+                expect.stringMatching(/[A12-9JQK]0?[ACDS]/)
+            ])
+        );
+    });
+
+    test('returns play with cut card', () => {
+        var play = CribbageHand.randomPlay();
+        expect(play.cutCard);
+    });
+
+    test('returns play with four cards have values', () => {
+        var play = CribbageHand.randomPlay();
+        expect(play.cutCard).toEqual(expect.stringMatching(/[A12-9JQK]0?[ACDS]/));
+    });
+});
+
 describe('testing Hand.hasHisNobs', () => {
     const expectHasNobs = (p, e) => {
         var [h, c] = p;
