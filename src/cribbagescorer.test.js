@@ -360,3 +360,89 @@ describe('testing Hand.findFifteens', () => {
         ]);
     });
 });
+
+describe('testing Hand.getScore', () => {
+    const getScore = (p) => {
+        var [h, c] = p;
+        h = CribbageHand.fromString(h);
+        var score = h.getScore(c);
+        return score;
+    }
+
+    const expectScoreToBe = (p, s) => {
+        var score = getScore(p);
+        expect(score).toBe(s);
+    }
+
+    test('returns 0 with no tricks', () => {
+        var play = ["AC 3S 6S QD", "JH"];
+        expectScoreToBe(play, 0);
+    });
+
+    test('returns 2 with one fifteen', () => {
+        var play = ["9C 3S 5S QD", "8H"];
+        expectScoreToBe(play, 2);
+    });
+
+    test('returns 2 with one pair', () => {
+        var play = ["3C 3S 10S QD", "8H"];
+        expectScoreToBe(play, 2);
+    });
+
+    test('returns 6 with one triplet', () => {
+        var play = ["3C 3S 3D QD", "8H"];
+        expectScoreToBe(play, 6);
+    });
+
+    test('returns 12 with four-of-a-kind', () => {
+        var play = ["3C 3S 3D 3H", "8H"];
+        expectScoreToBe(play, 12);
+    });
+
+    test('returns 3 with run of three', () => {
+        var play = ["9C 10S 8S AD", "2H"];
+        expectScoreToBe(play, 3);
+    });
+
+    test('returns 4 with run of four', () => {
+        var play = ["9C 10S 8S JD", "2H"];
+        expectScoreToBe(play, 4);
+    });
+
+    test('returns 5 with run of five', () => {
+        var play = ["9C 10S 8S JD", "QH"];
+        expectScoreToBe(play, 5);
+    });
+
+    test('returns 1 with his nobs', () => {
+        var play = ["AC 10S 8S JH", "2H"];
+        expectScoreToBe(play, 1);
+    });
+
+    test('returns 4 with flush in hand', () => {
+        var play = ["AS 10S 8S KS", "2H"];
+        expectScoreToBe(play, 4);
+    });
+
+    test('returns 5 with flush including cut card', () => {
+        var play = ["AS 10S 8S KS", "2S"];
+        expectScoreToBe(play, 5);
+    });
+
+    test('returns 29 with 4 fives and jack of cut suit', () => {
+        var play = ["JC 5S 5H 5D", "5C"];
+        expectScoreToBe(play, 29);
+    });
+
+    test('smokeTest', () => {
+        expectScoreToBe(["QD 4S AD QH", "10D"], 8);
+        expectScoreToBe(["2S 6D 2C 8D", "6C"], 4);
+        expectScoreToBe(["3S 4C 5D KC", "10H"], 7);
+        expectScoreToBe(["6H 7H 8H 7C", "AH"], 16);
+        expectScoreToBe(["KS KD 3H JC", "8C"], 3);
+        expectScoreToBe(["5D 4C 4H 6S", "6C"], 24);
+        expectScoreToBe(["9S 7H KS 3H", "4S"], 0);
+        expectScoreToBe(["3D 2S 2D AH", "2H"], 15);
+        expectScoreToBe(["8S AS 9S 7S", "5D"], 11);
+    });
+});

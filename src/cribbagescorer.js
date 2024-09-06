@@ -85,4 +85,20 @@ export class CribbageHand {
 
         return fifteens;
     }
+
+    getScore(cutCard) {
+        var fifteens = this.findFifteens(cutCard);
+        var runs = this.findRuns(cutCard);
+        var multiples = this.findMultiples(cutCard);
+        var hasHisNobs = this.hasHisNobs(cutCard);
+        var hasFlush = this.hasFlush();
+        var hasFlushWithCutCard = this.hasFlush(cutCard);
+
+        var score = 2 * fifteens.length;
+        score += multiples.reduce((a, x) => a + x.length * (x.length - 1), 0);
+        score += runs.reduce((a, x) => a + x.length, 0);
+        score += hasHisNobs && 1 || 0;
+        score += hasFlushWithCutCard && 5 || hasFlush && 4 || 0;
+        return score;
+    }
 }
