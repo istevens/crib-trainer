@@ -2,10 +2,8 @@
 
 const JACK = 'J';
 const FACES = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', JACK, 'Q', 'K'];
-const SUITS = ['D', 'C', 'H', 'S'];
 const fv = a => !a && -1 || FACES.indexOf(a.slice(0, -1));
 const cardCompare = (a, b) => fv(a) < fv(b) && -1 || fv(a) > fv(b) && 1 || 0;
-const extendExistingOrCreate = (m,v) => m.set(v[0], (m.get(v[0]) || []).concat(v[1]));
 
 export class CribbageHand {
 
@@ -25,16 +23,17 @@ export class CribbageHand {
         return jackOfCutSuitIsInHand;
     }
 
-    hasFlush() {
-        var suits = this.cards.map(x => x.slice(-1));
-        var hasFlush = new Set(suits).size == 1;
-        return hasFlush;
-    }
-
     _includeCutCardWithHand(cutCard) {
         var hand = this.cards.slice();
         hand = hand.concat(cutCard);
         return hand;
+    }
+
+    hasFlush(cutCard) {
+        var cards = cutCard && this._includeCutCardWithHand(cutCard) || this.cards;
+        var suits = cards.map(x => x.slice(-1));
+        var hasFlush = new Set(suits).size == 1;
+        return hasFlush;
     }
 
     _completeAndSortHand(cutCard) {
@@ -78,7 +77,7 @@ export class CribbageHand {
         var hand = this._completeAndSortHand(cutCard);
 
         var addCardToAll = (a, v) => a.concat(a.map(x => [v].concat(x)));
-        var cardScore = x => Math.min(10, 1 + FACES.indexOf(x[0]));
+        var cardScore = x => Math.min(10, 1 + fv(x));
         var handTotal = a => a.reduce((x, y) => x + cardScore(y), 0);
         var cardsAddToFifteen = a => handTotal(a) == 15;
         var fifteens = hand.reduce(addCardToAll, [[]]);

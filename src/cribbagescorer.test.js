@@ -61,6 +61,16 @@ describe('testing Hand.hasFlush', () => {
         var hand = "AC 2C 3C 4D";
         expectHasFlush(hand, false);
     });
+
+    test('returns true if all same suit with cut card', () => {
+        var hand = "AC 2C 3C 4C";
+        expectHasFlush(hand, true);
+    });
+
+    test('returns false if not all same suit with cut card', () => {
+        var hand = "AC 2C 3C 4D";
+        expectHasFlush(hand, false);
+    });
 });
 
 describe('testing Hand.findMultiples', () => {
@@ -89,16 +99,18 @@ describe('testing Hand.findMultiples', () => {
 
     test('returns two pair if in hand', () => {
         var play = ["3C 2C 3D 2D", "5D"];
-        var m = findMultiples(play);
-        expect(m).toContainEqual(["2C", "2D"]);
-        expect(m).toContainEqual(["3C", "3D"]);
+        expectMultiplesToBe(play, [
+            ["2C", "2D"],
+            ["3C", "3D"]
+        ]);
     });
 
     test('returns two pair if in hand and cut card', () => {
         var play = ["3C 2C 5D 2D", "3D"];
-        var m = findMultiples(play);
-        expect(m).toContainEqual(["2C", "2D"]);
-        expect(m).toContainEqual(["3C", "3D"]);
+        expectMultiplesToBe(play, [
+            ["2C", "2D"],
+            ["3C", "3D"]
+        ]);
     });
 
     test('returns only one trio if in hand', () => {
@@ -113,9 +125,10 @@ describe('testing Hand.findMultiples', () => {
 
     test('returns trio and pair if in hand and cut card', () => {
         var play = ["2C 2H 3C 3D", "3S"];
-        var m = findMultiples(play);
-        expect(m).toContainEqual(["2C", "2H"]);
-        expect(m).toContainEqual(["3C", "3D", "3S"]);
+        expectMultiplesToBe(play, [
+            ["2C", "2H"],
+            ["3C", "3D", "3S"]
+        ]);
     });
 
     test('returns only one quad if in hand', () => {
@@ -335,6 +348,15 @@ describe('testing Hand.findFifteens', () => {
             ["6S", "3S", "3D", "3H"],
             ["6S", "3C", "3D", "3H"],
             ["6S", "3C", "3S", "3H"]
+        ]);
+    });
+
+    test('Ten card is handled as ten value', () => {
+        var play = ["QD 4S AD QH", "10D"];
+        expectFifteensToBe(play, [
+            [ "QD", "4S", "AD" ],
+            [ "10D", "4S", "AD" ],
+            [ "QH", "4S", "AD" ]
         ]);
     });
 });
