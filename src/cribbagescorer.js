@@ -7,7 +7,7 @@ const DECK = SUITS.flatMap(s => FACES.map(f => f+s));
 const fv = a => !a && -1 || FACES.indexOf(a.slice(0, -1));
 const cardCompare = (a, b) => fv(a) < fv(b) && -1 || fv(a) > fv(b) && 1 || 0;
 
-export class CribbageHand {
+export default class CribbageHand {
 
     constructor(cards) {
         this.cards = cards;
@@ -68,7 +68,9 @@ export class CribbageHand {
 
     _groupHandAndCutCardByFaceValue(cutCard) {
         var hand = this._completeAndSortHand(cutCard);
-        var addCardToExisting = (a, card) => cardCompare(a.at(-1).at(-1), card) == 0 && a.slice(0,-1).concat([a.at(-1).concat([card])]);
+        var cardsMatch = (a, card) => cardCompare(a.at(-1).at(-1), card) == 0;
+        var appendToMultiple = (a, card) => a.slice(0,-1).concat([a.at(-1).concat([card])]);
+        var addCardToExisting = (a, card) => cardsMatch(a, card) && appendToMultiple(a, card);
         var addCardToMultiple = (a, card) => addCardToExisting(a, card) || a.concat([[card]]);
         var multiples = hand.reduce(addCardToMultiple, [[]]);
         multiples = multiples.slice(1);

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no"/>
+    <script type="module" src="https://cardmeister.github.io/elements.cardmeister.min.js"></script>
+    <script type="module" src="src/cribbagescorer.js"></script>
+    <style>
+        body {
+            background: rgb(0,199,34);
+            background: fixed radial-gradient(circle at 50% 12%, rgba(0,199,34,1) 0%, rgba(1,152,34,1) 49%, rgba(0,120,52,1) 100%);
+        }
+
+        img {
+            width: 20vw;
+            margin: 2vw;
+            border: 1px solid black;
+            border-radius: 10px;
+        }
+
+        #cribbagescorer {
+            width: 100%;
+        }
+
+        #cribbagescorer > * {
+            display: flex;
+            justify-content: center;
+        }
+
+        select {
+            width: 10rem;
+        }
+    </style>
+</head>
+<body>
+    <div id="cribbagescorer">
+
+        <div id="cutCard"></div>
+
+        <div id="hand"></div>
+
+        <form>
+            <select id="scoreSelect">
+                <option disabled>This hand's score is:</option>
+            </select>
+        </form>
+    </div>
+
+    <script type="module">
+        import CribbageHand from "./src/cribbagescorer.js";
+
+        function displayNextHand() {
+            var play = CribbageHand.randomPlay();
+            var cutCard = document.getElementById('cutCard');
+            var card = play.cutCard;
+            const cardTemplate = (card) => `<card-t cid="${card}"></card-t>`;
+            cutCard.innerHTML = cardTemplate(card);
+
+            var hand = document.getElementById('hand');
+            var cards = play.hand.cards.map(card => cardTemplate(card));
+            cards = cards.join("");
+            hand.innerHTML = cards;
+
+            var selector = document.getElementById('scoreSelect');
+            var evaluateScore = (ev) => {
+                var score = ev.target.value;
+                var expected = play.hand.getScore(play.cutCard);
+
+                window.alert((score==expected) + " expected " + expected);
+                ev.target.selectedIndex = 0;
+                displayNextHand();
+            };
+            selector.addEventListener('change', evaluateScore, {once: true});
+        }
+
+        function setup() {
+            var selector = document.getElementById('scoreSelect');
+            new Array(30).fill().map((x, i) => {
+                var o = document.createElement('option');
+                o.label = o.value = i;
+                selector.appendChild(o);
+            });
+
+        }
+
+        setup();
+        displayNextHand();
+
+    </script>
+</body>
+</html>
