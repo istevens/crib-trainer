@@ -26,13 +26,36 @@
             justify-content: center;
         }
 
-        select {
-            width: 10rem;
+        #score {
+            position: fixed;
+            right: 1rem;
+            color: white;
+            font-size: 2rem;
+        }
+
+        #score span {
+            background: white;
+            padding: 1rem;
+            width: 2rem;
+        }
+
+        #score #successes {
+            text-align: right;
+            padding-right: 1rem;
+            background-color: green;
+        }
+
+        #score #failures {
+            text-align: left;
+            padding-left: 1rem;
+            background-color: red;
         }
     </style>
 </head>
 <body>
     <div id="cribbagescorer">
+
+        <div id="score"><span id="successes">0</span><span id="failures">0</span></div>
 
         <div id="cutCard"></div>
 
@@ -48,38 +71,63 @@
     <script type="module">
         import CribbageHand from "./src/cribbagescorer.js";
 
+        const _getEl = x => document.getElementById(x);
+        const SCORE_SELECTED = "scoreSelected";
+        const NEW_ROUND = "newRound";
+
+        var play = null;
+
         function displayNextHand() {
-            var play = CribbageHand.randomPlay();
-            var cutCard = document.getElementById('cutCard');
+            play = CribbageHand.randomPlay();
+
+            var cutCard = _getEl('cutCard');
             var card = play.cutCard;
             const cardTemplate = (card) => `<card-t cid="${card}"></card-t>`;
             cutCard.innerHTML = cardTemplate(card);
 
-            var hand = document.getElementById('hand');
+            var hand = _getEl('hand');
             var cards = play.hand.cards.map(card => cardTemplate(card));
             cards = cards.join("");
             hand.innerHTML = cards;
 
-            var selector = document.getElementById('scoreSelect');
-            var evaluateScore = (ev) => {
-                var score = ev.target.value;
-                var expected = play.hand.getScore(play.cutCard);
+            var select = _getEl('scoreSelect');
+            select.selectedIndex = 0;
+        }
 
-                window.alert((score==expected) + " expected " + expected);
-                ev.target.selectedIndex = 0;
-                displayNextHand();
-            };
-            selector.addEventListener('change', evaluateScore, {once: true});
+        function handWasScored(ev) {
+            var score = this.value;
+            var expected = play.hand.getScore(play.cutCard);
+            var evPayload = {bubbles: true, detail: {play: play, selectedScore: score}};
+
+            this.dispatchEvent(new CustomEvent(SCORE_SELECTED, evPayload));
+            this.dispatchEvent(new CustomEvent(NEW_ROUND, evPayload));
+        }
+
+        function changeScore(ev) {
+            var play = ev.detail.play;
+            var selectedScore = ev.detail.selectedScore;
+            var score = this.querySelector('#score');
+
+            var actualScore = play.hand.getScore(play.cutCard);
+            var successes = score.querySelector('#successes');
+            var failures = score.querySelector('#failures');
+            var elemToIncr = (selectedScore == actualScore) && successes || failures;
+            elemToIncr.textContent = parseInt(elemToIncr.textContent) + 1;
         }
 
         function setup() {
-            var selector = document.getElementById('scoreSelect');
+            var selector = _getEl('scoreSelect');
             new Array(30).fill().map((x, i) => {
                 var o = document.createElement('option');
                 o.label = o.value = i;
                 selector.appendChild(o);
             });
 
+            selector.addEventListener('change', handWasScored);
+
+            var scorer = _getEl('cribbagescorer');
+            scorer.addEventListener(SCORE_SELECTED, changeScore);
+            scorer.addEventListener(NEW_ROUND, displayNextHand);
         }
 
         setup();
