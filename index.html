@@ -92,6 +92,8 @@
 
             var select = _getEl('scoreSelect');
             select.selectedIndex = 0;
+            select.focus();
+            select.blur();
         }
 
         function handWasScored(ev) {
