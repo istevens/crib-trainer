@@ -1,6 +1,6 @@
 'use strict';
 
-import { CribbageHand } from './cribbagescorer.js';
+import CribbageHand from './cribbagescorer.js';
 
 describe('testing Hand.fromString', () => {
     const expectHandsEqual = (v, e) => {
@@ -29,7 +29,7 @@ describe('testing Hand.randomPlay', () => {
         var play = CribbageHand.randomPlay();
         expect(play.hand.cards).toEqual(
             expect.arrayContaining([
-                expect.stringMatching(/[A12-9JQK]0?[ACDS]/)
+                expect.stringMatching(/[A12-9JQK]0?[SCDH]/)
             ])
         );
     });
@@ -41,7 +41,7 @@ describe('testing Hand.randomPlay', () => {
 
     test('returns play with four cards have values', () => {
         var play = CribbageHand.randomPlay();
-        expect(play.cutCard).toEqual(expect.stringMatching(/[A12-9JQK]0?[ACDS]/));
+        expect(play.cutCard).toEqual(expect.stringMatching(/[A12-9JQK]0?[SCDH]/));
     });
 });
 
@@ -112,6 +112,11 @@ describe('testing Hand.findMultiples', () => {
         var m = findMultiples(p);
         expect(m).toEqual(e);
     }
+
+    test('returns none if none in hand', () => {
+        var play = ["AC 2C 3C 4D", "5D"];
+        expectMultiplesToBe(play, []);
+    });
 
     test('returns only one pair if in hand', () => {
         var play = ["AC 2C 3C 3D", "5D"];
@@ -299,6 +304,11 @@ describe('testing Hand.findFifteens', () => {
         );
     }
 
+    test('returns zero fifteens if none in hand', () => {
+        var play = ["AC AD AS AD", "2D"];
+        expectFifteensToBe(play, []);
+    });
+
     test('returns three fifteens with one five and three face cards', () => {
         var play = ["5C KC JC QD", "2D"];
         expectFifteensToBe(
@@ -470,5 +480,42 @@ describe('testing Hand.getScore', () => {
         expectScoreToBe(["9S 7H KS 3H", "4S"], 0);
         expectScoreToBe(["3D 2S 2D AH", "2H"], 15);
         expectScoreToBe(["8S AS 9S 7S", "5D"], 11);
+    });
+});
+
+describe('testing Hand.getTricks', () => {
+
+    var expectPropEqualsRelatedCall = (play, prop) => {
+        var hand = CribbageHand.fromString(play[0]);
+        var cutCard = play[1];
+        var tricks = hand.getTricks(cutCard);
+        var call = prop.startsWith('has') && prop || 'find' + prop[0].toUpperCase() + prop.slice(1);
+        expect(tricks[prop]).toEqual(hand[call](cutCard));
+    }
+
+    test('returns results of hasHisNobs', () => {
+        expectPropEqualsRelatedCall(["AC 2C JD 4C", "5D"], 'hasHisNobs');
+        expectPropEqualsRelatedCall(["AC 2C 3D 4C", "5C"], 'hasHisNobs');
+    });
+
+    test('returns results of hasFlush', () => {
+        expectPropEqualsRelatedCall(["AC 2C 3C 4C", "5C"], 'hasFlush');
+        expectPropEqualsRelatedCall(["AC 2D 3C 4C", "5C"], 'hasFlush');
+    });
+
+    test('returns results of findMultiples', () => {
+        expectPropEqualsRelatedCall(["AC 2C 3C 4D", "5C"], 'multiples');
+        expectPropEqualsRelatedCall(["AC 2C 3C 3D", "5C"], 'multiples');
+        expectPropEqualsRelatedCall(["2C 2H 3C 3D", "3S"], 'multiples');
+    });
+
+    test('returns results of findRuns', () => {
+        expectPropEqualsRelatedCall(["AC 3C 5C 7D", "9D"], 'runs');
+        expectPropEqualsRelatedCall(["2C AC 3C 2D", "3D"], 'runs');
+    });
+
+    test('returns results of findFifteens', () => {
+        expectPropEqualsRelatedCall(["AC AD AS AD", "2D"], 'fifteens');
+        expectPropEqualsRelatedCall(["5C 5S JC QD", "5D"], 'fifteens');
     });
 });

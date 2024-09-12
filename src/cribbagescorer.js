@@ -113,18 +113,25 @@ export default class CribbageHand {
     }
 
     getScore(cutCard) {
-        var fifteens = this.findFifteens(cutCard);
-        var runs = this.findRuns(cutCard);
-        var multiples = this.findMultiples(cutCard);
-        var hasHisNobs = this.hasHisNobs(cutCard);
-        var hasFlush = this.hasFlush();
-        var hasFlushWithCutCard = this.hasFlush(cutCard);
-
-        var score = 2 * fifteens.length;
-        score += multiples.reduce((a, x) => a + x.length * (x.length - 1), 0);
-        score += runs.reduce((a, x) => a + x.length, 0);
-        score += hasHisNobs && 1 || 0;
-        score += hasFlushWithCutCard && 5 || hasFlush && 4 || 0;
+        var t = this.getTricks(cutCard);
+        var score = 2 * t.fifteens.length;
+        score += t.multiples.reduce((a, x) => a + x.length * (x.length - 1), 0);
+        score += t.runs.reduce((a, x) => a + x.length, 0);
+        score += t.hasHisNobs && 1 || 0;
+        score += t.hasFlushWithCutCard && 5 || t.hasFlush && 4 || 0;
         return score;
+    }
+
+    getTricks(cutCard) {
+        var tricks = {
+            fifteens: this.findFifteens(cutCard),
+            runs: this.findRuns(cutCard),
+            multiples: this.findMultiples(cutCard),
+            hasHisNobs: this.hasHisNobs(cutCard),
+            hasFlush: this.hasFlush(),
+            hasFlushWithCutCard: this.hasFlush(cutCard),
+        };
+
+        return tricks;
     }
 }
