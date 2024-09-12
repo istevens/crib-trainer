@@ -50,6 +50,13 @@
             padding-left: 1rem;
             background-color: red;
         }
+
+        #tricks {
+            font-size: 200%;
+            color: white;
+            display: block;
+        }
+
     </style>
 </head>
 <body>
@@ -66,6 +73,8 @@
                 <option disabled>This hand's score is:</option>
             </select>
         </form>
+
+        <div id="tricks"></div>
     </div>
 
     <script type="module">
@@ -117,6 +126,14 @@
             elemToIncr.textContent = parseInt(elemToIncr.textContent) + 1;
         }
 
+        function showTricks(ev) {
+            var play = ev.detail.play;
+            var tricks = this.querySelector('#tricks');
+            tricks.innerHTML = `<div>Last play: ${play.hand.cards} + ${play.cutCard}</div>`;
+            tricks.innerHTML += `<div>Score: ${play.hand.getScore(play.cutCard)}</div>`
+            tricks.innerHTML += Object.entries(play.hand.getTricks(play.cutCard)).map(x => '<div>'+x+'</div>').join('');
+        }
+
         function setup() {
             var selector = _getEl('scoreSelect');
             new Array(30).fill().map((x, i) => {
@@ -129,6 +146,7 @@
 
             var scorer = _getEl('cribbagescorer');
             scorer.addEventListener(SCORE_SELECTED, changeScore);
+            scorer.addEventListener(SCORE_SELECTED, showTricks);
             scorer.addEventListener(NEW_ROUND, displayNextHand);
         }
 
