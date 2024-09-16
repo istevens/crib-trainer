@@ -41,10 +41,12 @@ export default class CribbageHand {
         return {hand: hand, cutCard: cutCard};
     }
 
-    hasHisNobs(cutCard) {
+    findHisNobs(cutCard) {
         var cutSuit = cutCard[1];
-        var jackOfCutSuitIsInHand = this.cards.includes(JACK + cutSuit);
-        return jackOfCutSuitIsInHand;
+        var jackOfCutSuit = JACK + cutSuit;
+        var jackOfCutSuitIsInHand = this.cards.includes(jackOfCutSuit);
+        var hisNobs = jackOfCutSuitIsInHand && [cutCard, jackOfCutSuit] || [];
+        return hisNobs;
     }
 
     _includeCutCardWithHand(cutCard) {
@@ -53,11 +55,18 @@ export default class CribbageHand {
         return hand;
     }
 
-    hasFlush(cutCard) {
-        var cards = cutCard && this._includeCutCardWithHand(cutCard) || this.cards;
-        var suits = cards.map(x => x.slice(-1));
-        var hasFlush = new Set(suits).size == 1;
-        return hasFlush;
+    findFlush(cutCard) {
+        var suits = new Set(this.cards.map(x => x.slice(-1)));
+        var hasOneSuit = x => x.size == 1;
+        var flushInHand = hasOneSuit(suits);
+        var suitOfCutCard = cutCard.slice(-1);
+        var flushWithCutCard = flushInHand && hasOneSuit(suits.add(suitOfCutCard));
+
+        var flush = flushWithCutCard && this._includeCutCardWithHand(cutCard)
+                || flushInHand && this.cards
+                || [];
+
+        return flush;
     }
 
     _completeAndSortHand(cutCard) {
@@ -115,21 +124,27 @@ export default class CribbageHand {
     getScore(cutCard) {
         var t = this.getTricks(cutCard);
         var score = 2 * t.fifteens.length;
-        score += t.multiples.reduce((a, x) => a + x.length * (x.length - 1), 0);
+        score += t.pairs.length * 2;
+        score += t.triples.length * 6;
+        score += t.quadruples.length * 12;
         score += t.runs.reduce((a, x) => a + x.length, 0);
-        score += t.hasHisNobs && 1 || 0;
-        score += t.hasFlushWithCutCard && 5 || t.hasFlush && 4 || 0;
+        score += t.hisNobs.length == 2 && 1 || 0;
+        score += t.flush.length;
         return score;
     }
 
     getTricks(cutCard) {
+        var multiples = this.findMultiples(cutCard);
+        var multipleOfLength = n => multiples.filter(x => x.length == n);
+
         var tricks = {
             fifteens: this.findFifteens(cutCard),
             runs: this.findRuns(cutCard),
-            multiples: this.findMultiples(cutCard),
-            hasHisNobs: this.hasHisNobs(cutCard),
-            hasFlush: this.hasFlush(),
-            hasFlushWithCutCard: this.hasFlush(cutCard),
+            pairs: multipleOfLength(2),
+            triples: multipleOfLength(3),
+            quadruples: multipleOfLength(4),
+            flush: this.findFlush(cutCard),
+            hisNobs: this.findHisNobs(cutCard),
         };
 
         return tricks;

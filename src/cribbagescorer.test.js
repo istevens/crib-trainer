@@ -45,57 +45,57 @@ describe('testing Hand.randomPlay', () => {
     });
 });
 
-describe('testing Hand.hasHisNobs', () => {
-    const expectHasNobs = (p, e) => {
+describe('testing Hand.findHisNobs', () => {
+    const expectNobsToBe = (p, e) => {
         var [h, c] = p;
         h = CribbageHand.fromString(h);
-        var hasHisNobs = h.hasHisNobs(c);
-        expect(hasHisNobs).toBe(e);
+        var hisNobs = h.findHisNobs(c);
+        expect(hisNobs).toEqual(expect.arrayContaining(e));
     }
 
-    test('returns true if suit of jack in hand matches cutCard', () => {
+    test('returns nobs if suit of jack in hand matches cutCard', () => {
         var play = ["AC 2C JD 4C", "5D"];
-        expectHasNobs(play, true);
+        expectNobsToBe(play, ["5D", "JD"]);
     });
 
-    test('returns false if suit of jack in hand does not match cutCard', () => {
+    test('returns empty if suit of jack in hand does not match cutCard', () => {
         var play = ["AC 2C JD 4C", "5C"];
-        expectHasNobs(play, false);
+        expectNobsToBe(play, []);
     });
 
-    test('returns false if suit of no jack in hand', () => {
+    test('returns empty if suit of no jack in hand', () => {
         var play = ["AC 2C 3D 4C", "5C"];
-        expectHasNobs(play, false);
+        expectNobsToBe(play, []);
     });
 
 });
 
-describe('testing Hand.hasFlush', () => {
+describe('testing Hand.findFlush', () => {
 
-    const expectHasFlush = (h, e) => {
+    const expectHasFlush = (h, e, cut) => {
         h = CribbageHand.fromString(h);
-        var hasFlush = h.hasFlush();
-        expect(hasFlush).toBe(e);
+        var flush = h.findFlush(cut);
+        expect(flush).toEqual(expect.arrayContaining(e));
     }
 
-    test('returns true if all same suit', () => {
+    test('returns flush if all same suit', () => {
         var hand = "AC 2C 3C 4C";
-        expectHasFlush(hand, true);
+        expectHasFlush(hand, hand.split(" "), "4D");
     });
 
-    test('returns false if not all same suit', () => {
+    test('returns empty if not all same suit', () => {
         var hand = "AC 2C 3C 4D";
-        expectHasFlush(hand, false);
+        expectHasFlush(hand, [], "5C");
     });
 
     test('returns true if all same suit with cut card', () => {
         var hand = "AC 2C 3C 4C";
-        expectHasFlush(hand, true);
+        expectHasFlush(hand, ["AC", "2C", "3C", "4C", "5C"], "5C");
     });
 
-    test('returns false if not all same suit with cut card', () => {
-        var hand = "AC 2C 3C 4D";
-        expectHasFlush(hand, false);
+    test('returns true if all same suit with cut card', () => {
+        var hand = "AC 2C 3C 4C";
+        expectHasFlush(hand, [], "5D");
     });
 });
 
@@ -485,28 +485,54 @@ describe('testing Hand.getScore', () => {
 
 describe('testing Hand.getTricks', () => {
 
-    var expectPropEqualsRelatedCall = (play, prop) => {
+    var getTricks = (play) => {
         var hand = CribbageHand.fromString(play[0]);
         var cutCard = play[1];
         var tricks = hand.getTricks(cutCard);
+        return tricks;
+    }
+
+    var expectPropEqualsRelatedCall = (play, prop) => {
+        var hand = CribbageHand.fromString(play[0]);
+        var cutCard = play[1];
+        var tricks = getTricks(play);
         var call = prop.startsWith('has') && prop || 'find' + prop[0].toUpperCase() + prop.slice(1);
         expect(tricks[prop]).toEqual(hand[call](cutCard));
     }
 
-    test('returns results of hasHisNobs', () => {
-        expectPropEqualsRelatedCall(["AC 2C JD 4C", "5D"], 'hasHisNobs');
-        expectPropEqualsRelatedCall(["AC 2C 3D 4C", "5C"], 'hasHisNobs');
+    var expectPropToEqual = (play, prop, exp) => {
+        var tricks = getTricks(play);
+        expect(tricks[prop]).toEqual(exp);
+    }
+
+    test('returns nobs and cut card', () => {
+        expectPropToEqual(["AC 2C JD 4C", "5D"], 'hisNobs', ['5D', 'JD']);
+        expectPropToEqual(["AC 2C 3D 4C", "5C"], 'hisNobs', []);
     });
 
-    test('returns results of hasFlush', () => {
-        expectPropEqualsRelatedCall(["AC 2C 3C 4C", "5C"], 'hasFlush');
-        expectPropEqualsRelatedCall(["AC 2D 3C 4C", "5C"], 'hasFlush');
+    test('returns flush', () => {
+        expectPropEqualsRelatedCall(["AC 2C 3C 4D", "5C"], 'flush');
+        expectPropEqualsRelatedCall(["AC 2C 3C 4C", "5C"], 'flush');
+        expectPropEqualsRelatedCall(["AC 2C 3C 4C", "5D"], 'flush');
     });
 
-    test('returns results of findMultiples', () => {
-        expectPropEqualsRelatedCall(["AC 2C 3C 4D", "5C"], 'multiples');
-        expectPropEqualsRelatedCall(["AC 2C 3C 3D", "5C"], 'multiples');
-        expectPropEqualsRelatedCall(["2C 2H 3C 3D", "3S"], 'multiples');
+    test('returns pairs', () => {
+        expectPropToEqual(["AC 2C 3C 4D", "5C"], 'pairs', []);
+        expectPropToEqual(["AC 2C 3C 3D", "5C"], 'pairs', [["3C", "3D"]]);
+        expectPropToEqual(["2C 2H 3C 3D", "5C"], 'pairs', [["2C", "2H"], ["3C", "3D"]]);
+        expectPropToEqual(["2C 2H 3C 3D", "3S"], 'pairs', [["2C", "2H"]]);
+    });
+
+    test('returns triples', () => {
+        expectPropToEqual(["AC 2C 3C 4D", "5C"], 'triples', []);
+        expectPropToEqual(["AC 2C 3C 3D", "3S"], 'triples', [["3C", "3D", "3S"]]);
+        expectPropToEqual(["2C 2H 3C 3D", "3S"], 'triples', [["3C", "3D", "3S"]]);
+    });
+
+    test('returns quadruples', () => {
+        expectPropToEqual(["AC 2C 3C 4D", "5C"], 'quadruples', []);
+        expectPropToEqual(["AC 3H 3C 3D", "3S"], 'quadruples', [["3H", "3C", "3D", "3S"]]);
+        expectPropToEqual(["3H 3C 3D 3S", "AC"], 'quadruples', [["3H", "3C", "3D", "3S"]]);
     });
 
     test('returns results of findRuns', () => {
