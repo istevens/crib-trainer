@@ -64,15 +64,15 @@
 
         <div id="score"><span id="successes">0</span><span id="failures">0</span></div>
 
-        <div id="cutCard"></div>
-
-        <div id="hand"></div>
-
-        <form>
-            <select id="scoreSelect">
-                <option disabled>This hand's score is:</option>
-            </select>
-        </form>
+        <div id="play">
+            <div class="cards" id="cutCard"></div>
+            <div class="cards" id="hand"></div>
+            <form>
+                <select id="scoreSelect">
+                    <option disabled>This hand's score is:</option>
+                </select>
+            </form>
+        </div>
 
         <div id="tricks"></div>
     </div>
@@ -83,21 +83,21 @@
         const _getEl = x => document.getElementById(x);
         const SCORE_SELECTED = "scoreSelected";
         const NEW_ROUND = "newRound";
+        const cardTemplate = (card) => `<card-t cid="${card}"></card-t>`;
 
         var play = null;
+
+        function renderCards(cards, el) {
+            var cards = cards.map(cardTemplate).join("");
+            el && (el.innerHTML = cards);
+            return cards;
+        }
 
         function displayNextHand() {
             play = CribbageHand.randomPlay();
 
-            var cutCard = _getEl('cutCard');
-            var card = play.cutCard;
-            const cardTemplate = (card) => `<card-t cid="${card}"></card-t>`;
-            cutCard.innerHTML = cardTemplate(card);
-
-            var hand = _getEl('hand');
-            var cards = play.hand.cards.map(card => cardTemplate(card));
-            cards = cards.join("");
-            hand.innerHTML = cards;
+            renderCards([play.cutCard], _getEl('cutCard'));
+            renderCards(play.hand.cards, _getEl('hand'));
 
             var select = _getEl('scoreSelect');
             select.selectedIndex = 0;
@@ -126,12 +126,26 @@
             elemToIncr.textContent = parseInt(elemToIncr.textContent) + 1;
         }
 
+        function renderTrick(t) {
+            var [name, tricks] = t;
+            var hasTricks = tricks.length > 0;
+            tricks = hasTricks && tricks.map(x => "<span>" + renderCards(x) + "</span>") || "<span>" + t[1] + "</span>";
+            const trickTemplate = `<li><span>${name}</span>:<span>${tricks}</span></li>`;
+
+            tricks = hasTricks && trickTemplate || "";
+            return tricks;
+        }
+
         function showTricks(ev) {
             var play = ev.detail.play;
-            var tricks = this.querySelector('#tricks');
-            tricks.innerHTML = `<div>Last play: ${play.hand.cards} + ${play.cutCard}</div>`;
-            tricks.innerHTML += `<div>Score: ${play.hand.getScore(play.cutCard)}</div>`
-            tricks.innerHTML += Object.entries(play.hand.getTricks(play.cutCard)).map(x => '<div>'+x+'</div>').join('');
+            var tricksEl = document.createElement('ul');
+            var tricks = play.hand.getTricks(play.cutCard);
+
+            renderCards(play.hand.cards.concat(play.cutCard), tricksEl);
+            tricksEl.innerHTML += `<li>Score: ${play.hand.getScore(play.cutCard)}</li>`
+            tricks = Object.entries(tricks).map(renderTrick);
+            tricksEl.innerHTML += tricks.join("");
+            this.querySelector('#tricks').innerHTML = tricksEl.innerHTML;
         }
 
         function setup() {
