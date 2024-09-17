@@ -65,8 +65,8 @@
         <div id="score"><span id="successes">0</span><span id="failures">0</span></div>
 
         <div id="play">
-            <div class="cards" id="cutCard"></div>
-            <div class="cards" id="hand"></div>
+            <div id="cutCard"></div>
+            <div id="hand"></div>
             <form>
                 <select id="scoreSelect">
                     <option disabled>This hand's score is:</option>
@@ -74,7 +74,11 @@
             </form>
         </div>
 
-        <div id="tricks"></div>
+        <dialog id="tricks">
+            <button autofocus>Close</button>
+            <div id="lastHand"></div>
+            <ul id="trickList"></ul>
+        </dialog>
     </div>
 
     <script type="module">
@@ -138,14 +142,16 @@
 
         function showTricks(ev) {
             var play = ev.detail.play;
-            var tricksEl = document.createElement('ul');
+            var tricksEl = document.querySelector('ul#trickList');
             var tricks = play.hand.getTricks(play.cutCard);
-
-            renderCards(play.hand.cards.concat(play.cutCard), tricksEl);
-            tricksEl.innerHTML += `<li>Score: ${play.hand.getScore(play.cutCard)}</li>`
             tricks = Object.entries(tricks).map(renderTrick);
+
+            renderCards(play.hand.cards.concat(play.cutCard), _getEl('lastHand'));
+            tricksEl.innerHTML = `<li>Score: ${play.hand.getScore(play.cutCard)}</li>`
             tricksEl.innerHTML += tricks.join("");
-            this.querySelector('#tricks').innerHTML = tricksEl.innerHTML;
+
+            var dialog = document.querySelector('dialog#tricks');
+            dialog.showModal();
         }
 
         function setup() {
@@ -162,6 +168,9 @@
             scorer.addEventListener(SCORE_SELECTED, changeScore);
             scorer.addEventListener(SCORE_SELECTED, showTricks);
             scorer.addEventListener(NEW_ROUND, displayNextHand);
+
+            var dialog = scorer.querySelector("dialog");
+            dialog.querySelector("button").addEventListener("click", () => dialog.close());
         }
 
         setup();
