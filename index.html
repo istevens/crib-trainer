@@ -177,8 +177,9 @@
             tricks = Object.entries(tricks).map(renderTrick);
 
             renderCards(play.hand.cards.concat(play.cutCard), _getEl('lastHand'));
-            tricksEl.innerHTML = `<li>Score: ${play.hand.getScore(play.cutCard)}</li>`
-            tricksEl.innerHTML += tricks.join("");
+            tricksEl.innerHTML = tricks.join("");
+
+            _getEl('correctScore').innerHTML = `${play.hand.getScore(play.cutCard)}`;
 
             var dialog = document.querySelector('dialog#tricks');
             dialog.showModal();
