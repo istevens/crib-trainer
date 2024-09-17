@@ -1,13 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no"/>
     <script type="module" src="https://cardmeister.github.io/elements.cardmeister.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0 user-scalable=no" />
     <script type="module" src="src/cribbagescorer.js"></script>
     <style>
-        body {
-            background: rgb(0,199,34);
-            background: fixed radial-gradient(circle at 50% 12%, rgba(0,199,34,1) 0%, rgba(1,152,34,1) 49%, rgba(0,120,52,1) 100%);
+        html {
+            background: rgba(0,120,52,1);
+            background: fixed radial-gradient(circle at 50% 10rem, rgba(0,200,40,1) 0%, rgba(0,120,24,1) 40%, rgba(0,0,0,1) 100%);
+            font-family: Helvetica, sans-serif;
+            overflow: hidden;
+            overscroll-behavior: none;
+            touch-action: pan-x pan-y;
+            height: 100%;
         }
 
         img {
