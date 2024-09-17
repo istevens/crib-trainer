@@ -128,14 +128,15 @@ export default class CribbageHand {
         score += t.triples.length * 6;
         score += t.quadruples.length * 12;
         score += t.runs.reduce((a, x) => a + x.length, 0);
-        score += t.hisNobs.length == 2 && 1 || 0;
-        score += t.flush.length;
+        score += t.hisNobs.length && 1;
+        score += t.flush.length && t.flush[0].length;
         return score;
     }
 
     getTricks(cutCard) {
         var multiples = this.findMultiples(cutCard);
         var multipleOfLength = n => multiples.filter(x => x.length == n);
+        var arrayIfNotEmpty = x => x.length > 1 && [x] || x;
 
         var tricks = {
             fifteens: this.findFifteens(cutCard),
@@ -143,8 +144,8 @@ export default class CribbageHand {
             pairs: multipleOfLength(2),
             triples: multipleOfLength(3),
             quadruples: multipleOfLength(4),
-            flush: this.findFlush(cutCard),
-            hisNobs: this.findHisNobs(cutCard),
+            flush: arrayIfNotEmpty(this.findFlush(cutCard)),
+            hisNobs: arrayIfNotEmpty(this.findHisNobs(cutCard)),
         };
 
         return tricks;

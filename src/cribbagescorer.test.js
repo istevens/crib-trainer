@@ -506,14 +506,14 @@ describe('testing Hand.getTricks', () => {
     }
 
     test('returns nobs and cut card', () => {
-        expectPropToEqual(["AC 2C JD 4C", "5D"], 'hisNobs', ['5D', 'JD']);
+        expectPropToEqual(["AC 2C JD 4C", "5D"], 'hisNobs', [['5D', 'JD']]);
         expectPropToEqual(["AC 2C 3D 4C", "5C"], 'hisNobs', []);
     });
 
     test('returns flush', () => {
-        expectPropEqualsRelatedCall(["AC 2C 3C 4D", "5C"], 'flush');
-        expectPropEqualsRelatedCall(["AC 2C 3C 4C", "5C"], 'flush');
-        expectPropEqualsRelatedCall(["AC 2C 3C 4C", "5D"], 'flush');
+        expectPropToEqual(["AC 2C 3C 4D", "5C"], 'flush', []);
+        expectPropToEqual(["AC 2C 3C 4C", "5C"], 'flush', [["AC","2C","3C","4C","5C"]]);
+        expectPropToEqual(["AC 2C 3C 4C", "5D"], 'flush', [["AC","2C","3C","4C"]]);
     });
 
     test('returns pairs', () => {
