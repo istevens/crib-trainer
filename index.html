@@ -52,26 +52,32 @@
 
         #score {
             position: fixed;
+            top: 1rem;
             right: 1rem;
+            height: 3rem;
+            width: 6rem;
+
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+
             color: white;
-            font-size: 2rem;
+            font-weight: bold;
         }
 
         #score span {
-            background: white;
-            padding: 1rem;
-            width: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50%;
+            height: 100%;
         }
 
         #score #successes {
-            text-align: right;
-            padding-right: 1rem;
             background-color: green;
         }
 
         #score #failures {
-            text-align: left;
-            padding-left: 1rem;
             background-color: red;
         }
 
