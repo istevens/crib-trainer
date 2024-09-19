@@ -81,10 +81,56 @@
             background-color: red;
         }
 
-        #tricks {
-            font-size: 200%;
-            color: white;
-            display: block;
+        #tricks #lastHand {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        #tricks img {
+            height: 5em;
+        }
+
+        #trickList {
+            list-style: none;
+            display: contents;
+        }
+
+        #trickList li {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+
+        #trickList li>span:first-child {
+            width: 5em;
+            text-transform: capitalize;
+        }
+
+        #trickList li>span:last-child {
+            width: 100%;
+            max-width: 18em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .trick {
+            height: 6em;
+            transform: rotateZ(3deg);
+            margin-right: 5em;
+        }
+
+        .trick img {
+            position: absolute;
+            transform-origin: bottom left;
+        }
+
+        .trick .card13 img, .trick .card14 img, .trick .card15 img {transform: rotateZ(342deg)}
+        .trick .card12 img, .trick .card23 img, .trick .card24 img, .trick .card25 img {transform: rotateZ(351deg)}
+        .trick .card22 img, .trick .card33 img, .trick .card34 img, .trick .card35 img {transform: rotateZ(0)}
+        .trick .card44 img, .trick .card45 img {transform: rotateZ(9deg)}
+        .trick .card55 img {transform: rotateZ(18deg)}
         }
 
     </style>
@@ -117,7 +163,7 @@
         const _getEl = x => document.getElementById(x);
         const SCORE_SELECTED = "scoreSelected";
         const NEW_ROUND = "newRound";
-        const cardTemplate = (card) => `<card-t cid="${card}"></card-t>`;
+        const cardTemplate = (card, i, a) => `<card-t cid="${card}" class="card${i+1}${a.length}"></card-t>`;
 
         var play = null;
 
@@ -163,7 +209,7 @@
         function renderTrick(t) {
             var [name, tricks] = t;
             var hasTricks = tricks.length > 0;
-            tricks = hasTricks && tricks.map(x => "<span>" + renderCards(x) + "</span>") || "<span>" + t[1] + "</span>";
+            tricks = hasTricks && tricks.map(x => `<span class='trick'>${renderCards(x)}</span>`) || "<span>" + t[1] + "</span>";
             const trickTemplate = `<li><span>${name}</span>:<span>${tricks}</span></li>`;
 
             tricks = hasTricks && trickTemplate || "";
