@@ -508,6 +508,7 @@ describe('testing Hand.getTricks', () => {
     test('returns nobs and cut card', () => {
         expectPropToEqual(["AC 2C JD 4C", "5D"], 'hisNobs', [['5D', 'JD']]);
         expectPropToEqual(["AC 2C 3D 4C", "5C"], 'hisNobs', []);
+        expectPropToEqual(["AH QD 9H JC", "10C"], 'hisNobs', [['10C', 'JC']]);
     });
 
     test('returns flush', () => {

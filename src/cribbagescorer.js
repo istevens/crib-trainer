@@ -42,7 +42,7 @@ export default class CribbageHand {
     }
 
     findHisNobs(cutCard) {
-        var cutSuit = cutCard[1];
+        var cutSuit = cutCard.at(-1);
         var jackOfCutSuit = JACK + cutSuit;
         var jackOfCutSuitIsInHand = this.cards.includes(jackOfCutSuit);
         var hisNobs = jackOfCutSuitIsInHand && [cutCard, jackOfCutSuit] || [];
