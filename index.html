@@ -88,7 +88,7 @@
         }
 
         #tricks img {
-            height: 5em;
+            height: 6em;
         }
 
         #trickList {
@@ -115,12 +115,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-wrap: wrap;
         }
 
         .trick {
-            height: 6em;
+            height: 7em;
             transform: rotateZ(3deg);
-            margin-right: 5em;
+            margin-right: 5.5em;
             visibility: visible;
         }
 
@@ -129,17 +130,23 @@
             transform-origin: bottom left;
         }
 
-        .trick .card13 img, .trick .card14 img, .trick .card15 img {transform: rotateZ(342deg)}
-        .trick .card12 img, .trick .card23 img, .trick .card24 img, .trick .card25 img {transform: rotateZ(351deg)}
-        .trick .card22 img, .trick .card33 img, .trick .card34 img, .trick .card35 img {transform: rotateZ(0)}
-        .trick .card44 img, .trick .card45 img {transform: rotateZ(9deg)}
-        .trick .card55 img {transform: rotateZ(18deg)}
+        .trick .card14 img, .trick .card15 img {transform: rotateZ(339deg)}
+        .trick .card13 img, .trick .card24 img, .trick .card25 img {transform: rotateZ(346deg)}
+        .trick .card12 img, .trick .card23 img, .trick .card34 img, .trick .card35 img {transform: rotateZ(353deg)}
+        .trick .card22 img, .trick .card33 img, .trick .card44 img, .trick .card45 img  {transform: rotateZ(0)}
+        .trick .card55 img {transform: rotateZ(7deg)}
+
+        #correctScore {
+            font-size: 4rem;
+            font-weight: bold;
+            text-align: center;
         }
 
     </style>
 </head>
 <body>
     <div id="cribbagescorer">
+        <h1>Crib Trainer</h1>
 
         <div id="score"><span id="successes">0</span><span id="failures">0</span></div>
 
@@ -154,8 +161,9 @@
         </div>
 
         <dialog id="tricks">
-            <button autofocus>Close</button>
+            <button>Close</button>
             <div id="lastHand"></div>
+            <div id="correctScore"></div>
             <ul id="trickList"></ul>
         </dialog>
     </div>
