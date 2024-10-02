@@ -181,12 +181,13 @@
     <script type="module">
         import CribbageHand from "./src/cribbagescorer.js";
 
+        var play = null;
         const _getEl = x => document.getElementById(x);
         const SCORE_SELECTED = "scoreSelected";
         const NEW_ROUND = "newRound";
         const cardTemplate = (card, i, a) => `<card-t cid="${card}" class="card${i+1}${a.length}"></card-t>`;
-
-        var play = null;
+        const tricksTemplate = (name, tricks) => `<li><span>${name}</span>:<span>${tricks}</span></li>`;
+        const trickTemplate = x => `<span class='trick'>${renderCards(x)}</span>`;
 
         function renderCards(cards, el) {
             var cards = cards.map(cardTemplate).join("");
@@ -223,32 +224,35 @@
             var actualScore = play.hand.getScore(play.cutCard);
             var successes = score.querySelector('#successes');
             var failures = score.querySelector('#failures');
-            var elemToIncr = (selectedScore == actualScore) && successes || failures;
+            var gotItRight = selectedScore == actualScore;
+            var elemToIncr = gotItRight && successes || failures;
             elemToIncr.textContent = parseInt(elemToIncr.textContent) + 1;
         }
 
         function renderTrick(t) {
             var [name, tricks] = t;
             var hasTricks = tricks.data.length > 0;
-            tricks = hasTricks && tricks.data.map(x => `<span class='trick'>${renderCards(x)}</span>`) || "<span>" + t[1] + "</span>";
-            const trickTemplate = `<li><span>${name}</span>:<span>${tricks}</span></li>`;
-
-            tricks = hasTricks && trickTemplate || "";
+            tricks = hasTricks && tricks.data.map(trickTemplate);
+            tricks = hasTricks && tricksTemplate(name, tricks) || "";
             return tricks;
         }
 
         function showTricks(ev) {
             var play = ev.detail.play;
-            var tricksEl = document.querySelector('ul#trickList');
-            var tricks = play.hand.getTricks(play.cutCard);
-            tricks = Object.entries(tricks).map(renderTrick);
+            var cutCard = play.cutCard;
+            var hand = play.hand;
 
-            renderCards(play.hand.cards.concat(play.cutCard), _getEl('lastHand'));
+            renderCards(hand.cards.concat(cutCard), _getEl('lastHand'));
+            _getEl('correctScore').innerHTML = `${hand.getScore(cutCard)}`;
+
+            var tricksEl = document.querySelector('ul#trickList');
+            var tricks = hand.getTricks(cutCard);
+            tricks = Object.entries(tricks).map(renderTrick);
             tricksEl.innerHTML = tricks.join("");
 
-            _getEl('correctScore').innerHTML = `${play.hand.getScore(play.cutCard)}`;
-
             var dialog = document.querySelector('dialog#tricks');
+            var closeDialog = ev => dialog.close();
+            dialog.addEventListener('click', closeDialog, {once: true});
             dialog.showModal();
         }
 
