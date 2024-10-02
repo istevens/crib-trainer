@@ -1,18 +1,32 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script type="module" src="https://cardmeister.github.io/elements.cardmeister.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0 user-scalable=no" />
+    <script type="module" src="src/elements.cardmeister.min.js"></script>
     <script type="module" src="src/cribbagescorer.js"></script>
     <style>
-        html {
-            background: rgba(0,120,52,1);
-            background: fixed radial-gradient(circle at 50% 10rem, rgba(0,200,40,1) 0%, rgba(0,120,24,1) 40%, rgba(0,0,0,1) 100%);
-            font-family: Helvetica, sans-serif;
+        :root {
             overflow: hidden;
             overscroll-behavior: none;
             touch-action: pan-x pan-y;
             height: 100%;
+            --tableDecorColor: rgb(255, 255, 130, 0.5);
+            --cardPlacementBorder: 0.2rem solid var(--tableDecorColor);
+        }
+
+        html {
+            background: rgba(0,120,52,1);
+            background: fixed radial-gradient(circle at 50% 10rem, rgba(0,200,40,1) 0%, rgba(0,120,24,1) 40%, rgba(0,0,0,1) 100%);
+            font-family: Helvetica, sans-serif;
+        }
+
+        select {
+            width: 10rem;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--tableDecorColor);
         }
 
         #play img {
@@ -32,17 +46,13 @@
             border-radius: 11.5px;
         }
 
-        select {
-            width: 10rem;
-        }
-
         #hand, #cutCard img {
             padding: 0.5rem;
-            border: 0.2rem solid rgb(255, 255, 130, 0.5);
+            border: var(--cardPlacementBorder);
         }
 
         #cutCard img {
-            outline: 0.2rem solid rgb(255, 255, 130, 0.5);
+            outline: var(--cardPlacementBorder);
             outline-offset: 0.3rem;
         }
 
