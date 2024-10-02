@@ -497,43 +497,47 @@ describe('testing Hand.getTricks', () => {
         var cutCard = play[1];
         var tricks = getTricks(play);
         var call = prop.startsWith('has') && prop || 'find' + prop[0].toUpperCase() + prop.slice(1);
-        expect(tricks[prop]).toEqual(hand[call](cutCard));
+        expect(tricks[prop].data).toEqual(hand[call](cutCard));
     }
 
-    var expectPropToEqual = (play, prop, exp) => {
+    var expectTrickToEqual = (play, prop, exp) => {
         var tricks = getTricks(play);
-        expect(tricks[prop]).toEqual(exp);
+        expect(tricks[prop].data).toEqual(exp);
     }
 
     test('returns nobs and cut card', () => {
-        expectPropToEqual(["AC 2C JD 4C", "5D"], 'hisNobs', [['5D', 'JD']]);
-        expectPropToEqual(["AC 2C 3D 4C", "5C"], 'hisNobs', []);
-        expectPropToEqual(["AH QD 9H JC", "10C"], 'hisNobs', [['10C', 'JC']]);
+        expectTrickToEqual(["AC 2C JD 4C", "5D"], 'hisNobs', [['5D', 'JD']]);
+        expectTrickToEqual(["AC 2C 3D 4C", "5C"], 'hisNobs', []);
+        expectTrickToEqual(["AH QD 9H JC", "10C"], 'hisNobs', [['10C', 'JC']]);
+    });
+
+    test('returns score of nobs', () => {
+
     });
 
     test('returns flush', () => {
-        expectPropToEqual(["AC 2C 3C 4D", "5C"], 'flush', []);
-        expectPropToEqual(["AC 2C 3C 4C", "5C"], 'flush', [["AC","2C","3C","4C","5C"]]);
-        expectPropToEqual(["AC 2C 3C 4C", "5D"], 'flush', [["AC","2C","3C","4C"]]);
+        expectTrickToEqual(["AC 2C 3C 4D", "5C"], 'flush', []);
+        expectTrickToEqual(["AC 2C 3C 4C", "5C"], 'flush', [["AC","2C","3C","4C","5C"]]);
+        expectTrickToEqual(["AC 2C 3C 4C", "5D"], 'flush', [["AC","2C","3C","4C"]]);
     });
 
     test('returns pairs', () => {
-        expectPropToEqual(["AC 2C 3C 4D", "5C"], 'pairs', []);
-        expectPropToEqual(["AC 2C 3C 3D", "5C"], 'pairs', [["3C", "3D"]]);
-        expectPropToEqual(["2C 2H 3C 3D", "5C"], 'pairs', [["2C", "2H"], ["3C", "3D"]]);
-        expectPropToEqual(["2C 2H 3C 3D", "3S"], 'pairs', [["2C", "2H"]]);
+        expectTrickToEqual(["AC 2C 3C 4D", "5C"], 'pairs', []);
+        expectTrickToEqual(["AC 2C 3C 3D", "5C"], 'pairs', [["3C", "3D"]]);
+        expectTrickToEqual(["2C 2H 3C 3D", "5C"], 'pairs', [["2C", "2H"], ["3C", "3D"]]);
+        expectTrickToEqual(["2C 2H 3C 3D", "3S"], 'pairs', [["2C", "2H"]]);
     });
 
     test('returns triples', () => {
-        expectPropToEqual(["AC 2C 3C 4D", "5C"], 'triples', []);
-        expectPropToEqual(["AC 2C 3C 3D", "3S"], 'triples', [["3C", "3D", "3S"]]);
-        expectPropToEqual(["2C 2H 3C 3D", "3S"], 'triples', [["3C", "3D", "3S"]]);
+        expectTrickToEqual(["AC 2C 3C 4D", "5C"], 'triples', []);
+        expectTrickToEqual(["AC 2C 3C 3D", "3S"], 'triples', [["3C", "3D", "3S"]]);
+        expectTrickToEqual(["2C 2H 3C 3D", "3S"], 'triples', [["3C", "3D", "3S"]]);
     });
 
     test('returns quadruples', () => {
-        expectPropToEqual(["AC 2C 3C 4D", "5C"], 'quadruples', []);
-        expectPropToEqual(["AC 3H 3C 3D", "3S"], 'quadruples', [["3H", "3C", "3D", "3S"]]);
-        expectPropToEqual(["3H 3C 3D 3S", "AC"], 'quadruples', [["3H", "3C", "3D", "3S"]]);
+        expectTrickToEqual(["AC 2C 3C 4D", "5C"], 'quadruples', []);
+        expectTrickToEqual(["AC 3H 3C 3D", "3S"], 'quadruples', [["3H", "3C", "3D", "3S"]]);
+        expectTrickToEqual(["3H 3C 3D 3S", "AC"], 'quadruples', [["3H", "3C", "3D", "3S"]]);
     });
 
     test('returns results of findRuns', () => {

@@ -211,8 +211,8 @@
 
         function renderTrick(t) {
             var [name, tricks] = t;
-            var hasTricks = tricks.length > 0;
-            tricks = hasTricks && tricks.map(x => `<span class='trick'>${renderCards(x)}</span>`) || "<span>" + t[1] + "</span>";
+            var hasTricks = tricks.data.length > 0;
+            tricks = hasTricks && tricks.data.map(x => `<span class='trick'>${renderCards(x)}</span>`) || "<span>" + t[1] + "</span>";
             const trickTemplate = `<li><span>${name}</span>:<span>${tricks}</span></li>`;
 
             tricks = hasTricks && trickTemplate || "";

@@ -7,6 +7,19 @@ const DECK = SUITS.flatMap(s => FACES.map(f => f+s));
 const fv = a => !a && -1 || FACES.indexOf(a.slice(0, -1));
 const cardCompare = (a, b) => fv(a) < fv(b) && -1 || fv(a) > fv(b) && 1 || 0;
 
+const pointsPerCard = n => x => n * x.flat().length;
+const ppc1 = pointsPerCard(1);
+const SCORE_FNS = {
+    fifteens: x => 2 * x.length,
+    pairs: ppc1,
+    triples: pointsPerCard(2),
+    quadruples: pointsPerCard(3),
+    runs: ppc1,
+    flush: ppc1,
+    hisNobs: pointsPerCard(0.5)
+};
+
+
 export default class CribbageHand {
 
     constructor(cards) {
@@ -123,13 +136,7 @@ export default class CribbageHand {
 
     getScore(cutCard) {
         var t = this.getTricks(cutCard);
-        var score = 2 * t.fifteens.length;
-        score += t.pairs.length * 2;
-        score += t.triples.length * 6;
-        score += t.quadruples.length * 12;
-        score += t.runs.reduce((a, x) => a + x.length, 0);
-        score += t.hisNobs.length && 1;
-        score += t.flush.length && t.flush[0].length;
+        var score = Object.values(t).reduce((x,y) => x + y.score, 0);
         return score;
     }
 
@@ -140,14 +147,20 @@ export default class CribbageHand {
 
         var tricks = {
             fifteens: this.findFifteens(cutCard),
-            runs: this.findRuns(cutCard),
             pairs: multipleOfLength(2),
             triples: multipleOfLength(3),
             quadruples: multipleOfLength(4),
+            runs: this.findRuns(cutCard),
             flush: arrayIfNotEmpty(this.findFlush(cutCard)),
             hisNobs: arrayIfNotEmpty(this.findHisNobs(cutCard)),
         };
 
-        return tricks;
+        var tricksAndScores = Object.entries(tricks).map(x => {
+            var ret = [x[0], {data: x[1], score: SCORE_FNS[x[0]](x[1])}];
+            return ret;
+        });
+
+        tricksAndScores = Object.fromEntries(tricksAndScores);
+        return tricksAndScores;
     }
 }
