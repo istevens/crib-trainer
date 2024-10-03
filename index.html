@@ -113,10 +113,25 @@
             visibility: hidden;
         }
 
-        #trickList li>span:first-child {
+        #trickList .trickLabel {
             width: 5em;
-            text-transform: capitalize;
             visibility: visible;
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+        }
+
+        #trickList .trickScore {
+            font-size: 3em;
+            font-weight: bold;
+        }
+
+        #trickList li:not(:first-child) .trickScore::before {
+            content: '+\00A0';
+        }
+
+        #trickList .trickName {
+            font-size: 0.75em;
         }
 
         #trickList li>span:last-child {
@@ -171,10 +186,10 @@
         </div>
 
         <dialog id="tricks">
-            <button>Close</button>
             <div id="lastHand"></div>
             <div id="correctScore"></div>
             <ul id="trickList"></ul>
+            <button>Close</button>
         </dialog>
     </div>
 
@@ -186,7 +201,7 @@
         const SCORE_SELECTED = "scoreSelected";
         const NEW_ROUND = "newRound";
         const cardTemplate = (card, i, a) => `<card-t cid="${card}" class="card${i+1}${a.length}"></card-t>`;
-        const tricksTemplate = (name, tricks) => `<li><span>${name}</span>:<span>${tricks}</span></li>`;
+        const tricksTemplate = (name, score, tricks) => `<li><span class="trickLabel"><span class="trickScore">${score}</span> <span class="trickName">for ${name}</span></span>:<span>${tricks}</span></li>`;
         const trickTemplate = x => `<span class='trick'>${renderCards(x)}</span>`;
 
         function renderCards(cards, el) {
@@ -222,18 +237,19 @@
             var score = this.querySelector('#score');
 
             var actualScore = play.hand.getScore(play.cutCard);
-            var successes = score.querySelector('#successes');
-            var failures = score.querySelector('#failures');
+            var successes = '#successes';
+            var failures = '#failures';
             var gotItRight = selectedScore == actualScore;
             var elemToIncr = gotItRight && successes || failures;
+            elemToIncr = score.querySelector(elemToIncr);
             elemToIncr.textContent = parseInt(elemToIncr.textContent) + 1;
         }
 
         function renderTrick(t) {
-            var [name, tricks] = t;
-            var hasTricks = tricks.data.length > 0;
-            tricks = hasTricks && tricks.data.map(trickTemplate);
-            tricks = hasTricks && tricksTemplate(name, tricks) || "";
+            var trickData = t[1].data;
+            var hasTricks = trickData.length > 0;
+            tricks = hasTricks && trickData.map(trickTemplate);
+            tricks = hasTricks && tricksTemplate(t[0], t[1].score, tricks) || "";
             return tricks;
         }
 
