@@ -218,7 +218,6 @@
 
             var select = _getEl('scoreSelect');
             select.selectedIndex = 0;
-            select.focus();
             select.blur();
         }
 
@@ -228,7 +227,6 @@
             var evPayload = {bubbles: true, detail: {play: play, selectedScore: score}};
 
             this.dispatchEvent(new CustomEvent(SCORE_SELECTED, evPayload));
-            this.dispatchEvent(new CustomEvent(NEW_ROUND, evPayload));
         }
 
         function changeScore(ev) {
@@ -267,8 +265,6 @@
             tricksEl.innerHTML = tricks.join("");
 
             var dialog = document.querySelector('dialog#tricks');
-            var closeDialog = ev => dialog.close();
-            dialog.addEventListener('click', closeDialog, {once: true});
             dialog.showModal();
         }
 
@@ -288,11 +284,14 @@
             scorer.addEventListener(NEW_ROUND, displayNextHand);
 
             var dialog = scorer.querySelector("dialog");
-            dialog.querySelector("button").addEventListener("click", () => dialog.close());
+            var closeTricks = ev => dialog.dispatchEvent(new CustomEvent(NEW_ROUND, {bubbles: true})) && dialog.close();
+            dialog.addEventListener("click", closeTricks);
+            dialog.addEventListener("close", closeTricks);
+
+            closeTricks();
         }
 
         setup();
-        displayNextHand();
 
     </script>
 </body>
