@@ -6,12 +6,14 @@
     <script type="module" src="src/cribbagescorer.js"></script>
     <style>
         :root {
-            overflow: hidden;
-            overscroll-behavior: none;
-            touch-action: pan-x pan-y;
-            height: 100%;
             --tableDecorColor: rgb(255, 255, 130, 0.5);
             --cardPlacementBorder: 0.2rem solid var(--tableDecorColor);
+        }
+
+        dialog, ::backdrop, :root {
+            overflow: hidden;
+            overscroll-behavior: none;
+            touch-action: none;
         }
 
         html {
