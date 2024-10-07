@@ -155,9 +155,10 @@ export default class CribbageHand {
             hisNobs: arrayIfNotEmpty(this.findHisNobs(cutCard)),
         };
 
-        var tricksAndScores = Object.entries(tricks).map(x => {
-            var ret = [x[0], {data: x[1], score: SCORE_FNS[x[0]](x[1])}];
-            return ret;
+        var tricksAndScores = Object.entries(tricks).filter(x => x[1].length > 0);
+        tricksAndScores = tricksAndScores.map(x => {
+            var tricks = [x[0], {data: x[1], score: SCORE_FNS[x[0]](x[1])}];
+            return tricks;
         });
 
         tricksAndScores = Object.fromEntries(tricksAndScores);
