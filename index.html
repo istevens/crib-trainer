@@ -112,28 +112,45 @@
             display: flex;
             flex-direction: row;
             align-items: center;
+            justify-content: center;
             visibility: hidden;
         }
 
-        #trickList .trickLabel {
-            width: 5em;
-            visibility: visible;
+        #correctScore, #trickList .trickLabel {
             display: flex;
             flex-direction: column;
             text-align: center;
         }
 
-        #trickList .trickScore {
-            font-size: 3em;
+        #tricks:has(#correctScore .trickScore) #trickList .trickLabel {
+            display: none;
+        }
+
+        #trickList .trickLabel {
+            width: 5em;
+            visibility: visible;
+        }
+
+        .trickScore {
+            position: relative;
             font-weight: bold;
+            line-height: 75%;
+        }
+
+        .trickLabel .trickScore {
+            font-size: 3rem;
         }
 
         #trickList li:not(:first-child) .trickScore::before {
+            position: absolute;
+            right: 3rem;
             content: '+\00A0';
+            font-size: 0.33em;
         }
 
-        #trickList .trickName {
-            font-size: 0.75em;
+        .trickName {
+            font-size: 0.75rem;
+            font-weighT: bold;
         }
 
         #trickList li>span:last-child {
@@ -164,6 +181,7 @@
         .trick .card55 img {transform: rotateZ(7deg)}
 
         #correctScore {
+            margin: 1rem;
             font-size: 4rem;
             font-weight: bold;
             text-align: center;
@@ -203,7 +221,16 @@
         const SCORE_SELECTED = "scoreSelected";
         const NEW_ROUND = "newRound";
         const cardTemplate = (card, i, a) => `<card-t cid="${card}" class="card${i+1}${a.length}"></card-t>`;
-        const tricksTemplate = (name, score, tricks) => `<li><span class="trickLabel"><span class="trickScore">${score}</span> <span class="trickName">for ${name}</span></span>:<span>${tricks}</span></li>`;
+        const scoreTemplate = (name, score, tricks) => {
+            var n = tricks.length;
+            var isHisNobs = name.includes('nobs');
+            name = !isHisNobs && (tricks.length == 1 && 'a' || tricks.length) + ' ' + name || name;
+            name = !isHisNobs && tricks.length == 1 && name.replace(/s$/, '') || name;
+            return `
+            <span class="trickScore">${score}</span>
+            <span class="trickName">for ${name}</span>
+        `};
+        const tricksTemplate = (name, score, tricks) => `<li><span class="trickLabel">${scoreTemplate(name, score, tricks)}</span>:<span>${tricks}</span></li>`;
         const trickTemplate = x => `<span class='trick'>${renderCards(x)}</span>`;
 
         function renderCards(cards, el) {
@@ -257,14 +284,16 @@
             var play = ev.detail.play;
             var cutCard = play.cutCard;
             var hand = play.hand;
+            var tricks = Object.entries(hand.getTricks(cutCard));
+            var firstAndOnlyTrick = tricks.length == 1 && tricks[0];
 
             renderCards(hand.cards.concat(cutCard), _getEl('lastHand'));
-            _getEl('correctScore').innerHTML = `${hand.getScore(cutCard)}`;
+
+            var score = firstAndOnlyTrick && scoreTemplate(firstAndOnlyTrick[0], firstAndOnlyTrick[1].score, firstAndOnlyTrick[1].data) || hand.getScore(cutCard);
+            _getEl('correctScore').innerHTML = score;
 
             var tricksEl = document.querySelector('ul#trickList');
-            var tricks = hand.getTricks(cutCard);
-            tricks = Object.entries(tricks).map(renderTrick);
-            tricksEl.innerHTML = tricks.join("");
+            tricksEl.innerHTML = tricks.map(renderTrick).join("");
 
             var dialog = document.querySelector('dialog#tricks');
             dialog.showModal();

@@ -16,7 +16,7 @@ const SCORE_FNS = {
     quadruples: pointsPerCard(3),
     runs: ppc1,
     flush: ppc1,
-    hisNobs: pointsPerCard(0.5)
+    'his nobs': pointsPerCard(0.5)
 };
 
 
@@ -152,7 +152,7 @@ export default class CribbageHand {
             quadruples: multipleOfLength(4),
             runs: this.findRuns(cutCard),
             flush: arrayIfNotEmpty(this.findFlush(cutCard)),
-            hisNobs: arrayIfNotEmpty(this.findHisNobs(cutCard)),
+            'his nobs': arrayIfNotEmpty(this.findHisNobs(cutCard)),
         };
 
         var tricksAndScores = Object.entries(tricks).filter(x => x[1].length > 0);
