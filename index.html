@@ -3,7 +3,6 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover, user-scalable=no" />
     <script type="module" src="src/elements.cardmeister.min.js"></script>
-    <script type="module" src="src/cribbagescorer.js"></script>
     <style>
         :root {
             --tableDecorColor: rgb(255, 255, 130, 0.5);
@@ -16,7 +15,7 @@
             font-family: Helvetica, sans-serif;
         }
 
-        dialog, ::backdrop, #cribbagescorer {
+        dialog, ::backdrop, #cribtrainer {
             overflow: hidden;
             overscroll-behavior: none;
             touch-action: none;
@@ -31,7 +30,7 @@
             color: var(--tableDecorColor);
         }
 
-        #cribbagescorer {
+        #cribtrainer {
             background: rgba(0,120,52,1);
             background: fixed radial-gradient(circle at 50% 10rem, rgba(0,200,40,1) 0%, rgba(0,120,24,1) 40%, rgba(0,0,0,1) 100%);
             height: 100%;
@@ -226,7 +225,7 @@
     </style>
 </head>
 <body>
-    <div id="cribbagescorer">
+    <div id="cribtrainer">
         <h1>Crib Trainer</h1>
 
         <div id="score"><span id="successes">0</span><span id="failures">0</span></div>
@@ -372,15 +371,15 @@
 
             selector.addEventListener('change', handWasScored);
 
-            var scorer = _getEl('cribbagescorer');
-            scorer.addEventListener(SCORE_SELECTED, changeScore);
-            scorer.addEventListener(SCORE_SELECTED, showScoreSelection);
-            scorer.addEventListener(SCORE_GRADED, clearScoreSelection);
-            scorer.addEventListener(SCORE_GRADED, showTricks);
-            scorer.addEventListener(NEW_ROUND, displayNextHand);
-            scorer.addEventListener(NEW_ROUND, clearScoreSelection);
+            var trainer = _getEl('cribtrainer');
+            trainer.addEventListener(SCORE_SELECTED, changeScore);
+            trainer.addEventListener(SCORE_SELECTED, showScoreSelection);
+            trainer.addEventListener(SCORE_GRADED, clearScoreSelection);
+            trainer.addEventListener(SCORE_GRADED, showTricks);
+            trainer.addEventListener(NEW_ROUND, displayNextHand);
+            trainer.addEventListener(NEW_ROUND, clearScoreSelection);
 
-            var dialog = scorer.querySelector("dialog");
+            var dialog = trainer.querySelector("dialog");
             var closeTricks = ev => dialog.dispatchEvent(new CustomEvent(NEW_ROUND, {bubbles: true})) && dialog.close();
             dialog.addEventListener("click", closeTricks);
             dialog.addEventListener("close", closeTricks);
