@@ -10,16 +10,16 @@
             --cardPlacementBorder: 0.2rem solid var(--tableDecorColor);
         }
 
-        dialog, ::backdrop, :root {
+        html, body {
+            margin: 0;
+            height: 100%;
+            font-family: Helvetica, sans-serif;
+        }
+
+        dialog, ::backdrop, #cribbagescorer {
             overflow: hidden;
             overscroll-behavior: none;
             touch-action: none;
-        }
-
-        html {
-            background: rgba(0,120,52,1);
-            background: fixed radial-gradient(circle at 50% 10rem, rgba(0,200,40,1) 0%, rgba(0,120,24,1) 40%, rgba(0,0,0,1) 100%);
-            font-family: Helvetica, sans-serif;
         }
 
         select {
@@ -29,6 +29,13 @@
         h1 {
             text-align: center;
             color: var(--tableDecorColor);
+        }
+
+        #cribbagescorer {
+            background: rgba(0,120,52,1);
+            background: fixed radial-gradient(circle at 50% 10rem, rgba(0,200,40,1) 0%, rgba(0,120,24,1) 40%, rgba(0,0,0,1) 100%);
+            height: 100%;
+            display: relative;
         }
 
         #play img {
@@ -56,10 +63,6 @@
         #cutCard img {
             outline: var(--cardPlacementBorder);
             outline-offset: 0.3rem;
-        }
-
-        #cribbagescorer {
-            width: 100%;
         }
 
         #score {
