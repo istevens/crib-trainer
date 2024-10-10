@@ -44,7 +44,7 @@
             gap: 2rem;
         }
 
-        #hand, #cutCard img {
+        #hand, #cutCard img, #tricks {
             border-radius: 11.5px;
         }
 
@@ -91,6 +91,11 @@
 
         #score #failures {
             background-color: red;
+        }
+
+        #tricks {
+            background-color: beige;
+            border: 1px solid black;
         }
 
         #tricks #lastHand {
@@ -187,6 +192,34 @@
             text-align: center;
         }
 
+        #selectedScore {
+            position: absolute;
+            visibility: hidden;
+            width: 100%;
+            top: 20%;
+            font-size: 24em;
+            font-weight: bold;
+            pointer-events: none;
+            letter-spacing: -0.1em;
+            text-indent: -0.1em;
+            text-align: center;
+            filter: blur(0);
+            transition: filter 500ms ease-in;
+        }
+
+        #selectedScore.active {
+            visibility: visible;
+            filter: blur(0.25em);
+        }
+
+        #selectedScore.correct {
+            color: chartreuse;
+        }
+
+        #selectedScore.incorrect {
+            color: red;
+        }
+
     </style>
 </head>
 <body>
@@ -211,6 +244,8 @@
             <ul id="trickList"></ul>
             <button>Close</button>
         </dialog>
+
+        <div id="selectedScore"></div>
     </div>
 
     <script type="module">
@@ -218,8 +253,11 @@
 
         var play = null;
         const _getEl = x => document.getElementById(x);
+
         const SCORE_SELECTED = "scoreSelected";
+        const SCORE_GRADED = "scoreGraded";
         const NEW_ROUND = "newRound";
+
         const cardTemplate = (card, i, a) => `<card-t cid="${card}" class="card${i+1}${a.length}"></card-t>`;
         const scoreTemplate = (name, score, tricks) => {
             var n = tricks.length;
@@ -251,25 +289,47 @@
         }
 
         function handWasScored(ev) {
-            var score = this.value;
+            var selected = this.value;
             var expected = play.hand.getScore(play.cutCard);
-            var evPayload = {bubbles: true, detail: {play: play, selectedScore: score}};
+            var evPayload = {bubbles: true, detail: {
+                    play: play,
+                    selectedScore: selected,
+                    expectedScore: expected,
+                    scoresMatch: selected == expected
+            }};
 
             this.dispatchEvent(new CustomEvent(SCORE_SELECTED, evPayload));
         }
 
         function changeScore(ev) {
-            var play = ev.detail.play;
-            var selectedScore = ev.detail.selectedScore;
-            var score = this.querySelector('#score');
-
-            var actualScore = play.hand.getScore(play.cutCard);
             var successes = '#successes';
             var failures = '#failures';
-            var gotItRight = selectedScore == actualScore;
-            var elemToIncr = gotItRight && successes || failures;
+            var elemToIncr = ev.detail.scoresMatch && successes || failures;
+            var score = this.querySelector('#score');
+
             elemToIncr = score.querySelector(elemToIncr);
             elemToIncr.textContent = parseInt(elemToIncr.textContent) + 1;
+        }
+
+        function clearScoreSelection(ev) {
+            var el = this.querySelector('#selectedScore');
+            el.classList.remove('correct', 'incorrect', 'active');
+        }
+
+        function showScoreSelection(ev) {
+            var selectedScore = ev.detail.selectedScore;
+            var scoresMatch = ev.detail.scoresMatch;
+            var el = this.querySelector('#selectedScore');
+            el.textContent = selectedScore;
+            el.classList.toggle("active");
+            el.classList.toggle(scoresMatch && "correct" || "incorrect");
+
+            this.addEventListener('transitionend', x => {
+                this.dispatchEvent(
+                    new CustomEvent(SCORE_GRADED, {
+                        bubbles: true, detail: ev.detail
+                    }))
+            }, {once: true});
         }
 
         function renderTrick(t) {
@@ -289,7 +349,7 @@
 
             renderCards(hand.cards.concat(cutCard), _getEl('lastHand'));
 
-            var score = firstAndOnlyTrick && scoreTemplate(firstAndOnlyTrick[0], firstAndOnlyTrick[1].score, firstAndOnlyTrick[1].data) || hand.getScore(cutCard);
+            var score = firstAndOnlyTrick && scoreTemplate(firstAndOnlyTrick[0], firstAndOnlyTrick[1].score, firstAndOnlyTrick[1].data) || ev.detail.expectedScore;
             _getEl('correctScore').innerHTML = score;
 
             var tricksEl = document.querySelector('ul#trickList');
@@ -311,8 +371,11 @@
 
             var scorer = _getEl('cribbagescorer');
             scorer.addEventListener(SCORE_SELECTED, changeScore);
-            scorer.addEventListener(SCORE_SELECTED, showTricks);
+            scorer.addEventListener(SCORE_SELECTED, showScoreSelection);
+            scorer.addEventListener(SCORE_GRADED, clearScoreSelection);
+            scorer.addEventListener(SCORE_GRADED, showTricks);
             scorer.addEventListener(NEW_ROUND, displayNextHand);
+            scorer.addEventListener(NEW_ROUND, clearScoreSelection);
 
             var dialog = scorer.querySelector("dialog");
             var closeTricks = ev => dialog.dispatchEvent(new CustomEvent(NEW_ROUND, {bubbles: true})) && dialog.close();
