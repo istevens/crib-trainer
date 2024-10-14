@@ -37,7 +37,7 @@
             display: relative;
         }
 
-        #play img {
+        #play card-set::part(card) {
             width: 18vw;
             margin: 0 0.5rem;
             max-width: 10rem;
@@ -50,16 +50,20 @@
             gap: 2rem;
         }
 
-        #hand, #cutCard img, #tricks {
+        #hand, #cutCard {
+            display: flex;
+        }
+
+        #hand, #tricks, #cutCard {
             border-radius: 11.5px;
         }
 
-        #hand, #cutCard img {
+        #hand, #cutCard {
             padding: 0.5rem;
             border: var(--cardPlacementBorder);
         }
 
-        #cutCard img {
+        #cutCard {
             outline: var(--cardPlacementBorder);
             outline-offset: 0.3rem;
         }
@@ -100,14 +104,19 @@
             border: 1px solid black;
         }
 
-        #tricks #lastHand {
+        #tricks card-set#lastHand {
             width: 100%;
             display: flex;
             justify-content: center;
         }
 
-        #tricks img {
+        #tricks card-set::part(card) {
             height: 6em;
+        }
+
+        .trick {
+            height: 7em;
+            margin-right: 5.5em;
         }
 
         #trickList {
@@ -121,6 +130,10 @@
             align-items: center;
             justify-content: center;
             visibility: hidden;
+        }
+
+        #trickList li span {
+            visibility: visible;
         }
 
         #correctScore, #trickList .trickLabel {
@@ -157,7 +170,7 @@
 
         .trickName {
             font-size: 0.75rem;
-            font-weighT: bold;
+            font-weight: bold;
         }
 
         #trickList li>span:last-child {
@@ -168,24 +181,6 @@
             justify-content: center;
             flex-wrap: wrap;
         }
-
-        .trick {
-            height: 7em;
-            transform: rotateZ(3deg);
-            margin-right: 5.5em;
-            visibility: visible;
-        }
-
-        .trick img {
-            position: absolute;
-            transform-origin: bottom left;
-        }
-
-        .trick .card14 img, .trick .card15 img {transform: rotateZ(339deg)}
-        .trick .card13 img, .trick .card24 img, .trick .card25 img {transform: rotateZ(346deg)}
-        .trick .card12 img, .trick .card23 img, .trick .card34 img, .trick .card35 img {transform: rotateZ(353deg)}
-        .trick .card22 img, .trick .card33 img, .trick .card44 img, .trick .card45 img  {transform: rotateZ(0)}
-        .trick .card55 img {transform: rotateZ(7deg)}
 
         #correctScore {
             margin: 1rem;
@@ -231,8 +226,8 @@
         <div id="score"><span id="successes">0</span><span id="failures">0</span></div>
 
         <div id="play">
-            <div id="cutCard"></div>
-            <div id="hand"></div>
+            <card-set id="cutCard"></card-set>
+            <card-set id="hand"></card-set>
             <form>
                 <select id="scoreSelect">
                     <option disabled>This hand's score is:</option>
@@ -241,7 +236,7 @@
         </div>
 
         <dialog id="tricks">
-            <div id="lastHand"></div>
+            <card-set id="lastHand"></card-set>
             <div id="correctScore"></div>
             <ul id="trickList"></ul>
             <button>Close</button>
@@ -250,6 +245,65 @@
         <div id="selectedScore"></div>
     </div>
 
+    <script type="module">
+        import "./src/cribbagescorer.js";
+
+        const STYLE = new CSSStyleSheet();
+        STYLE.replaceSync(`
+            :host::part(card) {
+                --cardset-card-number: 0;
+                width: 5rem;
+            }
+
+            :host([arrangeBy=fan]) {
+                --cardset-card-count: 0;
+                --cardset-card-rotation: 8deg;
+
+                display: flex;
+                position: relative;
+                transform: rotateZ(calc(360deg - 1/2 * (var(--cardset-card-count) * var(--cardset-card-rotation))));
+                transform-origin: bottom left;
+            }
+
+            :host([arrangeBy=fan])::part(card) {
+                position: absolute;
+                transform: rotateZ(calc(var(--cardset-card-number) * var(--cardset-card-rotation)));
+                transform-origin: bottom left;
+            }
+        `);
+
+        const cardTemplate = (card, i, a) => `<card-t part="card" cid="${card}" class="card${i+1}${a.length}" style="--cardset-card-number: ${i}"></card-t>`;
+
+        class CardSetComponent extends HTMLElement {
+            static observedAttributes = ['cards'];
+
+            constructor() {
+                super();
+                this.arrangeBy = this.getAttribute('arrangeBy') || 'row';
+                this.jitter = this.getAttribute('jitter') || 0;
+                this.attachShadow({mode: "open"});
+                this.shadowRoot.adoptedStyleSheets = [STYLE];
+                this.cardCount = 0;
+            }
+
+            renderCards() {
+                let cards = this.getAttribute('cards');
+                cards = cards && cards.split(',') || [];
+                this.cardCount = cards.length;
+                cards = cards.map(x => x.trim());
+                let html = cards.map(cardTemplate).join("");
+                return html;
+            }
+
+            attributeChangedCallback(name, newVal, oldVal) {
+                let shouldRender = name == 'cards' && newVal != oldVal;
+                shouldRender && (this.shadowRoot.innerHTML = this.renderCards());
+                shouldRender && (this.style.setProperty('--cardset-card-count', this.cardCount));
+            }
+        }
+
+        customElements.define("card-set", CardSetComponent);
+    </script>
     <script type="module">
         import CribbageHand from "./src/cribbagescorer.js";
 
@@ -260,30 +314,23 @@
         const SCORE_GRADED = "scoreGraded";
         const NEW_ROUND = "newRound";
 
-        const cardTemplate = (card, i, a) => `<card-t cid="${card}" class="card${i+1}${a.length}"></card-t>`;
         const scoreTemplate = (name, score, tricks) => {
             var n = tricks.length;
             var isHisNobs = name.includes('nobs');
-            name = !isHisNobs && (tricks.length == 1 && 'a' || tricks.length) + ' ' + name || name;
-            name = !isHisNobs && tricks.length == 1 && name.replace(/s$/, '') || name;
-            return `
-            <span class="trickScore">${score}</span>
-            <span class="trickName">for ${name}</span>
-        `};
-        const tricksTemplate = (name, score, tricks) => `<li><span class="trickLabel">${scoreTemplate(name, score, tricks)}</span>:<span>${tricks}</span></li>`;
-        const trickTemplate = x => `<span class='trick'>${renderCards(x)}</span>`;
-
-        function renderCards(cards, el) {
-            var cards = cards.map(cardTemplate).join("");
-            el && (el.innerHTML = cards);
-            return cards;
-        }
+            name = !isHisNobs && (n == 1 && 'a' || n) + ' ' + name || name;
+            name = !isHisNobs && n == 1 && name.replace(/s$/, '') || name;
+            var html = `<span class="trickScore">${score}</span>
+                <span class="trickName">for ${name}</span>`;
+            return html;
+        };
+        const tricksTemplate = (name, score, tricks) => `<li><span class="trickLabel">${scoreTemplate(name, score, tricks)}</span>:<span>${tricks.join("")}</span></li>`;
+        const trickTemplate = x => `<card-set class='trick' cards='${x}' arrangeBy='fan'></card-set>`;
 
         function displayNextHand() {
             play = CribbageHand.randomPlay();
 
-            renderCards([play.cutCard], _getEl('cutCard'));
-            renderCards(play.hand.cards, _getEl('hand'));
+            _getEl('cutCard').setAttribute('cards', [play.cutCard]);
+            _getEl('hand').setAttribute('cards', play.hand.cards);
 
             var select = _getEl('scoreSelect');
             select.selectedIndex = 0;
@@ -337,7 +384,7 @@
         function renderTrick(t) {
             var trickData = t[1].data;
             var hasTricks = trickData.length > 0;
-            tricks = hasTricks && trickData.map(trickTemplate);
+            var tricks = hasTricks && trickData.map(trickTemplate);
             tricks = hasTricks && tricksTemplate(t[0], t[1].score, tricks) || "";
             return tricks;
         }
@@ -349,7 +396,7 @@
             var tricks = Object.entries(hand.getTricks(cutCard));
             var firstAndOnlyTrick = tricks.length == 1 && tricks[0];
 
-            renderCards(hand.cards.concat(cutCard), _getEl('lastHand'));
+            _getEl('lastHand').setAttribute('cards', hand.cards.concat(cutCard));
 
             var score = firstAndOnlyTrick && scoreTemplate(firstAndOnlyTrick[0], firstAndOnlyTrick[1].score, firstAndOnlyTrick[1].data) || ev.detail.expectedScore;
             _getEl('correctScore').innerHTML = score;
