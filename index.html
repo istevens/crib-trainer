@@ -306,7 +306,7 @@
         const _getEl = x => document.getElementById(x);
 
         const SCORE_SELECTED = "scoreSelected";
-        const SCORE_GRADED = "scoreGraded";
+        const SCORE_INCORRECT = "scoreIncorrect";
         const NEW_ROUND = "newRound";
 
         const scoreTemplate = (name, score, tricks) => {
@@ -368,12 +368,11 @@
             el.classList.toggle("active");
             el.classList.toggle(scoresMatch && "correct" || "incorrect");
 
-            this.addEventListener('transitionend', x => {
-                this.dispatchEvent(
-                    new CustomEvent(SCORE_GRADED, {
-                        bubbles: true, detail: ev.detail
-                    }))
-            }, {once: true});
+            var nev = scoresMatch && NEW_ROUND || SCORE_INCORRECT;
+            nev = new CustomEvent(nev, {bubbles: true, detail: ev.detail});
+            this.addEventListener(
+                'transitionend', x => {this.dispatchEvent(nev)}, {once: true}
+            );
         }
 
         function renderTrick(t) {
@@ -416,8 +415,7 @@
             var trainer = _getEl('cribtrainer');
             trainer.addEventListener(SCORE_SELECTED, changeScore);
             trainer.addEventListener(SCORE_SELECTED, showScoreSelection);
-            trainer.addEventListener(SCORE_GRADED, clearScoreSelection);
-            trainer.addEventListener(SCORE_GRADED, showTricks);
+            trainer.addEventListener(SCORE_INCORRECT, showTricks);
             trainer.addEventListener(NEW_ROUND, displayNextHand);
             trainer.addEventListener(NEW_ROUND, clearScoreSelection);
 
