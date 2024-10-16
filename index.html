@@ -105,18 +105,12 @@
         }
 
         #tricks card-set#lastHand {
-            width: 100%;
             display: flex;
             justify-content: center;
         }
 
-        #tricks card-set::part(card) {
-            height: 6em;
-        }
-
-        .trick {
-            height: 7em;
-            margin-right: 5.5em;
+        #tricks card-set#lastHand::part(card) {
+            width: 6rem;
         }
 
         #trickList {
@@ -257,22 +251,23 @@
 
             :host([arrangeBy=fan]) {
                 --cardset-card-count: 0;
-                --cardset-card-rotation: 8deg;
+                --cardset-card-rotation: 7.5deg;
 
                 display: flex;
                 position: relative;
-                transform: rotateZ(calc(360deg - 1/2 * (var(--cardset-card-count) * var(--cardset-card-rotation))));
-                transform-origin: bottom left;
             }
 
             :host([arrangeBy=fan])::part(card) {
                 position: absolute;
-                transform: rotateZ(calc(var(--cardset-card-number) * var(--cardset-card-rotation)));
+                transform: rotateZ(calc(
+                    360deg - 1/2 * (var(--cardset-card-count) * var(--cardset-card-rotation))
+                    + (var(--cardset-card-number) * var(--cardset-card-rotation))
+                ));
                 transform-origin: bottom left;
             }
         `);
 
-        const cardTemplate = (card, i, a) => `<card-t part="card" cid="${card}" class="card${i+1}${a.length}" style="--cardset-card-number: ${i}"></card-t>`;
+        const cardTemplate = (card, i, a) => `<card-t part="card" cid="${card}" class="card_${i+1}_${a.length}" style="--cardset-card-number: ${i}"></card-t>`;
 
         class CardSetComponent extends HTMLElement {
             static observedAttributes = ['cards'];
