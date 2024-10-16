@@ -245,25 +245,22 @@
         const STYLE = new CSSStyleSheet();
         STYLE.replaceSync(`
             :host::part(card) {
-                --cardset-card-number: 0;
                 width: 5rem;
             }
 
             :host([arrangeBy=fan]) {
                 --cardset-card-count: 0;
-                --cardset-card-rotation: 7.5deg;
-
-                display: flex;
+                --cardset-card-rotation: 7deg;
                 position: relative;
             }
 
             :host([arrangeBy=fan])::part(card) {
                 position: absolute;
                 transform: rotateZ(calc(
-                    360deg - 1/2 * (var(--cardset-card-count) * var(--cardset-card-rotation))
-                    + (var(--cardset-card-number) * var(--cardset-card-rotation))
+                    360deg + var(--cardset-card-rotation)
+                        * (var(--cardset-card-number) - 1/2 * var(--cardset-card-count))
                 ));
-                transform-origin: bottom left;
+                transform-origin: left bottom;
             }
         `);
 
