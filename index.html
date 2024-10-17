@@ -421,6 +421,7 @@
             trainer.addEventListener(SCORE_SELECTED, changeScore);
             trainer.addEventListener(SCORE_SELECTED, showScoreSelection);
             trainer.addEventListener(SCORE_INCORRECT, showTricks);
+            trainer.addEventListener(SCORE_INCORRECT, clearScoreSelection)
             trainer.addEventListener(NEW_ROUND, displayNextHand);
             trainer.addEventListener(NEW_ROUND, clearScoreSelection);
 
