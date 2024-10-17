@@ -5,8 +5,10 @@
     <script type="module" src="src/elements.cardmeister.min.js"></script>
     <style>
         :root {
-            --tableDecorColor: rgb(255, 255, 130, 0.5);
-            --cardPlacementBorder: 0.2rem solid var(--tableDecorColor);
+            --tableDecorColour: rgb(255, 255, 130, 0.5);
+            --cardPlacementBorder: 0.2rem solid var(--tableDecorColour);
+            --successColour: chartreuse;
+            --failureColour: red;
         }
 
         html, body {
@@ -27,11 +29,10 @@
 
         h1 {
             text-align: center;
-            color: var(--tableDecorColor);
+            color: var(--tableDecorColour);
         }
 
         #cribtrainer {
-            background: rgba(0,120,52,1);
             background: fixed radial-gradient(circle at 50% 10rem, rgba(0,200,40,1) 0%, rgba(0,120,24,1) 40%, rgba(0,0,0,1) 100%);
             height: 100%;
             display: relative;
@@ -96,11 +97,13 @@
         }
 
         #score #successes {
-            background-color: green;
+            background-color: var(--successColour);
+            color: black;
         }
 
         #score #failures {
-            background-color: red;
+            background-color: var(--failureColour);
+            color: white;
         }
 
         #tricks {
@@ -208,11 +211,11 @@
         }
 
         #selectedScore.correct {
-            color: chartreuse;
+            color: var(--successColour);
         }
 
         #selectedScore.incorrect {
-            color: red;
+            color: var(--failureColour);
         }
 
     </style>
