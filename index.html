@@ -143,6 +143,10 @@
             visibility: visible;
         }
 
+        #trickList .trickLabel {
+            width: 6rem;
+        }
+
         #correctScore, #trickList .trickLabel {
             display: flex;
             flex-direction: column;
@@ -163,11 +167,12 @@
             font-size: 3rem;
         }
 
-        #trickList li:not(:first-child) .trickScore::before {
+        #trickList li:not(:first-child) .trickLabel::before {
             position: absolute;
-            right: 3rem;
+            left: 1rem;
             content: '+\00A0';
-            font-size: 0.33em;
+            font-size: 2rem;
+            font-weight: bold;
         }
 
         .trickName {
