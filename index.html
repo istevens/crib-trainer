@@ -32,40 +32,42 @@
             color: var(--tableDecorColour);
         }
 
+        card-set[arrangeBy=row] {
+            justify-items: center;
+        }
+
         #cribtrainer {
             background: fixed radial-gradient(circle at 50% 10rem, rgba(0,200,40,1) 0%, rgba(0,120,24,1) 40%, rgba(0,0,0,1) 100%);
             height: 100%;
-            display: relative;
-        }
-
-        card-set:not([arrangeBy='fan']) {
             display: flex;
-            justify-content: center;
-        }
-
-        #play card-set::part(card) {
-            width: 20vw;
-            max-width: 10rem;
+            flex-direction: column;
+            place-items: center;
         }
 
         #play {
-            display: flex;
-            align-items: center;
-            flex-direction: column;
+            display: inherit;
+            flex-direction: inherit;
+            place-items: inherit;
             gap: 2rem;
         }
 
-        #hand, #cutCard {
-            display: flex;
-        }
-
-        #hand, #tricks, #cutCard {
-            border-radius: 11.5px;
+        #play card-set::part(card) {
+            max-width: 15rem;
+            min-width: 9rem;
         }
 
         #hand, #cutCard {
             padding: 0.5rem;
             border: var(--cardPlacementBorder);
+        }
+
+        #hand {
+            gap: 0.5rem;
+            max-width: 90vw;
+        }
+
+        #hand, #tricks, #cutCard {
+            border-radius: 11.5px;
         }
 
         #cutCard {
@@ -81,10 +83,7 @@
             width: 6rem;
 
             display: flex;
-            flex-direction: row;
-            align-items: center;
 
-            color: white;
             font-weight: bold;
         }
 
@@ -111,6 +110,15 @@
             border: 1px solid black;
         }
 
+        #tricks[open] {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #tricks card-set#lastHand {
+            min-width: 7rem;
+        }
+
         #tricks card-set#lastHand::part(card) {
             width: 6rem;
         }
@@ -126,7 +134,6 @@
 
         #trickList li {
             display: flex;
-            flex-direction: row;
             align-items: center;
             justify-content: center;
             visibility: hidden;
@@ -144,11 +151,6 @@
 
         #tricks:has(#correctScore .trickScore) #trickList .trickLabel {
             display: none;
-        }
-
-        #trickList .trickLabel {
-            width: 5em;
-            visibility: visible;
         }
 
         .trickScore {
@@ -184,10 +186,8 @@
         }
 
         #correctScore {
-            margin: 1rem;
             font-size: 4rem;
             font-weight: bold;
-            text-align: center;
         }
 
         #selectedScore {
@@ -252,17 +252,21 @@
         const STYLE = new CSSStyleSheet();
         STYLE.replaceSync(`
             :host {
-                display: inline-block;
+                --cardset-card-count: 0;
+                display: grid;
+                width: auto;
             }
 
             :host::part(card) {
                 width: 5rem;
             }
 
+            :host([arrangeBy=row]) {
+                grid-template-columns: repeat(auto-fit, minmax(2rem, 1fr));
+            }
+
             :host([arrangeBy=fan]) {
-                --cardset-card-count: 0;
                 --cardset-card-rotation: 7deg;
-                display: grid;
             }
 
             :host([arrangeBy=fan])::part(card) {
@@ -282,7 +286,7 @@
 
             constructor() {
                 super();
-                this.arrangeBy = this.getAttribute('arrangeBy') || 'row';
+                this.setAttribute('arrangeBy', this.getAttribute('arrangeBy') || 'row');
                 this.jitter = this.getAttribute('jitter') || 0;
                 this.attachShadow({mode: "open"});
                 this.shadowRoot.adoptedStyleSheets = [STYLE];
