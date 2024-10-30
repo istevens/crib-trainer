@@ -9,6 +9,8 @@
             --cardPlacementBorder: 0.2rem solid var(--tableDecorColour);
             --successColour: chartreuse;
             --failureColour: red;
+            --dialogColour: hsl(43, 100%, 92%);
+            --dialogDecorColour: hsl(43, 100%, 20%);
             --cardWidth: 5rem;
         }
 
@@ -22,6 +24,12 @@
             overflow: hidden;
             overscroll-behavior: none;
             touch-action: none;
+        }
+
+        dialog {
+            background-color: var(--dialogColour);
+            border: 1px solid black;
+            max-width: 90%;
         }
 
         select {
@@ -62,7 +70,6 @@
         #hand, #lastHand {
             grid-template-columns: repeat(3, minmax(2rem, 1fr)) 1fr;
             justify-items: left;
-            overflow: hidden;
         }
 
         #hand {
@@ -70,7 +77,7 @@
             max-width: 85vw;
         }
 
-        #hand, #tricks, #cutCard {
+        #hand, dialog, #cutCard {
             border-radius: 11.5px;
         }
 
@@ -107,22 +114,23 @@
             color: white;
         }
 
-        #tricks {
-            background-color: beige;
-            border: 1px solid black;
-            max-width: 90%;
-            --cardWidth: 6rem;
-        }
-
-        #tricks>div {
+        #tricksContainer {
             display: grid;
-            row-gap: 0.5rem;
-            grid-template-columns: 6rem 1fr 2fr;
+            gap: 0.5rem 1rem;
+            grid-template-columns: 6rem minmax(var(--cardWidth), 1fr) minmax(calc(var(--cardWidth) + 3rem), 2fr);
             align-items: center;
         }
 
-        #lastPlay, #trickList, #trickList li {
+        #lastPlay, #trickList, #trickList li, #correctScore {
             display: contents;
+        }
+
+        #lastPlay {
+            --cardWidth: 6rem;
+        }
+
+        #lastCutCard {
+            justify-self: left;
         }
 
         #trickList {
@@ -133,57 +141,80 @@
             list-style: none;
         }
 
-        #trickList card-set::part(card) {
-            width: var(--cardWidth);
-        }
-
-        #correctScore, #trickList .trickLabel {
+        .trickLabel {
             display: flex;
             flex-direction: column;
             text-align: center;
             place-items: center;
         }
 
-        #trickList>li:only-child .trickScore {
-            display: none;
+        #correctScore {
+            font-size: 4rem;
         }
 
-        .trickScore {
-            position: relative;
-            font-weight: bold;
-            line-height: 75%;
-        }
-
-        .trickLabel .trickScore {
+        #trickList .trickLabel {
             font-size: 3rem;
         }
 
-        #trickList li:not(:first-child) .trickLabel::before {
+        .trickLabel {
+            position: relative;
+            font-weight: bold;
+        }
+
+        .trickLabel::before {
             position: absolute;
-            left: 1rem;
-            content: '+\00A0';
+            left: 0;
             font-size: 2rem;
             font-weight: bold;
         }
 
-        .trickName {
-            width: 50%;
-            font-size: 0.75rem;
-            font-weight: bold;
+        #trickList li:first-child .trickLabel::before {
+            content: '=';
+        }
+
+        #trickList li:not(:first-child) .trickLabel::before {
+            content: '+';
+        }
+
+        #trickList li:only-child .trickScore {
+            display: none;
+        }
+
+        #trickList li:only-child .trickLabel::before {
+            content: '';
+        }
+
+        .trickScore {
+            line-height: 75%;
+        }
+
+        .trickDescription {
+            width: 75%;
+            font-size: 1rem;
         }
 
         #trickList li ul {
+            position: relative;
             display: flex;
             justify-content: space-evenly;
             flex-wrap: wrap;
             column-gap: 1rem;
             grid-column: 2 / span 2;
-            padding: 0 0 0 5vw;
+            padding-left: 0;
         }
 
-        #correctScore {
-            font-size: 4rem;
-            font-weight: bold;
+        #trickList li:first-child ul, #trickList li:first-child>span {
+            padding-top: 2rem;
+        }
+
+        #trickList li:first-child ul::before {
+            position: absolute;
+            width: 50%;
+            content: '';
+            top: 0.5rem;
+            border-width: 1px 0 0 0;
+            border-image: radial-gradient(circle, var(--dialogDecorColour), 75%, rgba(0,0,0,0)) 1 0;
+            border-style: solid;
         }
 
         #selectedScore {
@@ -215,7 +246,7 @@
         }
 
         @media (orientation: landscape) {
-            #tricks>div {
+            #tricksContainer {
                 max-width: 40rem;
             }
         }
@@ -245,15 +276,22 @@
         </div>
 
         <dialog id="tricks">
-            <div>
-            <div id="lastPlay">
-                <div id="correctScore"></div>
-                <card-set id="lastCutCard"></card-set>
-                <card-set id="lastHand"></card-set>
+            <div id="tricksContainer">
+                <div id="lastPlay">
+                    <div id="correctScore">
+                        <span class="trickLabel">
+                            <span class="trickDescription">
+                                Score is
+                            </span>
+                            <span class="trickScore"></span>
+                        </span>
+                    </div>
+                    <card-set id="lastCutCard"></card-set>
+                    <card-set id="lastHand"></card-set>
+                </div>
+                <ul id="trickList"></ul>
             </div>
-            <ul id="trickList"></ul>
             <button>Close</button>
-            </div>
         </dialog>
 
         <div id="selectedScore"></div>
@@ -330,6 +368,7 @@
 
         const _getEl = x => document.getElementById(x);
 
+        var play = null;
         const SCORE_SELECTED = "scoreSelected";
         const SCORE_INCORRECT = "scoreIncorrect";
         const NEW_ROUND = "newRound";
@@ -340,7 +379,7 @@
             name = !isHisNobs && (n == 1 && 'a' || n) + ' ' + name || name;
             name = !isHisNobs && n == 1 && name.replace(/s$/, '') || name;
             var html = `<span class="trickScore">${score}</span>
-                <span class="trickName">for ${name}</span>`;
+                <span class="trickDescription">for ${name}</span>`;
             return html;
         };
         const tricksTemplate = (name, score, tricks) => `<li><span class="trickLabel">${scoreTemplate(name, score, tricks)}</span><ul>${tricks.join("")}</ul></li>`;
@@ -409,19 +448,19 @@
         }
 
         function showTricks(ev) {
-            var play = ev.detail.play;
+            play = ev.detail.play;
             var cutCard = play.cutCard;
             var hand = play.hand;
             var tricks = Object.entries(hand.getTricks(cutCard));
 
             _getEl('lastCutCard').setAttribute('cards', [cutCard]);
             _getEl('lastHand').setAttribute('cards', hand.cards);
-            _getEl('correctScore').innerHTML = ev.detail.expectedScore;
+            this.querySelector('#correctScore .trickScore').innerHTML = ev.detail.expectedScore;
 
-            var tricksEl = document.querySelector('ul#trickList');
+            var tricksEl = this.querySelector('ul#trickList');
             tricksEl.innerHTML = tricks.map(renderTrick).join("");
 
-            var dialog = document.querySelector('dialog#tricks');
+            var dialog = this.querySelector('dialog#tricks');
             dialog.showModal();
         }
 
