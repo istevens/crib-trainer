@@ -267,7 +267,7 @@
 
         <div id="play">
             <card-set id="cutCard"></card-set>
-            <card-set id="hand"></card-set>
+            <card-set id="hand" jitter="3"></card-set>
             <form>
                 <select id="scoreSelect">
                     <option disabled>This hand's score is:</option>
@@ -287,7 +287,7 @@
                         </span>
                     </div>
                     <card-set id="lastCutCard"></card-set>
-                    <card-set id="lastHand"></card-set>
+                    <card-set id="lastHand" jitter="2"></card-set>
                 </div>
                 <ul id="trickList"></ul>
             </div>
@@ -316,6 +316,15 @@
                 grid-template-columns: repeat(auto-fit, minmax(2rem, 1fr));
             }
 
+            :host([arrangeBy=row])::part(card) {
+                --xyjitterbase: calc(0.25rem * var(--cardset-card-jitter));
+                --rotjitterbase: calc(3deg * var(--cardset-card-jitter));
+                transform: translate(
+                    calc(var(--xyjitterbase) * var(--cardset-card-xjitter)),
+                    calc(var(--xyjitterbase) * var(--cardset-card-yjitter))
+                ) rotateZ(calc(var(--rotjitterbase) * var(--cardset-card-rotjitter)));
+            }
+
             :host([arrangeBy=fan]) {
                 --cardset-card-rotation: 7deg;
                 justify-items: center;
@@ -326,23 +335,40 @@
                 transform: rotateZ(calc(
                     360deg + var(--cardset-card-rotation)
                         * (var(--cardset-card-number) - 1/2 * var(--cardset-card-count))
-                ));
+                    ));
                 transform-origin: left bottom;
             }
         `);
 
-        const cardTemplate = (card, i, a) => `<card-t part="card" cid="${card}" class="card_${i+1}_${a.length}" style="--cardset-card-number: ${i}"></card-t>`;
-
         class CardSetComponent extends HTMLElement {
             static observedAttributes = ['cards'];
+            static STYLE_PREFIX = '--cardset-card-';
 
             constructor() {
                 super();
-                this.setAttribute('arrangeBy', this.getAttribute('arrangeBy') || 'row');
-                this.jitter = this.getAttribute('jitter') || 0;
                 this.attachShadow({mode: "open"});
                 this.shadowRoot.adoptedStyleSheets = [STYLE];
                 this.cardCount = 0;
+
+                let jitter = this.getAttribute('jitter');
+                jitter = jitter == "" && 1 || jitter || 0;
+                this.setAttribute('jitter', jitter);
+                this.setAttribute('arrangeBy', this.getAttribute('arrangeBy') || 'row');
+            }
+
+            cardTemplate(card, i, a) {
+                let rand = () => Math.random() - 0.5;
+                let jitters = ['x', 'y', 'rot'];
+                jitters = jitters.map(x => [x + 'jitter', rand()]);
+
+                let style = jitters.concat([['number', i]]);
+                style = style.concat([['jitter', this.getAttribute('jitter')]]);
+                style = style.map(x => CardSetComponent.STYLE_PREFIX + x[0] + ': ' + x[1]);
+                style = style.join('; ');
+
+                let j = this.getAttribute('jitter');
+                let html = `<card-t part="card" cid="${card}" style="${style}"></card-t>`;
+                return html;
             }
 
             renderCards() {
@@ -350,7 +376,7 @@
                 cards = cards && cards.split(',') || [];
                 this.cardCount = cards.length;
                 cards = cards.map(x => x.trim());
-                let html = cards.map(cardTemplate).join("");
+                let html = cards.map((...x) => this.cardTemplate(...x)).join("");
                 return html;
             }
 
