@@ -41,16 +41,21 @@
             color: var(--tableDecorColour);
         }
 
-        card-set[arrangeBy=row] {
-            justify-items: center;
+        li {
+            list-style: none;
+        }
+
+        ul {
+            padding-inline-start: 0;
+            margin-inline-start: 0;
         }
 
         card-set::part(card) {
-            min-width: var(--cardWidth);
+            width: var(--cardWidth);
         }
 
         #cribtrainer {
-            background: fixed radial-gradient(circle at 50% 10rem, rgba(0,200,40,1) 0%, rgba(0,120,24,1) 40%, rgba(0,0,0,1) 100%);
+            background: fixed radial-gradient(circle at 50% 10rem, rgb(0,200,40) 0%, rgb(0,120,24) 40%, rgb(0,0,0) 100%);
             height: 100%;
         }
 
@@ -114,13 +119,6 @@
             color: white;
         }
 
-        #tricksContainer {
-            display: grid;
-            gap: 0.5rem 1rem;
-            grid-template-columns: 6rem minmax(var(--cardWidth), 1fr) minmax(calc(var(--cardWidth) + 3rem), 2fr);
-            align-items: center;
-        }
-
         #lastPlay, #trickList, #trickList li, #correctScore {
             display: contents;
         }
@@ -133,12 +131,32 @@
             justify-self: left;
         }
 
-        #trickList {
+        #intro {
             --cardWidth: 5rem;
         }
 
-        #trickList li {
-            list-style: none;
+        dialog li ul {
+            position: relative;
+            display: flex;
+            justify-content: space-evenly;
+            flex-wrap: wrap;
+            column-gap: 1rem;
+        }
+
+        #exampleTricks, #tricksContainer {
+            display: grid;
+            align-items: center;
+        }
+
+        #exampleTricks {
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            max-width: 50rem;
+        }
+
+        #tricksContainer {
+            grid-template-columns: 6rem minmax(var(--cardWidth), 1fr) minmax(calc(var(--cardWidth) + 3rem), 2fr);
+            gap: 0.5rem 1rem;
         }
 
         .trickLabel {
@@ -184,23 +202,8 @@
             content: '';
         }
 
-        .trickScore {
-            line-height: 75%;
-        }
-
-        .trickDescription {
-            width: 75%;
-            font-size: 1rem;
-        }
-
-        #trickList li ul {
-            position: relative;
-            display: flex;
-            justify-content: space-evenly;
-            flex-wrap: wrap;
-            column-gap: 1rem;
+        #trickList ul {
             grid-column: 2 / span 2;
-            padding-left: 0;
         }
 
         #trickList li:first-child ul, #trickList li:first-child>span {
@@ -215,6 +218,15 @@
             border-width: 1px 0 0 0;
             border-image: radial-gradient(circle, var(--dialogDecorColour), 75%, rgba(0,0,0,0)) 1 0;
             border-style: solid;
+        }
+
+        .trickScore {
+            line-height: 75%;
+        }
+
+        .trickDescription {
+            width: 75%;
+            font-size: 1rem;
         }
 
         #selectedScore {
@@ -275,6 +287,36 @@
             </form>
         </div>
 
+        <dialog id="intro">
+            <h2>Welcome</h2>
+            <p>This is a dialog to show instructions</p>
+            <h3>Scoring</h3>
+            <ul id="exampleTricks">
+                <li><span>Cards totalling 15 score 2 points.</span><ul>
+                    <li><card-set cards="JH,5C" arrangeBy="fan"></card-set></li>
+                    <li><card-set cards="2H,3C,7D,AS,AC" arrangeBy="fan"></card-set></li>
+                </ul></li>
+                <li>Pairs score 2 points each, eg.<ul>
+                    <li><card-set cards="3C,3D" arrangeBy="fan"></card-set></li>
+                    <li><card-set cards="8C,8H" arrangeBy="fan"></card-set></li>
+                </ul></li>
+                <li>Triplets score 6 points each, eg.<ul>
+                    <li><card-set cards="9C,9D,9H" arrangeBy="fan"></card-set></li>
+                </ul></li>
+                <li>Four-of-a-kind scores 12 points, eg.<ul>
+                    <li><card-set cards="QH,QS,QD,QC" arrangeBy="fan"></card-set></li>
+                </ul></li>
+                <li>Runs of 3, 4, or 5 score 1 point for each card, eg.<ul>
+                    <li><card-set cards="6D,7C,8H" arrangeBy="fan"></card-set><li>
+                    <li><card-set cards="10H,JS,QD,KC" arrangeBy="fan"></card-set></li>
+                </ul></li>
+                <li>A jack in the hand with the same suit as the cut card scores one point, eg.<ul>
+                    <li><card-set cards="10C,JC" arrangeBy="fan"></card-set></li>
+                </ul></li>
+            </ul>
+            <form><button formmethod="dialog">Close</button></form>
+        </dialog>
+
         <dialog id="tricks">
             <div id="tricksContainer">
                 <div id="lastPlay">
@@ -306,6 +348,7 @@
                 --cardset-card-count: 0;
                 display: grid;
                 width: auto;
+                justify-items: center;
             }
 
             :host::part(card) {
@@ -313,7 +356,7 @@
             }
 
             :host([arrangeBy=row]) {
-                grid-template-columns: repeat(auto-fit, minmax(2rem, 1fr));
+                grid-template-columns: repeat(auto-fit, minmax(1rem, 1fr));
             }
 
             :host([arrangeBy=row])::part(card) {
@@ -327,7 +370,6 @@
 
             :host([arrangeBy=fan]) {
                 --cardset-card-rotation: 7deg;
-                justify-items: center;
             }
 
             :host([arrangeBy=fan])::part(card) {
@@ -508,12 +550,14 @@
             trainer.addEventListener(NEW_ROUND, displayNextHand);
             trainer.addEventListener(NEW_ROUND, clearScoreSelection);
 
-            var dialog = trainer.querySelector("dialog");
-            var closeTricks = ev => dialog.dispatchEvent(new CustomEvent(NEW_ROUND, {bubbles: true})) && dialog.close();
-            dialog.addEventListener("click", closeTricks);
-            dialog.addEventListener("close", closeTricks);
+            var tricks = trainer.querySelector("dialog#tricks");
+            var closeTricks = ev => ev.target.dispatchEvent(new CustomEvent(NEW_ROUND, {bubbles: true})) && ev.target.close();
+            tricks.addEventListener("click", closeTricks);
+            tricks.addEventListener("close", closeTricks);
 
-            closeTricks();
+            var intro = trainer.querySelector("dialog#intro");
+            intro.addEventListener("close", closeTricks);
+            intro.showModal();
         }
 
         setup();
