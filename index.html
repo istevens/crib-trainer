@@ -59,12 +59,22 @@
             height: 100%;
         }
 
-        #play {
-            --cardWidth: 9rem;
-            display: flex;
+        .mainContent {
             flex-direction: column;
             place-items: center;
             gap: 2rem;
+        }
+
+        .mainContent:not(.activeContent) {
+            display: none;
+        }
+
+        .mainContent.activeContent {
+            display: flex;
+        }
+
+        #play {
+            --cardWidth: 9rem;
         }
 
         #hand, #cutCard {
@@ -264,7 +274,7 @@
         }
 
         @media (orientation: landscape) and (hover: none) {
-            #play {
+            #cribtrainer .mainContent {
                 flex-direction: row;
             }
 
@@ -275,9 +285,16 @@
     <div id="cribtrainer">
         <h1>Crib Trainer</h1>
 
-        <div id="score"><span id="successes">0</span><span id="failures">0</span></div>
+        <section id="start" class="mainContent activeContent">
+            <h2>Welcome</h2>
+            <p>Practice your cribbage hand scoring!</p>
+            <button id="playButton">Play</button>
+            <button id="instructionsButton">Instructions</button>
+        </section>
 
-        <div id="play">
+        <section id="play" class="mainContent">
+            <section id="score"><span id="successes">0</span><span id="failures">0</span></section>
+
             <card-set id="cutCard"></card-set>
             <card-set id="hand" jitter="3"></card-set>
             <form>
@@ -285,9 +302,9 @@
                     <option disabled>This hand's score is:</option>
                 </select>
             </form>
-        </div>
+        </section>
 
-        <dialog id="intro">
+        <dialog id="instructions">
             <h2>Welcome</h2>
             <p>This is a dialog to show instructions</p>
             <h3>Scoring</h3>
@@ -319,7 +336,7 @@
 
         <dialog id="tricks">
             <div id="tricksContainer">
-                <div id="lastPlay">
+                <section id="lastPlay">
                     <div id="correctScore">
                         <span class="trickLabel">
                             <span class="trickDescription">
@@ -330,10 +347,10 @@
                     </div>
                     <card-set id="lastCutCard"></card-set>
                     <card-set id="lastHand" jitter="2"></card-set>
-                </div>
+                </section>
                 <ul id="trickList"></ul>
             </div>
-            <button>Close</button>
+            <form><button formmethod="dialog">Close</button></form>
         </dialog>
 
         <div id="selectedScore"></div>
@@ -409,7 +426,7 @@
                 style = style.join('; ');
 
                 let j = this.getAttribute('jitter');
-                let html = `<card-t part="card" cid="${card}" style="${style}"></card-t>`;
+                let html = `<playing-card part="card" cid="${card}" style="${style}"></playing-card>`;
                 return html;
             }
 
@@ -550,14 +567,21 @@
             trainer.addEventListener(NEW_ROUND, displayNextHand);
             trainer.addEventListener(NEW_ROUND, clearScoreSelection);
 
-            var tricks = trainer.querySelector("dialog#tricks");
-            var closeTricks = ev => ev.target.dispatchEvent(new CustomEvent(NEW_ROUND, {bubbles: true})) && ev.target.close();
-            tricks.addEventListener("click", closeTricks);
-            tricks.addEventListener("close", closeTricks);
+            var startNewRound = ev => ev.target.dispatchEvent(new CustomEvent(NEW_ROUND, {bubbles: true}));
 
-            var intro = trainer.querySelector("dialog#intro");
-            intro.addEventListener("close", closeTricks);
-            intro.showModal();
+            var tricks = trainer.querySelector("dialog#tricks");
+            tricks.addEventListener("click", () => tricks.close());
+            tricks.addEventListener("close", startNewRound);
+
+            var playButton = trainer.querySelector("#playButton");
+            var startGame = ev => {
+                startNewRound(ev);
+                ['#play', '#start'].map(x => trainer.querySelector(x).classList.toggle('activeContent'));
+            }
+            playButton.addEventListener("click", startGame);
+
+            var instrButton = trainer.querySelector("#instructionsButton");
+            instrButton.addEventListener('click', () => trainer.querySelector('dialog#instructions').showModal());
         }
 
         setup();
