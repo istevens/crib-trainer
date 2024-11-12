@@ -5,6 +5,7 @@
     <script type="module" src="src/elements.cardmeister.min.js"></script>
     <style>
         :root {
+            --tableColour: rgb(0, 200, 40);
             --tableDecorColour: rgb(255, 255, 130, 0.5);
             --cardPlacementBorder: 0.2rem solid var(--tableDecorColour);
             --successColour: chartreuse;
@@ -18,6 +19,7 @@
             margin: 0;
             height: 100%;
             font-family: Helvetica, sans-serif;
+            background: var(--tableColour);
         }
 
         dialog, ::backdrop, #cribtrainer {
@@ -55,29 +57,46 @@
         }
 
         #cribtrainer {
-            background: fixed radial-gradient(circle at 50% 10rem, rgb(0,200,40) 0%, rgb(0,120,24) 40%, rgb(0,0,0) 100%);
+            background: fixed radial-gradient(circle at 50% 10rem, var(--tableColour) 0%, rgb(0,120,24) 40%, rgb(0,0,0) 100%);
             height: 100%;
         }
 
-        .mainContent {
+        #table {
+            margin-top: 2rem;
+        }
+
+        #table nav * {
+            text-align: center;
+            background-color: inherit;
+            font-size: 2rem;
+            padding: 1rem;
+            width: 12rem;
+            color: var(--tableDecorColour);
+            cursor: pointer;
+        }
+
+        #table nav *:hover {
+            background-color: var(--tableDecorColour);
+            color: black;
+        }
+
+        #table .activeContent {
+            display: flex;
             flex-direction: column;
             place-items: center;
             gap: 2rem;
         }
 
-        .mainContent:not(.activeContent) {
+        #table>section:not(.activeContent) {
             display: none;
-        }
-
-        .mainContent.activeContent {
-            display: flex;
         }
 
         #play {
             --cardWidth: 9rem;
+            position: relative;
         }
 
-        #hand, #cutCard {
+        #hand, #cutCard, #table nav * {
             padding: 0.5rem;
             border: var(--cardPlacementBorder);
         }
@@ -92,10 +111,11 @@
             max-width: 85vw;
         }
 
-        #hand, dialog, #cutCard {
+        #hand, dialog, #cutCard, #table nav * {
             border-radius: 11.5px;
         }
 
+        #table nav *.primary,
         #cutCard {
             outline: var(--cardPlacementBorder);
             outline-offset: 0.3rem;
@@ -103,8 +123,7 @@
 
         #score {
             display: flex;
-            position: fixed;
-            top: 1rem;
+            position: absolute;
             right: 1rem;
             height: 3rem;
             width: 6rem;
@@ -129,7 +148,7 @@
             color: white;
         }
 
-        #lastPlay, #trickList, #trickList li, #correctScore {
+        #lastPlay, #trickList, #trickList li, #correctScore, #start nav {
             display: contents;
         }
 
@@ -274,40 +293,55 @@
         }
 
         @media (orientation: landscape) and (hover: none) {
-            #cribtrainer .mainContent {
+            #table {
+                margin-top: 1rem;
+                margin-left: 3rem;
+            }
+
+            #table .activeContent {
                 flex-direction: row;
             }
 
+            #play nav {
+                position: fixed;
+                top: 1rem;
+            }
         }
     </style>
 </head>
 <body>
     <div id="cribtrainer">
-        <h1>Crib Trainer</h1>
+        <h1><a href="#">Crib Trainer</a></h1>
 
-        <section id="start" class="mainContent activeContent">
-            <h2>Welcome</h2>
-            <p>Practice your cribbage hand scoring!</p>
-            <button id="playButton">Play</button>
-            <button id="instructionsButton">Instructions</button>
-        </section>
+        <section id="table">
+            <section id="start">
+                <h2>Welcome</h2>
+                <p>Practice your cribbage hand scoring!</p>
+                <nav>
+                    <a role="button" class="primary" href="#play">Play</a>
+                    <button class="instructionsButton" command="show-modal" commandfor="instructions">Instructions</button>
+                </nav>
+            </section>
 
-        <section id="play" class="mainContent">
-            <section id="score"><span id="successes">0</span><span id="failures">0</span></section>
+            <section id="play">
+                <section id="score"><span id="successes">0</span><span id="failures">0</span></section>
 
-            <card-set id="cutCard"></card-set>
-            <card-set id="hand" jitter="3"></card-set>
-            <form>
-                <select id="scoreSelect">
-                    <option disabled>This hand's score is:</option>
-                </select>
-            </form>
+                <card-set id="cutCard"></card-set>
+                <card-set id="hand" jitter="3"></card-set>
+                <form>
+                    <select id="scoreSelect">
+                        <option disabled>This hand's score is:</option>
+                    </select>
+                </form>
+
+                <nav>
+                    <button class="instructionsButton" command="show-modal" commandfor="instructions">Instructions</button>
+                </nav>
+            </section>
         </section>
 
         <dialog id="instructions">
-            <h2>Welcome</h2>
-            <p>This is a dialog to show instructions</p>
-            <h3>Scoring</h3>
+            <h2>Scoring</h2>
             <ul id="exampleTricks">
                 <li><span>Cards totalling 15 score 2 points.</span><ul>
                     <li><card-set cards="JH,5C" arrangeBy="fan"></card-set></li>
@@ -331,7 +365,7 @@
                     <li><card-set cards="10C,JC" arrangeBy="fan"></card-set></li>
                 </ul></li>
             </ul>
-            <form><button formmethod="dialog">Close</button></form>
+            <form><button command="close" formmethod="dialog">Close</button></form>
         </dialog>
 
         <dialog id="tricks">
@@ -350,7 +384,7 @@
                 </section>
                 <ul id="trickList"></ul>
             </div>
-            <form><button formmethod="dialog">Close</button></form>
+            <form><button command="close" formmethod="dialog">Close</button></form>
         </dialog>
 
         <div id="selectedScore"></div>
@@ -557,8 +591,6 @@
                 selector.appendChild(o);
             });
 
-            selector.addEventListener('change', handWasScored);
-
             var trainer = _getEl('cribtrainer');
             trainer.addEventListener(SCORE_SELECTED, changeScore);
             trainer.addEventListener(SCORE_SELECTED, showScoreSelection);
@@ -566,22 +598,28 @@
             trainer.addEventListener(SCORE_INCORRECT, clearScoreSelection)
             trainer.addEventListener(NEW_ROUND, displayNextHand);
             trainer.addEventListener(NEW_ROUND, clearScoreSelection);
+            selector.addEventListener('change', handWasScored);
 
-            var startNewRound = ev => ev.target.dispatchEvent(new CustomEvent(NEW_ROUND, {bubbles: true}));
+            var startNewRound = () => trainer.dispatchEvent(new CustomEvent(NEW_ROUND, {bubbles: true}));
+            var switchSections = ev => {
+                    var location = window.location.hash.replace('#', '');
+                    location = [location || 'start'];
+                    var sections = ['.activeContent', '#' + location];
+                    sections.map(x => {
+                        x = trainer.querySelector(x);
+                        x = x && x.classList.toggle('activeContent');
+                    });
+                    startNewRound();
+                };
+            window.addEventListener('hashchange', switchSections);
+            switchSections();
 
             var tricks = trainer.querySelector("dialog#tricks");
             tricks.addEventListener("click", () => tricks.close());
             tricks.addEventListener("close", startNewRound);
 
-            var playButton = trainer.querySelector("#playButton");
-            var startGame = ev => {
-                startNewRound(ev);
-                ['#play', '#start'].map(x => trainer.querySelector(x).classList.toggle('activeContent'));
-            }
-            playButton.addEventListener("click", startGame);
-
-            var instrButton = trainer.querySelector("#instructionsButton");
-            instrButton.addEventListener('click', () => trainer.querySelector('dialog#instructions').showModal());
+            var instrButtons = trainer.querySelectorAll(".instructionsButton");
+            Array.from(instrButtons, x => x.addEventListener('click', () => trainer.querySelector('dialog#instructions').showModal()));
         }
 
         setup();
