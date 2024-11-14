@@ -1,18 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <title>Crib Trainer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover, user-scalable=no" />
     <script type="module" src="src/elements.cardmeister.min.js"></script>
     <style>
         :root {
             --tableColour: rgb(0, 200, 40);
             --tableDecorColour: rgb(255, 255, 130, 0.5);
-            --cardPlacementBorder: 0.2rem solid var(--tableDecorColour);
+            --uiElementBorder: 0.2rem solid var(--tableDecorColour);
             --successColour: chartreuse;
             --failureColour: red;
             --dialogColour: hsl(43, 100%, 92%);
             --dialogDecorColour: hsl(43, 100%, 20%);
             --cardWidth: 5rem;
+            --buttonWidth: 12rem;
+            --svgTrianglesInactive: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -8 8 16"><polygon points="8,-1 4.5,-8 1,-1" fill="black"/><polygon points="4.5,8 1,1 8,1" fill="black"/></svg>');
+            --svgTrianglesActive: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -8 8 16"><polygon points="8,-1 4.5,-8 1,-1" fill="rgba(255, 255, 130, 0.5)"/><polygon points="4.5,8 1,1 8,1" fill="rgba(255, 255, 130, 0.5)"/></svg>');
         }
 
         html, body {
@@ -35,12 +39,30 @@
         }
 
         select {
-            width: 10rem;
+            appearance: none;
+            background-image: var(--svgTrianglesInactive);
+            background-repeat: no-repeat;
+            background-position: right 0.5em center;
+            background-size: 0.5em;
+            padding-right: 1.5em !important;
+        }
+
+        :is(:hover, :focus) {
+            outline: none;
         }
 
         h1 {
-            text-align: center;
+            margin: 0;
+            font-size: min(14vw, 5rem);
             color: var(--tableDecorColour);
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+            width: 100%;
         }
 
         li {
@@ -65,19 +87,26 @@
             margin-top: 2rem;
         }
 
-        #table nav * {
+        #table nav *, select {
             text-align: center;
-            background-color: inherit;
+            background-color: transparent;
             font-size: 2rem;
-            padding: 1rem;
-            width: 12rem;
             color: var(--tableDecorColour);
             cursor: pointer;
         }
 
-        #table nav *:hover {
+        #table nav * {
+            width: var(--buttonWidth);
+        }
+
+        :is(#table nav *):hover {
             background-color: var(--tableDecorColour);
             color: black;
+        }
+
+        :is(#table nav *.primary):hover {
+            color: var(--tableDecorColour);
+            background-color: transparent;
         }
 
         #table .activeContent {
@@ -96,9 +125,9 @@
             position: relative;
         }
 
-        #hand, #cutCard, #table nav * {
+        #hand, #cutCard, #table nav *, select {
             padding: 0.5rem;
-            border: var(--cardPlacementBorder);
+            border: var(--uiElementBorder);
         }
 
         #hand, #lastHand {
@@ -111,14 +140,20 @@
             max-width: 85vw;
         }
 
-        #hand, dialog, #cutCard, #table nav * {
+        #hand, dialog, #cutCard, #table nav *, select {
             border-radius: 11.5px;
         }
 
         #table nav *.primary,
         #cutCard {
-            outline: var(--cardPlacementBorder);
+            outline: var(--uiElementBorder);
             outline-offset: 0.3rem;
+        }
+
+        #table nav *.primary,
+        select {
+            color: black;
+            background-color: var(--tableDecorColour);
         }
 
         #score {
@@ -286,9 +321,29 @@
             color: var(--failureColour);
         }
 
+        @media (hover: hover) {
+            select:hover {
+                color: var(--tableDecorColour);
+                background-color: transparent;
+                background-image: var(--svgTrianglesActive);
+            }
+        }
+
         @media (orientation: landscape) {
             #tricksContainer {
                 max-width: 40rem;
+            }
+
+            #play nav {
+                position: fixed;
+                top: 1rem;
+                left: 1rem;
+            }
+
+            #score {
+                position: fixed;
+                right: 1rem;
+                top: 1rem;
             }
         }
 
@@ -303,8 +358,7 @@
             }
 
             #play nav {
-                position: fixed;
-                top: 1rem;
+                left: 3rem;
             }
         }
     </style>
@@ -328,11 +382,9 @@
 
                 <card-set id="cutCard"></card-set>
                 <card-set id="hand" jitter="3"></card-set>
-                <form>
-                    <select id="scoreSelect">
-                        <option disabled>This hand's score is:</option>
-                    </select>
-                </form>
+                <select id="scoreSelect">
+                    <option disabled>This hand's score is:</option>
+                </select>
 
                 <nav>
                     <button class="instructionsButton" command="show-modal" commandfor="instructions">Instructions</button>
