@@ -204,7 +204,7 @@
             display: flex;
             justify-content: space-evenly;
             flex-wrap: wrap;
-            column-gap: 1rem;
+            place-items: center;
         }
 
         #exampleTricks, #tricksContainer {
@@ -220,7 +220,7 @@
 
         #tricksContainer {
             grid-template-columns: 6rem minmax(var(--cardWidth), 1fr) minmax(calc(var(--cardWidth) + 3rem), 2fr);
-            gap: 0.5rem 1rem;
+            gap: 0rem 1rem;
         }
 
         .trickLabel {
@@ -268,10 +268,11 @@
 
         #trickList ul {
             grid-column: 2 / span 2;
+            padding-left: 1.5rem;
         }
 
         #trickList li:first-child ul, #trickList li:first-child>span {
-            padding-top: 2rem;
+            padding-top: 1.25rem;
         }
 
         #trickList li:first-child ul::before {
@@ -449,13 +450,15 @@
         STYLE.replaceSync(`
             :host {
                 --cardset-card-count: 0;
+                --cardset-card-rotation: 7;
+                --cardset-card-width: 5rem;
                 display: grid;
                 width: auto;
                 justify-items: center;
             }
 
-            :host::part(card) {
-                width: 5rem;
+            ::part(card) {
+                width: var(--cardset-card-width);
             }
 
             :host([arrangeBy=row]) {
@@ -472,15 +475,20 @@
             }
 
             :host([arrangeBy=fan]) {
-                --cardset-card-rotation: 7deg;
+                --cardset-card-maxrotation: calc(var(--cardset-card-rotation) * var(--cardset-card-count) / 2);
+                --cardset-card-maxrotationrad: calc(var(--cardset-card-maxrotation) * 3.14159 / 180);
+                --cardset-card-padding: calc(var(--cardset-card-width) * abs(sin(var(--cardset-card-maxrotationrad))));
+                padding-top: var(--cardset-card-padding);
+                padding-right: calc(var(--cardset-card-padding) * 5/7);
             }
 
             :host([arrangeBy=fan])::part(card) {
                 grid-area: 1 / 1;
-                transform: rotateZ(calc(
-                    360deg + var(--cardset-card-rotation)
+                --cardset-card-thiscardrotation: calc(
+                    360deg + var(--cardset-card-rotation) * 1deg
                         * (var(--cardset-card-number) - 1/2 * var(--cardset-card-count))
-                    ));
+                    );
+                transform: rotateZ(var(--cardset-card-thiscardrotation));
                 transform-origin: left bottom;
             }
         `);
