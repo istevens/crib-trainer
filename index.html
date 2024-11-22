@@ -366,15 +366,14 @@
 </head>
 <body>
     <div id="cribtrainer">
-        <h1><a href="#">Crib Trainer</a></h1>
+        <h1><a href="#" tabindex="0">Crib Trainer</a></h1>
 
         <section id="table">
             <section id="start">
-                <h2>Welcome</h2>
-                <p>Practice your cribbage hand scoring!</p>
+                <h2>Score your cribbage hands faster and easier!</h2>
                 <nav>
-                    <a role="button" class="primary" href="#play">Play</a>
-                    <button class="instructionsButton" command="show-modal" commandfor="instructions">Instructions</button>
+                    <a role="button" class="primary" href="#play" autofocus tabindex="0">Play</a>
+                    <button class="instructionsButton" command="show-modal" commandfor="instructions">Scoring</button>
                 </nav>
             </section>
 
@@ -383,7 +382,7 @@
 
                 <card-set id="cutCard"></card-set>
                 <card-set id="hand" jitter="3"></card-set>
-                <select id="scoreSelect">
+                <select id="scoreSelect" autofocus>
                     <option disabled>This hand's score is:</option>
                 </select>
 
@@ -546,6 +545,7 @@
         import CribbageHand from "./src/cribbagescorer.js";
 
         const _getEl = x => document.getElementById(x);
+        const isTouch = 'ontouchstart' in window;
 
         var play = null;
         const SCORE_SELECTED = "scoreSelected";
@@ -573,7 +573,8 @@
 
             var select = _getEl('scoreSelect');
             select.selectedIndex = 0;
-            select.blur();
+            select.focus();
+            isTouch && select.blur();
         }
 
         function handWasScored(ev) {
