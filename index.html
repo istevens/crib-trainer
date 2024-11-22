@@ -275,7 +275,7 @@
             padding-top: 1.25rem;
         }
 
-        #trickList li:first-child ul::before {
+        #trickList li:first-child:has(ul>li) ul::before {
             position: absolute;
             width: 50%;
             content: '';
@@ -555,13 +555,14 @@
         const scoreTemplate = (name, score, tricks) => {
             var n = tricks.length;
             var isHisNobs = name.includes('nobs');
-            name = !isHisNobs && (n == 1 && 'a' || n) + ' ' + name || name;
+            name = !isHisNobs && (n == 1 && 'a' || n == 0 && 'no' || n) + ' ' + name || name;
             name = !isHisNobs && n == 1 && name.replace(/s$/, '') || name;
             var html = `<span class="trickScore">${score}</span>
                 <span class="trickDescription">for ${name}</span>`;
             return html;
         };
-        const tricksTemplate = (name, score, tricks) => `<li><span class="trickLabel">${scoreTemplate(name, score, tricks)}</span><ul>${tricks.join("")}</ul></li>`;
+        const trickLabelTemplate = (name, score, tricks) => `<span class="trickLabel">${scoreTemplate(name, score, tricks)}</span>`;
+        const tricksTemplate = (name, score, tricks) => `<li>${trickLabelTemplate(name, score, tricks)}<ul>${tricks.join("")}</ul></li>`;
         const trickTemplate = x => `<li><card-set class='trick' cards='${x}' arrangeBy='fan'></card-set></li>`;
 
         function displayNextHand() {
@@ -619,10 +620,8 @@
         }
 
         function renderTrick(t) {
-            var trickData = t[1].data;
-            var hasTricks = trickData.length > 0;
-            var tricks = hasTricks && trickData.map(trickTemplate);
-            tricks = hasTricks && tricksTemplate(t[0], t[1].score, tricks) || "";
+            var tricks = t[1].data.map(trickTemplate);
+            tricks = tricksTemplate(t[0], t[1].score, tricks);
             return tricks;
         }
 
@@ -630,14 +629,15 @@
             play = ev.detail.play;
             var cutCard = play.cutCard;
             var hand = play.hand;
-            var tricks = Object.entries(hand.getTricks(cutCard));
 
             _getEl('lastCutCard').setAttribute('cards', [cutCard]);
             _getEl('lastHand').setAttribute('cards', hand.cards);
             this.querySelector('#correctScore .trickScore').innerHTML = ev.detail.expectedScore;
 
             var tricksEl = this.querySelector('ul#trickList');
-            tricksEl.innerHTML = tricks.map(renderTrick).join("");
+            var tricks = Object.entries(hand.getTricks(cutCard));
+            var hasTricks = tricks.length > 0;
+            tricksEl.innerHTML = hasTricks && tricks.map(renderTrick).join("") || tricksTemplate("tricks", 0, []);
 
             var dialog = this.querySelector('dialog#tricks');
             dialog.showModal();
