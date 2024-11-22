@@ -19,6 +19,11 @@
             --svgTrianglesActive: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -8 8 16"><polygon points="8,-1 4.5,-8 1,-1" fill="rgba(255, 255, 130, 0.5)"/><polygon points="4.5,8 1,1 8,1" fill="rgba(255, 255, 130, 0.5)"/></svg>');
         }
 
+        * {
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
         html, body {
             margin: 0;
             height: 100%;
@@ -57,6 +62,10 @@
             color: var(--tableDecorColour);
             text-transform: uppercase;
             text-align: center;
+        }
+
+        card-set {
+            pointer-events: none;
         }
 
         a {
@@ -301,7 +310,6 @@
             top: 20%;
             font-size: 24em;
             font-weight: bold;
-            pointer-events: none;
             letter-spacing: -0.1em;
             text-indent: -0.1em;
             text-align: center;
@@ -644,15 +652,18 @@
             dialog.showModal();
         }
 
-        function setup() {
+        function populateScoreOptions() {
             var selector = _getEl('scoreSelect');
             new Array(30).fill().map((x, i) => {
                 var o = document.createElement('option');
                 o.label = o.value = i;
                 selector.appendChild(o);
             });
+        }
 
+        function addEventListeners() {
             var trainer = _getEl('cribtrainer');
+            var selector = _getEl('scoreSelect');
             trainer.addEventListener(SCORE_SELECTED, changeScore);
             trainer.addEventListener(SCORE_SELECTED, showScoreSelection);
             trainer.addEventListener(SCORE_INCORRECT, showTricks);
@@ -681,6 +692,15 @@
 
             var instrButtons = trainer.querySelectorAll(".instructionsButton");
             Array.from(instrButtons, x => x.addEventListener('click', () => trainer.querySelector('dialog#instructions').showModal()));
+
+            // Prevent double-tap to zoom and long-press
+            document.addEventListener('dblclick', (event) => event.preventDefault());
+            document.addEventListener('contextmenu', (event) => event.preventDefault());
+        }
+
+        function setup() {
+            populateScoreOptions();
+            addEventListeners();
         }
 
         setup();
