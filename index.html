@@ -7,7 +7,8 @@
     <style>
         :root {
             --tableColour: rgb(0, 200, 40);
-            --tableDecorColour: rgb(255, 255, 130, 0.5);
+            --tableDecorColour: hsl(60, 100%, 75%, 0.5);
+            --titleColour: hsl(60, 100%, 75%, 0.75);
             --uiElementBorder: 0.2rem solid var(--tableDecorColour);
             --successColour: chartreuse;
             --failureColour: red;
@@ -57,11 +58,20 @@
         }
 
         h1 {
-            margin: 0;
-            font-size: min(14vw, 5rem);
-            color: var(--tableDecorColour);
-            text-transform: uppercase;
-            text-align: center;
+            margin: 0.5rem;
+        }
+
+        h1 a {
+            display: block;
+            margin: auto;
+            aspect-ratio: 1704 / 321;
+            max-width: 40rem;
+            color: transparent;
+            background: var(--titleColour);
+            mask-image: url(cribtrainer-arched.svg);
+            mask-size: contain;
+            mask-repeat: no-repeat;
+            mask-position: center;
         }
 
         card-set {
@@ -93,7 +103,8 @@
         }
 
         #table {
-            margin-top: 2rem;
+            max-width: 40rem;
+            margin: 0 auto;
         }
 
         #table nav *, select {
