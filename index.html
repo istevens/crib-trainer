@@ -29,7 +29,8 @@
             margin: 0;
             height: 100%;
             font-family: Helvetica, sans-serif;
-            background: var(--tableColour);
+            width: 100%;
+            background: black;
         }
 
         dialog, ::backdrop, #cribtrainer {
@@ -42,6 +43,7 @@
             background-color: var(--dialogColour);
             border: 1px solid black;
             max-width: 90%;
+            padding: 1rem;
         }
 
         select {
@@ -97,14 +99,28 @@
             width: var(--cardWidth);
         }
 
+        .stacked {
+            display: flex;
+            flex-direction: column;
+            justify-items: center;
+        }
+
         #cribtrainer {
             background: fixed radial-gradient(circle at 50% 10rem, var(--tableColour) 0%, rgb(0,120,24) 40%, rgb(0,0,0) 100%);
             height: 100%;
+            width: 100%;
         }
 
         #table {
             max-width: 40rem;
             margin: 0 auto;
+            height: 100%;
+            width: 100%;
+        }
+
+        #table nav {
+            gap: 1.5rem;
+            place-items: center;
         }
 
         #table nav *, select {
@@ -130,14 +146,20 @@
         }
 
         #table .activeContent {
-            display: flex;
-            flex-direction: column;
             place-items: center;
-            gap: 2rem;
+            height: 100%;
+            width: 100%;
+            justify-content: space-around;
         }
 
         #table>section:not(.activeContent) {
             display: none;
+        }
+
+        #start {
+            max-width: 90%;
+            margin: auto;
+            font-size: 150%;
         }
 
         #play {
@@ -179,7 +201,8 @@
         #score {
             display: flex;
             position: absolute;
-            right: 1rem;
+            top: 1rem;
+            right: 0.5rem;
             height: 3rem;
             width: 6rem;
             font-weight: bold;
@@ -203,7 +226,7 @@
             color: white;
         }
 
-        #lastPlay, #trickList, #trickList li, #correctScore, #start nav {
+        #lastPlay, #trickList, #trickList li, #correctScore {
             display: contents;
         }
 
@@ -215,7 +238,7 @@
             justify-self: left;
         }
 
-        #intro {
+        #scoring {
             --cardWidth: 5rem;
         }
 
@@ -243,13 +266,6 @@
             gap: 0rem 1rem;
         }
 
-        .trickLabel {
-            display: flex;
-            flex-direction: column;
-            text-align: center;
-            place-items: center;
-        }
-
         #correctScore {
             font-size: 4rem;
         }
@@ -260,6 +276,8 @@
 
         .trickLabel {
             position: relative;
+            text-align: center;
+            place-items: center;
             font-weight: bold;
         }
 
@@ -371,6 +389,7 @@
             #table {
                 margin-top: 1rem;
                 margin-left: 3rem;
+                max-width: none;
             }
 
             #table .activeContent {
@@ -384,19 +403,21 @@
     </style>
 </head>
 <body>
-    <div id="cribtrainer">
+    <div id="cribtrainer" class="stacked">
         <h1><a href="#" tabindex="0">Crib Trainer</a></h1>
 
         <section id="table">
-            <section id="start">
-                <h2>Score your cribbage hands faster and easier!</h2>
-                <nav>
+            <section id="start" class="stacked">
+                <h2>Improve your cribbage hand scoring with this training game.</h2>
+                <nav class="stacked">
                     <a role="button" class="primary" href="#play" autofocus tabindex="0">Play</a>
-                    <button class="instructionsButton" command="show-modal" commandfor="instructions">Scoring</button>
+                    <button class="aboutButton" command="show-modal" commandfor="about" tabindex="0">About</button>
+                    <button class="scoringButton" command="show-modal" commandfor="scoring" tabindex="0">Scoring</button>
                 </nav>
+
             </section>
 
-            <section id="play">
+            <section id="play" class="stacked">
                 <section id="score"><span id="successes">0</span><span id="failures">0</span></section>
 
                 <card-set id="cutCard"></card-set>
@@ -443,7 +464,7 @@
             <div id="tricksContainer">
                 <section id="lastPlay">
                     <div id="correctScore">
-                        <span class="trickLabel">
+                        <span class="trickLabel stacked">
                             <span class="trickDescription">
                                 Score is
                             </span>
@@ -580,7 +601,7 @@
                 <span class="trickDescription">for ${name}</span>`;
             return html;
         };
-        const trickLabelTemplate = (name, score, tricks) => `<span class="trickLabel">${scoreTemplate(name, score, tricks)}</span>`;
+        const trickLabelTemplate = (name, score, tricks) => `<span class="trickLabel stacked">${scoreTemplate(name, score, tricks)}</span>`;
         const tricksTemplate = (name, score, tricks) => `<li>${trickLabelTemplate(name, score, tricks)}<ul>${tricks.join("")}</ul></li>`;
         const trickTemplate = x => `<li><card-set class='trick' cards='${x}' arrangeBy='fan'></card-set></li>`;
 
