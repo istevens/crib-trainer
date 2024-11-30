@@ -86,6 +86,10 @@
             width: 100%;
         }
 
+        p {
+            font-size: 1.5rem;
+        }
+
         li {
             list-style: none;
         }
@@ -238,8 +242,12 @@
             justify-self: left;
         }
 
-        #scoring {
+        dialog#scoring {
             --cardWidth: 5rem;
+        }
+
+        dialog#about {
+            max-width: clamp(20rem, 90%, 30rem);
         }
 
         dialog li ul {
@@ -426,13 +434,25 @@
                     <option disabled>This hand's score is:</option>
                 </select>
 
-                <nav>
-                    <button class="instructionsButton" command="show-modal" commandfor="instructions">Instructions</button>
+                <nav class="stacked">
+                    <button class="scoringButton" command="show-modal" commandfor="scoring">Scoring</button>
                 </nav>
             </section>
         </section>
 
-        <dialog id="instructions">
+        <dialog id="about">
+            <h2>About this game</h2>
+            <p>For many cribbage players, especially those new to the game,
+            scoring hands can be a challenge. Automated scorers exist, but
+            being able to go without is an advantage when assessing one's discards.</p>
+            <p>This game will drill you on scoring cribbage hands, and provide
+            an explainer if you score incorrectly. It keeps score, so you can
+            track your progress.</p>
+            <p>If you're interested in learning more, read my post on my dev blog.</p>
+            <form><button command="close" formmethod="dialog">Close</button></form>
+        </dialog>
+
+        <dialog id="scoring">
             <h2>Scoring</h2>
             <ul id="exampleTricks">
                 <li><span>2 points for cards summing to 15, eg.</span><ul>
@@ -722,8 +742,8 @@
             tricks.addEventListener("click", () => tricks.close());
             tricks.addEventListener("close", startNewRound);
 
-            var instrButtons = trainer.querySelectorAll(".instructionsButton");
-            Array.from(instrButtons, x => x.addEventListener('click', () => trainer.querySelector('dialog#instructions').showModal()));
+            var dialogButtons = trainer.querySelectorAll("[command=show-modal]");
+            Array.from(dialogButtons, x => x.addEventListener('click', () => trainer.querySelector('dialog#' + x.getAttribute('commandfor')).showModal()));
 
             // Prevent double-tap to zoom and long-press
             document.addEventListener('dblclick', (event) => event.preventDefault());
