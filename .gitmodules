@@ -1,0 +1,3 @@
+[submodule "cardmeister.github.io"]
+	path = cardmeister.github.io
+	url = git://github.com/cardmeister.github.io.git
