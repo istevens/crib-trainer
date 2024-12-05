@@ -5,7 +5,6 @@
     "description": "Game to practice scoring cribbage hands.",
     "scripts": {
         "build": "parcel build index.html",
-        "prebuild": "rm -rf dist",
         "test": "jest",
         "start": "parcel index.html -p 8080"
     },
