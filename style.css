@@ -8,6 +8,7 @@
     --dialogColour: hsl(43, 100%, 92%);
     --dialogDecorColour: hsl(43, 100%, 20%);
     --cardWidth: 5rem;
+    --maxCardWidth: 12rem;
     --buttonWidth: 12rem;
     --svgTrianglesInactive: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -8 8 16"><polygon points="8,-1 4.5,-8 1,-1" fill="black"/><polygon points="4.5,8 1,1 8,1" fill="black"/></svg>');
     --svgTrianglesActive: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -8 8 16"><polygon points="8,-1 4.5,-8 1,-1" fill="rgba(255, 255, 130, 0.5)"/><polygon points="4.5,8 1,1 8,1" fill="rgba(255, 255, 130, 0.5)"/></svg>');
@@ -99,6 +100,7 @@ ul {
 
 card-set::part(card) {
     width: var(--cardWidth);
+    max-width: var(--maxCardWidth);
 }
 
 .stacked {
@@ -168,7 +170,7 @@ card-set::part(card) {
 }
 
 #play {
-    --cardWidth: 9rem;
+    --cardWidth: 35vw;
     position: relative;
 }
 
@@ -178,7 +180,7 @@ card-set::part(card) {
 }
 
 #hand, #lastHand {
-    grid-template-columns: repeat(3, minmax(2rem, 1fr)) 1fr;
+    grid-template-columns: repeat(3, minmax(1rem, 1fr)) 1fr;
     justify-items: left;
 }
 
@@ -240,7 +242,7 @@ select {
 }
 
 #lastCutCard {
-    justify-self: left;
+    justify-self: center;
 }
 
 dialog#scoring {
@@ -271,7 +273,7 @@ dialog li ul {
 }
 
 #tricksContainer {
-    grid-template-columns: 6rem minmax(var(--cardWidth), 1fr) minmax(calc(var(--cardWidth) + 3rem), 2fr);
+    grid-template-columns: 6rem minmax(var(--cardWidth), 2fr) minmax(calc(var(--cardWidth) + 2rem), 3fr);
     gap: 0rem 1rem;
 }
 
