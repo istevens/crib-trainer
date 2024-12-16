@@ -113,7 +113,7 @@ card-set::part(card) {
     background: fixed radial-gradient(circle at 50% 10rem, var(--tableColour) 0%, rgb(0,120,24) 40%, rgb(0,0,0) 100%);
     height: 100%;
     width: 100%;
-    font-family: Public Sans, sans-serif;
+    font-family: 'Public Sans', sans-serif;
     font-optical-sizing: auto;
     font-weight: 400;
 }
@@ -135,6 +135,7 @@ card-set::part(card) {
     text-align: center;
     background-color: transparent;
     font-size: 2rem;
+    font-family: inherit;
     color: var(--tableDecorColour);
     cursor: pointer;
 }
