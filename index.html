@@ -1,17 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://www.googletagmanager.com">
+    <link rel="preconnect" href="https://www.google-analytics.com">
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;700&display=swap">
     <title>Crib Trainer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="description" content="A game meant to help people practice scoring cribbage hands so they have an advantage when playing the game with others." />
     <meta name="author" content="Ian Stevens" />
-    <script type="module" src="cardmeister.github.io/elements.cardmeister.min.js"></script>
+    <script async type="module" src="cardmeister.github.io/elements.cardmeister.min.js"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8JTHR1K2WP"></script>
+    <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-8JTHR1K2WP');
+    </script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;700&display=swap">
     <link rel="stylesheet" href="style.css"/>
     <link rel="manifest" href="manifest.json"/>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;700&display=swap">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;700&display=swap">
 </head>
 <body>
     <div id="cribtrainer" class="stacked">
@@ -352,9 +361,59 @@
             document.addEventListener('contextmenu', (event) => event.preventDefault());
         }
 
+        function addAnalyticsListeners() {
+            const trainer = document.getElementById('cribtrainer');
+
+            trainer.addEventListener(SCORE_SELECTED, (ev) => {
+                const { selectedScore, expectedScore, scoresMatch } = ev.detail;
+                gtag('event', 'hand_scored', {
+                    event_category: 'Game',
+                    event_label: scoresMatch ? 'Correct' : 'Incorrect',
+                    value: parseInt(selectedScore),
+                    expected_score: parseInt(expectedScore),
+                });
+            });
+
+            trainer.addEventListener(NEW_ROUND, () => {
+                gtag('event', 'new_round_started', {
+                    event_category: 'Game',
+                    event_label: 'New Round',
+                });
+            });
+
+            window.addEventListener('hashchange', () => {
+                const currentSection = window.location.hash.replace('#', '') || 'start';
+                gtag('event', 'section_switched', {
+                    event_category: 'Navigation',
+                    event_label: currentSection,
+                });
+            });
+
+            const dialogs = document.querySelectorAll('dialog'); // Assuming dialogs use the <dialog> tag
+            function trackDialogEvent(eventType) {
+                dialogs.forEach((dialog) => {
+                    dialog.addEventListener(eventType, () => {
+                        const dialogName = dialog.id.replace('Dialog', '').toLowerCase();
+                        const eventName = `dialog_${eventType}ed`;
+
+                        gtag('event', eventName, {
+                            event_category: 'Dialogs',
+                            event_label: dialogName,
+                        });
+                    });
+                });
+            }
+
+            // Attach listeners for both open and close events
+            trackDialogEvent('open');
+            trackDialogEvent('close');
+
+        }
+
         function setup() {
             populateScoreOptions();
             addEventListeners();
+            addAnalyticsListeners();
         }
 
         setup();
