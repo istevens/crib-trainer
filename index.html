@@ -14,7 +14,7 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-8JTHR1K2WP"></script>
     <script>
           window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
+          window.gtag = function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
           gtag('config', 'G-8JTHR1K2WP');
     </script>
@@ -336,7 +336,7 @@
             selector.addEventListener('change', handWasScored);
 
             var startNewRound = () => trainer.dispatchEvent(new CustomEvent(NEW_ROUND, {bubbles: true}));
-            var switchSections = ev => {
+            var switchSections = () => {
                     var location = window.location.hash.replace('#', '');
                     location = [location || 'start'];
                     var sections = ['.activeContent', '#' + location];
@@ -409,13 +409,13 @@
             trackDialogEvent('close');
         }
 
-        function setup(gtag) {
+        function setup() {
             populateScoreOptions();
             addEventListeners();
-            addAnalyticsListeners(gtag);
+            addAnalyticsListeners();
         }
 
-        setup(gtag);
+        setup();
 
     </script>
 </body>
