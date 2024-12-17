@@ -407,16 +407,15 @@
             // Attach listeners for both open and close events
             trackDialogEvent('open');
             trackDialogEvent('close');
-
         }
 
-        function setup() {
+        function setup(gtag) {
             populateScoreOptions();
             addEventListeners();
-            addAnalyticsListeners();
+            addAnalyticsListeners(gtag);
         }
 
-        setup();
+        setup(gtag);
 
     </script>
 </body>
