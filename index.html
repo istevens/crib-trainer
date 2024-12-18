@@ -6,6 +6,7 @@
     <link rel="preconnect" href="https://www.googletagmanager.com">
     <link rel="preconnect" href="https://www.google-analytics.com">
     <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;700&display=swap">
+    <link rel="preload" as="script" href="https://www.googletagmanager.com/gtag/js?id=G-8JTHR1K2WP">
     <title>Crib Trainer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="description" content="A game meant to help people practice scoring cribbage hands so they have an advantage when playing the game with others." />
@@ -399,7 +400,7 @@
                 const dialogName = d.id.replace('Dialog', '').toLowerCase();
                 events.forEach(e => d.addEventListener(e, () => {
                     e = e.at(-1) == 'e' && e.slice(0,-1) || e;
-                    e = `d${e}ed`;
+                    e = `dialog_${e}ed`;
                     gtag('event', e, {
                         event_category: 'Dialogs',
                         event_label: dialogName,
