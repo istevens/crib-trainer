@@ -400,8 +400,7 @@
                 const dialogName = d.id.replace('Dialog', '').toLowerCase();
                 events.forEach(e => d.addEventListener(e, () => {
                     e = e.at(-1) == 'e' && e.slice(0,-1) || e;
-                    e = `dialog_${e}ed`;
-                    gtag('event', e, {
+                    gtag('event', `dialog_${e}ed`, {
                         event_category: 'Dialogs',
                         event_label: dialogName,
                     });
