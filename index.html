@@ -362,8 +362,8 @@
             Array.from(dialogButtons, b => b.addEventListener('click', () => openDialog(b.getAttribute('commandfor'))));
 
             // Prevent double-tap to zoom and long-press
-            document.addEventListener('dblclick', (event) => event.preventDefault());
-            document.addEventListener('contextmenu', (event) => event.preventDefault());
+            document.addEventListener('dblclick', e => e.preventDefault());
+            document.addEventListener('contextmenu', e => e.preventDefault());
         }
 
         function addAnalyticsListeners() {
@@ -373,24 +373,23 @@
                 const { selectedScore, expectedScore, scoresMatch } = ev.detail;
                 gtag('event', 'hand_scored', {
                     event_category: 'Game',
-                    event_label: scoresMatch ? 'Correct' : 'Incorrect',
-                    value: parseInt(selectedScore),
-                    expected_score: parseInt(expectedScore),
+                    event_label: scoresMatch ? 'Correct Score' : 'Incorrect Score',
                 });
             });
 
             trainer.addEventListener(NEW_ROUND, () => {
-                gtag('event', 'new_round_started', {
+                gtag('event', 'round_started', {
                     event_category: 'Game',
                     event_label: 'New Round',
                 });
             });
 
-            window.addEventListener('hashchange', () => {
-                const currentSection = window.location.hash.replace('#', '') || 'start';
+            window.addEventListener('hashchange', e => {
+                const getSection = u => u && u.indexOf('#') > 0 && u.split('#')[1] || 'start';
                 gtag('event', 'section_switched', {
                     event_category: 'Navigation',
-                    event_label: currentSection,
+                    event_label: getSection(e.newURL),
+                    from_url: getSection(e.oldURL),
                 });
             });
 
