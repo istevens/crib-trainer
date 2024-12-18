@@ -342,15 +342,15 @@
 
             var startNewRound = () => trainer.dispatchEvent(new CustomEvent(NEW_ROUND, {bubbles: true}));
             var switchSections = () => {
-                    var location = window.location.hash.replace('#', '');
-                    location = [location || 'start'];
-                    var sections = ['.activeContent', '#' + location];
-                    sections.map(x => {
-                        x = trainer.querySelector(x);
-                        x = x && x.classList.toggle('activeContent');
-                    });
-                    startNewRound();
-                };
+                var location = window.location.hash.replace('#', '');
+                location = location || 'start';
+                var sections = ['.activeContent', '#' + location];
+                sections.map(x => {
+                    x = trainer.querySelector(x);
+                    x = x && x.classList.toggle('activeContent');
+                });
+                location == 'play' && startNewRound();
+            };
             window.addEventListener('hashchange', switchSections);
             switchSections();
 
