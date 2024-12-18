@@ -297,6 +297,12 @@
             return tricks;
         }
 
+        function openDialog(d) {
+            d = document.querySelector('dialog#' + d);
+            d.dispatchEvent(new Event('open'));
+            d.showModal();
+        }
+
         function showTricks(ev) {
             play = ev.detail.play;
             var cutCard = play.cutCard;
@@ -311,8 +317,7 @@
             var hasTricks = tricks.length > 0;
             tricksEl.innerHTML = hasTricks && tricks.map(renderTrick).join("") || tricksTemplate("tricks", 0, []);
 
-            var dialog = this.querySelector('dialog#tricks');
-            dialog.showModal();
+            openDialog('tricks');
         }
 
         function populateScoreOptions() {
@@ -354,7 +359,7 @@
             tricks.addEventListener("close", startNewRound);
 
             var dialogButtons = trainer.querySelectorAll("[command=show-modal]");
-            Array.from(dialogButtons, x => x.addEventListener('click', () => trainer.querySelector('dialog#' + x.getAttribute('commandfor')).showModal()));
+            Array.from(dialogButtons, b => b.addEventListener('click', () => openDialog(b.getAttribute('commandfor'))));
 
             // Prevent double-tap to zoom and long-press
             document.addEventListener('dblclick', (event) => event.preventDefault());
@@ -389,24 +394,19 @@
                 });
             });
 
-            const dialogs = document.querySelectorAll('dialog'); // Assuming dialogs use the <dialog> tag
-            function trackDialogEvent(eventType) {
-                dialogs.forEach((dialog) => {
-                    dialog.addEventListener(eventType, () => {
-                        const dialogName = dialog.id.replace('Dialog', '').toLowerCase();
-                        const eventName = `dialog_${eventType}ed`;
-
-                        gtag('event', eventName, {
-                            event_category: 'Dialogs',
-                            event_label: dialogName,
-                        });
+            const dialogs = document.querySelectorAll('dialog');
+            const events = ['open', 'close'];
+            dialogs.forEach(d => {
+                const dialogName = d.id.replace('Dialog', '').toLowerCase();
+                events.forEach(e => d.addEventListener(e, () => {
+                    e = e.at(-1) == 'e' && e.slice(0,-1) || e;
+                    e = `d${e}ed`;
+                    gtag('event', e, {
+                        event_category: 'Dialogs',
+                        event_label: dialogName,
                     });
-                });
-            }
-
-            // Attach listeners for both open and close events
-            trackDialogEvent('open');
-            trackDialogEvent('close');
+                }));
+            });
         }
 
         function setup() {
