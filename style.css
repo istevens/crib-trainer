@@ -118,20 +118,20 @@ card-set::part(card) {
     font-weight: 400;
 }
 
-#table {
+.view {
     max-width: 40rem;
     margin: 0 auto;
-    margin-top: -4rem;
+    margin-top: -3rem;
     height: 100%;
     width: 100%;
 }
 
-#table nav {
+.view nav {
     gap: 1.5rem;
     place-items: center;
 }
 
-#table nav *, select {
+.view nav *, select {
     text-align: center;
     background-color: transparent;
     font-size: 2rem;
@@ -140,28 +140,28 @@ card-set::part(card) {
     cursor: pointer;
 }
 
-#table nav * {
+.view nav * {
     width: var(--buttonWidth);
 }
 
-:is(#table nav *):hover {
+:is(.view nav *):hover {
     background-color: var(--tableDecorColour);
     color: black;
 }
 
-:is(#table nav *.primary):hover {
+:is(.view nav *.primary):hover {
     color: var(--tableDecorColour);
     background-color: transparent;
 }
 
-#table .activeContent {
+.view.activeContent {
     place-items: center;
     height: 100%;
     width: 100%;
     justify-content: space-around;
 }
 
-#table>section:not(.activeContent) {
+.view:not(.activeContent) {
     display: none;
 }
 
@@ -176,7 +176,7 @@ card-set::part(card) {
     position: relative;
 }
 
-#hand, #cutCard, #table nav *, select {
+#hand, #cutCard, .view nav *, select {
     padding: 0.5rem;
     border: var(--uiElementBorder);
 }
@@ -191,17 +191,17 @@ card-set::part(card) {
     max-width: 85vw;
 }
 
-#hand, dialog, #cutCard, #table nav *, select {
+#hand, dialog, #cutCard, .view nav *, select {
     border-radius: 11.5px;
 }
 
-#table nav *.primary,
+.view nav *.primary,
 #cutCard {
     outline: var(--uiElementBorder);
     outline-offset: 0.3rem;
 }
 
-#table nav *.primary,
+.view nav *.primary,
 select {
     color: black;
     background-color: var(--tableDecorColour);
@@ -399,13 +399,13 @@ dialog li ul {
 }
 
 @media (orientation: landscape) and (hover: none) {
-    #table {
+    .view {
         margin-top: 1rem;
         margin-left: 3rem;
         max-width: none;
     }
 
-    #table .activeContent {
+    .view.activeContent {
         flex-direction: row;
     }
 
