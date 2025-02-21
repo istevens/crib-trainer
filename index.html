@@ -44,11 +44,11 @@
                 <card-set id="hand" jitter="3"></card-set>
             </section>
 
-            <select id="scoreSelect" autofocus>
-                <option disabled>This hand's score is:</option>
-            </select>
-
             <nav class="stacked">
+                <select id="scoreSelect" class="primary" autofocus>
+                    <option disabled>This hand's score is:</option>
+                </select>
+
                 <button class="scoringButton" command="show-modal" commandfor="scoring">Scoring</button>
             </nav>
         </section>
@@ -123,14 +123,29 @@
             :host {
                 --cardset-card-count: 0;
                 --cardset-card-rotation: 7;
-                --cardset-card-width: 5rem;
+                --cardset-card-width: auto;
                 display: grid;
-                width: auto;
-                justify-items: center;
+                flex-wrap: nowrap;
+                justify-content: center;
+                align-items: center;
+                height: 100%;
             }
 
-            ::part(card) {
-                width: var(--cardset-card-width);
+            playing-card {
+                padding: 0;
+                margin: 0;
+                flex: 0 1 auto;
+                aspect-ratio: 240/334;
+                height: 100%;
+                max-height: 100%;
+                width: auto;
+                object-fit: contain;
+            }
+
+            img {
+                height: 100%;
+                width: 100%;
+                object-fit: contain;
             }
 
             :host([arrangeBy=row]) {
@@ -182,33 +197,57 @@
             }
 
             cardTemplate(card, i, a) {
-                let rand = () => Math.random() - 0.5;
-                let jitters = ['x', 'y', 'rot'];
-                jitters = jitters.map(x => [x + 'jitter', rand()]);
-
-                let style = jitters.concat([['number', i]]);
-                style = style.concat([['jitter', this.getAttribute('jitter')]]);
-                style = style.map(x => CardSetComponent.STYLE_PREFIX + x[0] + ': ' + x[1]);
-                style = style.join('; ');
-
-                let j = this.getAttribute('jitter');
+                let style = [
+                    ['number', i],
+                    ['jitter', this.getAttribute('jitter')]
+                ];
+                style = style.map(x => this.getCardStyleName(x[0]) + ':' + x[1]);
+                style = style.join(';');
                 let html = `<playing-card part="card" cid="${card}" style="${style}"></playing-card>`;
                 return html;
             }
 
-            renderCards() {
-                let cards = this.getAttribute('cards');
-                cards = cards && cards.split(',') || [];
-                this.cardCount = cards.length;
-                cards = cards.map(x => x.trim());
-                let html = cards.map((...x) => this.cardTemplate(...x)).join("");
-                return html;
+            getCardStyleName(prop) {
+                return CardSetComponent.STYLE_PREFIX + prop;
             }
 
-            attributeChangedCallback(name, newVal, oldVal) {
+            setCardStyle(card, prop, value) {
+                card.style.setProperty(this.getCardStyleName(prop), value);
+                return card;
+            }
+
+            jitterCard(card) {
+                let rand = () => Math.random() - 0.5;
+                let jitters = ['x', 'y', 'rot'];
+                jitters = jitters.map(x => [x + 'jitter', rand()]);
+                jitters.forEach(x => this.setCardStyle(card, x[0], x[1]));
+                return card;
+            }
+
+            get cardNodes() {
+                let cards = Array.from(this.shadowRoot.childNodes);
+                return cards;
+            }
+
+            renderCards(cards) {
+                let root = this.shadowRoot;
+                let existingCards = this.cardNodes;
+                let shouldUpdateExisting = existingCards.length == cards.length;
+                let updateExisting = () => existingCards.forEach((x, i) => x.setAttribute('cid', cards[i]));
+                let createNew = () => (root.innerHTML = cards.map((...x) => this.cardTemplate(...x)).join(""));
+
+                shouldUpdateExisting && updateExisting() || createNew();
+
+                return cards.length;
+            }
+
+            attributeChangedCallback(name, oldVal, newVal) {
                 let shouldRender = name == 'cards' && newVal != oldVal;
-                shouldRender && (this.shadowRoot.innerHTML = this.renderCards());
-                shouldRender && (this.style.setProperty('--cardset-card-count', this.cardCount));
+                let newCards = newVal.split(',').map(x => x.trim()) || [];
+                let updateCount = (c) => this.style.setProperty('--cardset-card-count', c);
+                shouldRender && updateCount(newCards.length);
+                shouldRender && this.renderCards(newCards);
+                shouldRender && this.cardNodes.forEach(x => this.jitterCard(x));
             }
         }
 
