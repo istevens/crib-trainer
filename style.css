@@ -2,14 +2,14 @@
     --tableColour: rgb(0, 200, 40);
     --tableDecorColour: hsl(60, 100%, 75%, 0.5);
     --titleColour: hsl(60, 100%, 75%, 0.75);
-    --uiElementBorder: 0.2rem solid var(--tableDecorColour);
+    --uiElementBorder: 5px solid var(--tableDecorColour);
     --successColour: chartreuse;
     --failureColour: red;
     --dialogColour: hsl(43, 100%, 92%);
     --dialogDecorColour: hsl(43, 100%, 20%);
     --buttonWidth: 12rem;
-    --outerPadding: 0.25rem;
-    --outlineOffset: 0.3rem;
+    --outerPadding: 0.5rem;
+    --outlineOffset: 10px;
     --titleAspectRatio: 1310/403;
     --playTopMargin: calc(-0.3 * (100vw / (var(--titleAspectRatio))));
     --svgTrianglesInactive: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -8 8 16"><polygon points="8,-1 4.5,-8 1,-1" fill="black"/><polygon points="4.5,8 1,1 8,1" fill="black"/></svg>');
@@ -21,14 +21,17 @@
     user-select: none;
 }
 
-html, body {
-    margin: 0;
+html {
     padding: 0;
     display: flex;
-    flex-direction: column;
-    height: 100%;
-    width: 100%;
+    justify-content: center;
     background: black;
+}
+
+html, body, #cribtrainer {
+    width: 100%;
+    height: 100%;
+    margin: 0;
 }
 
 dialog, ::backdrop, #cribtrainer {
@@ -82,12 +85,6 @@ h1 a {
     mask-position: center;
 }
 
-card-set {
-    pointer-events: none;
-    flex: 1;
-    box-sizing: border-box;
-}
-
 a {
     text-decoration: none;
     color: inherit;
@@ -108,39 +105,40 @@ ul {
 }
 
 .stacked {
+    width: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: space-evenly;
     align-items: center;
-    box-sizing: border-box;
 }
 
 #cribtrainer {
+    flex: 1;
     background: fixed radial-gradient(circle at 50% 10rem, var(--tableColour) 0%, rgb(0,120,24) 40%, rgb(0,0,0) 100%);
-    height: 100%;
-    width: 100%;
     font-family: 'Public Sans', sans-serif;
     font-optical-sizing: auto;
     font-weight: 400;
     padding: var(--outerPadding);
+    box-sizing: border-box;
 }
 
 .view {
-    flex: 1;
-    position: relative;
-    max-width: 40rem;
-    margin: 0 auto;
-    width: 100%;
-    place-items: center;
     gap: 1rem;
+    flex: 1;
 }
 
 .view nav {
     gap: 1rem;
     padding-bottom: 1rem;
+    flex: 0;
+}
+
+#cards {
+    flex: 1;
+    gap: calc(1rem + var(--outlineOffset));
 }
 
 .view nav *, select {
+    padding: 10px;
     text-align: center;
     background-color: transparent;
     font-size: 2rem;
@@ -173,32 +171,39 @@ ul {
     font-size: 150%;
 }
 
+#play {
+    position: relative;
+}
+
+card-set {
+    pointer-events: none;
+}
+
 #cards {
     flex: 1;
-    gap: 1rem;
     box-sizing: border-box;
-    height: auto;
     width: 100%;
 }
 
-#hand, #cutCard {
-    max-height: 30vh;
-    box-sizing: border-box;
+#cards card-set {
+    flex: 1 1 0;
+    min-height: 0;
+    padding: 0.5rem;
+    justify-content: center;
+}
+
+#cards ::part(card) {
+    height: 100%;
 }
 
 #hand, #cutCard, .view nav *, select {
-    padding: 0.5rem;
     border: var(--uiElementBorder);
 }
 
-#hand, #lastHand {
-    grid-template-columns: repeat(3, minmax(1rem, 8rem)) 1fr;
-    justify-items: left;
-    max-width: 100%;
-}
-
 #hand {
-    gap: 0.5rem;
+    width: 100%;
+    grid-template-columns: repeat(auto-fit, minmax(0, calc(100% / 4.5)));
+    justify-items: center;
 }
 
 #hand, dialog, #cutCard, .view nav *, select {
@@ -220,8 +225,8 @@ select {
 #score {
     display: flex;
     position: absolute;
-    top: calc(1em - var(--playTopMargin));
-    right: var(--outerPadding);
+    top: calc(1rem - var(--playTopMargin));
+    right: 0;
     height: 3rem;
     width: 6rem;
     font-weight: 700;

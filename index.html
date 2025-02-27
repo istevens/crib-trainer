@@ -125,31 +125,13 @@
                 --cardset-card-rotation: 7;
                 --cardset-card-width: auto;
                 display: grid;
-                flex-wrap: nowrap;
-                justify-content: center;
-                align-items: center;
-                height: 100%;
+                grid-auto-flow: column;
+                box-sizing: border-box;
             }
 
             playing-card {
-                padding: 0;
-                margin: 0;
-                flex: 0 1 auto;
                 aspect-ratio: 240/334;
-                height: 100%;
-                max-height: 100%;
-                width: auto;
-                object-fit: contain;
-            }
-
-            img {
-                height: 100%;
-                width: 100%;
-                object-fit: contain;
-            }
-
-            :host([arrangeBy=row]) {
-                grid-template-columns: repeat(auto-fit, minmax(1rem, 1fr));
+                overflow: hidden;
             }
 
             :host([arrangeBy=row])::part(card) {
