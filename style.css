@@ -11,7 +11,9 @@
     --outerPadding: 0.5rem;
     --outlineOffset: 10px;
     --titleAspectRatio: 1310/403;
+    --maxTitleWidth: 40rem;
     --playTopMargin: calc(-0.3 * (100vw / (var(--titleAspectRatio))));
+    --cardGroupingFactor: 5;
     --svgTrianglesInactive: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -8 8 16"><polygon points="8,-1 4.5,-8 1,-1" fill="black"/><polygon points="4.5,8 1,1 8,1" fill="black"/></svg>');
     --svgTrianglesActive: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -8 8 16"><polygon points="8,-1 4.5,-8 1,-1" fill="rgba(255, 255, 130, 0.5)"/><polygon points="4.5,8 1,1 8,1" fill="rgba(255, 255, 130, 0.5)"/></svg>');
 }
@@ -23,7 +25,6 @@
 
 html {
     padding: 0;
-    display: flex;
     justify-content: center;
     background: black;
 }
@@ -66,6 +67,7 @@ h1 {
 }
 
 h2 {
+    font-size: 2rem;
     font-weight: 700;
     text-align: center;
     margin: 0;
@@ -74,9 +76,8 @@ h2 {
 h1 a {
     display: block;
     aspect-ratio: var(--titleAspectRatio);
-    max-width: 40rem;
+    max-width: var(--maxTitleWidth);
     margin: auto;
-    margin-bottom: var(--playTopMargin);
     color: transparent;
     background: var(--titleColour);
     mask-image: url(img/cribtrainer-arched.svg);
@@ -105,7 +106,6 @@ ul {
 }
 
 .stacked {
-    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -122,8 +122,11 @@ ul {
 }
 
 .view {
-    gap: 1rem;
+    width: 100%;
+    max-width: calc(var(--maxTitleWidth) - 1rem);
+    gap: 2rem;
     flex: 1;
+    max-height: 50rem;
 }
 
 .view nav {
@@ -134,7 +137,8 @@ ul {
 
 #cards {
     flex: 1;
-    gap: calc(1rem + var(--outlineOffset));
+    max-width: calc(var(--maxTitleWidth) - 5rem);
+    gap: 1rem;
 }
 
 .view nav *, select {
@@ -165,13 +169,15 @@ ul {
     display: none;
 }
 
-#start {
-    max-width: 90%;
-    margin: auto;
-    font-size: 150%;
+#start h2 {
+    flex: 1;
+    display: flex;
+    max-width: calc(var(--maxTitleWidth) * 0.75);
+    align-items: center;
 }
 
 #play {
+    margin-top: var(--playTopMargin);
     position: relative;
 }
 
@@ -202,7 +208,7 @@ card-set {
 
 #hand {
     width: 100%;
-    grid-template-columns: repeat(auto-fit, minmax(0, calc(100% / 4.5)));
+    grid-template-columns: repeat(auto-fit, minmax(0, calc(100% / var(--cardGroupingFactor))));
     justify-items: center;
 }
 
@@ -214,6 +220,7 @@ card-set {
 #cutCard {
     outline: var(--uiElementBorder);
     outline-offset: var(--outlineOffset);
+    margin-bottom: var(--outlineOffset);
 }
 
 .view nav *.primary,
@@ -395,31 +402,32 @@ dialog li ul {
     }
 }
 
-@media (orientation: landscape) and (width > 65rem) {
-    h1 a {
-        margin-bottom: -4rem;
+@media (width > 40rem /* maxTitleWidth */ ) {
+    :root {
+        --playTopMargin: calc(-0.3 * (var(--maxTitleWidth) / (var(--titleAspectRatio))));
     }
+}
 
+@media (orientation: landscape) and (hover: none) {
+    #cards {
+        flex-direction: row;
+    }
+}
+
+@media (orientation: landscape) and (width > 65rem) {
     #tricksContainer {
-        max-width: 40rem;
+        max-width: var(--maxTitleWidth);
     }
 
     #play .scoringButton {
         position: fixed;
         top: 1rem;
-        left: 1rem;
+        left: calc((100vw - var(--maxTitleWidth)) / 2 - var(--buttonWidth) - 1rem);
     }
 
     #score {
         position: fixed;
-        right: 1rem;
+        right: calc((100vw - var(--maxTitleWidth)) / 2 - 7rem);
         top: 1rem;
-    }
-}
-
-
-@media (orientation: landscape) and (hover: none) {
-    #cards {
-        flex-direction: row;
     }
 }
