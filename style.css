@@ -127,6 +127,7 @@ ul {
     gap: 2rem;
     flex: 1;
     max-height: 50rem;
+    justify-content: center;
 }
 
 .view nav {
@@ -137,8 +138,11 @@ ul {
 
 #cards {
     flex: 1;
+    min-height: 0;
+    width: 100%;
     max-width: calc(var(--maxTitleWidth) - 5rem);
     gap: 1rem;
+    box-sizing: border-box;
 }
 
 .view nav *, select {
@@ -177,6 +181,7 @@ ul {
 }
 
 #play {
+    min-height: 0;
     margin-top: var(--playTopMargin);
     position: relative;
 }
@@ -185,17 +190,11 @@ card-set {
     pointer-events: none;
 }
 
-#cards {
-    flex: 1;
-    box-sizing: border-box;
-    width: 100%;
-}
-
 #cards card-set {
     flex: 1 1 0;
+    height: 100%;
     min-height: 0;
     padding: 0.5rem;
-    justify-content: center;
 }
 
 #cards ::part(card) {
@@ -210,6 +209,7 @@ card-set {
     width: 100%;
     grid-template-columns: repeat(auto-fit, minmax(0, calc(100% / var(--cardGroupingFactor))));
     justify-items: center;
+    justify-content: center;
 }
 
 #hand, dialog, #cutCard, .view nav *, select {
@@ -368,15 +368,17 @@ dialog li ul {
 }
 
 #selectedScore {
-    position: absolute;
+    display: flex;
+    position: fixed;
     visibility: hidden;
+    justify-content: center;
+    align-items: center;
     width: 100%;
-    top: 20%;
+    height: 100%;
     font-size: 24em;
     font-weight: 700;
     letter-spacing: -0.1em;
     text-indent: -0.1em;
-    text-align: center;
     filter: blur(0);
     transition: filter 500ms ease-in;
 }
@@ -408,26 +410,63 @@ dialog li ul {
     }
 }
 
-@media (orientation: landscape) and (hover: none) {
-    #cards {
-        flex-direction: row;
-    }
-}
-
-@media (orientation: landscape) and (width > 65rem) {
+@media (width > 65rem) {
     #tricksContainer {
         max-width: var(--maxTitleWidth);
     }
 
-    #play .scoringButton {
+    #play :is(.scoringButton, #score) {
         position: fixed;
         top: 1rem;
-        left: calc((100vw - var(--maxTitleWidth)) / 2 - var(--buttonWidth) - 1rem);
+        --titleEdge: calc((100vw - var(--maxTitleWidth)) / 2) - 1rem;
+    }
+
+    #play .scoringButton {
+        left: calc(var(--titleEdge) - var(--buttonWidth));
     }
 
     #score {
-        position: fixed;
-        right: calc((100vw - var(--maxTitleWidth)) / 2 - 7rem);
-        top: 1rem;
+        right: calc(var(--titleEdge) - 6rem);
+    }
+}
+
+@media (orientation: landscape) and (hover: none) {
+    :root {
+        --maxTitleWidth: calc(25vh * var(--titleAspectRatio));
+    }
+
+    .view {
+        max-width: 100%;
+    }
+
+    #start {
+        flex-direction: row;
+    }
+
+    #start h2 {
+        flex: 1;
+    }
+
+    #play {
+        flex-direction: column;
+        padding-top: var(--outlineOffset);
+        margin: 0 1rem;
+    }
+
+    #cards {
+        --cardGroupingFactor: 6;
+        flex-direction: row;
+        max-width: calc(var(--maxTitleWidth) + 13rem);
+        gap: 2rem;
+    }
+
+    #cutCard {
+        flex: none !important;
+        animation: forceRedraw 0.01s forwards;
+    }
+
+    @keyframes forceRedraw {
+        from { opacity: 0.99; }
+        to { opacity: 1; }
     }
 }

@@ -215,7 +215,7 @@
                 let root = this.shadowRoot;
                 let existingCards = this.cardNodes;
                 let shouldUpdateExisting = existingCards.length == cards.length;
-                let updateExisting = () => existingCards.forEach((x, i) => x.setAttribute('cid', cards[i]));
+                let updateExisting = () => existingCards.map((x, i) => x.setAttribute('cid', cards[i]));
                 let createNew = () => (root.innerHTML = cards.map((...x) => this.cardTemplate(...x)).join(""));
 
                 shouldUpdateExisting && updateExisting() || createNew();
