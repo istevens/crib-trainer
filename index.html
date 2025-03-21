@@ -94,22 +94,22 @@
         </dialog>
 
         <dialog id="tricks">
-            <div id="tricksContainer">
-                <section id="lastPlay">
-                    <div id="correctScore">
-                        <span class="trickLabel stacked">
-                            <span class="trickDescription">
-                                Score is
-                            </span>
-                            <span class="trickScore"></span>
+            <section id="lastPlay" class="stacked">
+                <div id="correctScore">
+                    <span class="trickLabel stacked">
+                        <span class="trickDescription">
+                            Score is
                         </span>
-                    </div>
+                        <span class="trickScore"></span>
+                    </span>
+                </div>
+                <div id="lastCards" class="stacked">
                     <card-set id="lastCutCard"></card-set>
                     <card-set id="lastHand" jitter="2"></card-set>
-                </section>
-                <ul id="trickList"></ul>
-            </div>
-            <form><button command="close" formmethod="dialog">Close</button></form>
+                </div>
+            </section>
+            <ul class="trickList stacked"></ul>
+        <form><button command="close" formmethod="dialog">Close</button></form>
         </dialog>
 
         <div id="selectedScore"></div>
@@ -123,7 +123,6 @@
             :host {
                 --cardset-card-count: 0;
                 --cardset-card-rotation: 7;
-                --cardset-card-width: auto;
                 --cardset-card-aspect-ratio: 240/334;
                 display: grid;
                 grid-auto-flow: column;
@@ -144,7 +143,7 @@
                 padding: var(--cardset-card-padding);
                 min-height: 100%;
                 height: auto;
-                width: auto;
+                width: cover;
             }
 
             :host([arrangeBy=row])::part(card) {
@@ -164,6 +163,7 @@
                     );
                 transform: rotateZ(var(--cardset-card-thiscardrotation));
                 transform-origin: left bottom;
+                transform-box: fill-box;
             }
         `);
 
@@ -261,7 +261,7 @@
             return html;
         };
         const trickLabelTemplate = (name, score, tricks) => `<span class="trickLabel stacked">${scoreTemplate(name, score, tricks)}</span>`;
-        const tricksTemplate = (name, score, tricks) => `<li>${trickLabelTemplate(name, score, tricks)}<ul>${tricks.join("")}</ul></li>`;
+        const tricksTemplate = (name, score, tricks) => `<li class="trickCategory">${trickLabelTemplate(name, score, tricks)}<ul>${tricks.join("")}</ul></li>`;
         const trickTemplate = x => `<li><card-set class='trick' cards='${x}' arrangeBy='fan'></card-set></li>`;
 
         function displayNextHand() {
@@ -340,7 +340,7 @@
             _getEl('lastHand').setAttribute('cards', hand.cards);
             this.querySelector('#correctScore .trickScore').innerHTML = ev.detail.expectedScore;
 
-            var tricksEl = this.querySelector('ul#trickList');
+            var tricksEl = this.querySelector('#tricks .trickList');
             var tricks = Object.entries(hand.getTricks(cutCard));
             var hasTricks = tricks.length > 0;
             tricksEl.innerHTML = hasTricks && tricks.map(renderTrick).join("") || tricksTemplate("tricks", 0, []);
