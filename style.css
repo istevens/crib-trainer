@@ -388,13 +388,31 @@ dialog#scoring .trickScore {
     font-size: 2rem;
 }
 
+dialog#scoring .trickCategory,
 .trickCategory:not(:has(li:nth-child(2))) {
     flex: 1 1 calc(var(--trickWidth) - var(--interItemPadding));
     gap: 0;
 }
 
+dialog#scoring .trickLabel,
 .trickCategory:not(:has(li:nth-child(2))) .trickLabel {
     min-width: var(--trickLabelWidth);
+}
+
+dialog#scoring :has(card-set+span) {
+    position: relative;
+}
+
+dialog#scoring card-set+span {
+    position: absolute;
+    bottom: 1rem;
+    left: 3rem;
+    width: 3rem;
+}
+
+dialog#scoring .trickCategory {
+    display: flex;
+    flex-direction: column;
 }
 
 #selectedScore {
@@ -447,6 +465,9 @@ dialog#scoring .trickScore {
         min-width: var(--trickLabelWidth);
     }
 
+    dialog#scoring {
+        --trickWidth: 33%;
+    }
 }
 
 @media (width > 65rem) {
@@ -510,6 +531,10 @@ dialog#scoring .trickScore {
 
     #lastPlay {
         flex-direction: row;
+    }
+
+    dialog#scoring {
+        --trickWidth: 33%;
     }
 
     @keyframes forceRedraw {

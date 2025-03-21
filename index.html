@@ -66,27 +66,27 @@
         </dialog>
 
         <dialog id="scoring">
-            <h2>Scoring</h2>
-            <ul id="exampleTricks">
-                <li><span>2 points for cards summing to 15, eg.</span><ul>
+            <h2>Crib hand points</h2>
+            <ul class="trickList stacked">
+                <li class="trickCategory"><span class="trickLabel"><span class="trickScore">2</span> <span class="trickDescription">for sums to 15 (J,Q,K = 10)</span></span><ul>
                     <li><card-set cards="JH,5C" arrangeBy="fan"></card-set></li>
                     <li><card-set cards="2H,3C,6D,3S,AC" arrangeBy="fan"></card-set></li>
                 </ul></li>
-                <li>2 points for each pair, eg.<ul>
+                <li class="trickCategory"><span class="trickLabel"><span class="trickScore">2</span> <span class="trickDescription">for each pair</span></span><ul>
                     <li><card-set cards="3C,3D" arrangeBy="fan"></card-set></li>
                     <li><card-set cards="8C,8H" arrangeBy="fan"></card-set></li>
                 </ul></li>
-                <li>6 points for a triplet, eg.<ul>
+                <li class="trickCategory"><span class="trickLabel"><span class="trickScore">6</span> <span class="trickDescription">for a triplet</span></span><ul>
                     <li><card-set cards="9C,9D,9H" arrangeBy="fan"></card-set></li>
                 </ul></li>
-                <li>12 points for four-of-a-kind, eg.<ul>
+                <li class="trickCategory"><span class="trickLabel"><span class="trickScore">12</span> <span class="trickDescription">for four-of-a-kind</span></span><ul>
                     <li><card-set cards="QH,QS,QD,QC" arrangeBy="fan"></card-set></li>
                 </ul></li>
-                <li>1 point for each card in runs of 3, 4, or 5, eg.<ul>
-                    <li><card-set cards="6D,7C,8H" arrangeBy="fan"></card-set> = 3 points<li>
-                    <li><card-set cards="10H,JS,QD,KC" arrangeBy="fan"></card-set> = 4 points</li>
+                <li class="trickCategory"><span class="trickLabel"><span class="trickScore">1</span> <span class="trickDescription">for each card in runs of 3+</span></span><ul>
+                    <li><card-set cards="6D,7C,8H" arrangeBy="fan"></card-set><span class="trickDescription"> = 3</span></li>
+                    <li><card-set cards="10H,JS,QD,KC" arrangeBy="fan"></card-set><span class="trickDescription"> = 4</span></li>
                 </ul></li>
-                <li>1 point for a jack in the hand matching the suit of the cut card, eg.<ul>
+                <li class="trickCategory"><span class="trickLabel"><span class="trickScore">1</span> <span class="trickDescription">for a jack of the cut card's suit</span></span><ul>
                     <li><card-set cards="10C,JC" arrangeBy="fan"></card-set></li>
                 </ul></li>
             </ul>
@@ -266,6 +266,7 @@
 
         function displayNextHand() {
             play = CribbageHand.randomPlay();
+            //play = {cutCard: '5S', hand: CribbageHand.fromString('5C 5D 5H JS')};
 
             _getEl('cutCard').setAttribute('cards', [play.cutCard]);
             _getEl('hand').setAttribute('cards', play.hand.cards);
