@@ -230,6 +230,7 @@ card-set {
     grid-template-columns: repeat(auto-fit, minmax(0, calc(100% / var(--cardGroupingFactor))));
     justify-items: center;
     justify-content: center;
+    width: 100%;
 }
 
 #hand, dialog, #cutCard, .view nav *, select {
