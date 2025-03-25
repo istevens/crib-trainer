@@ -250,32 +250,14 @@ select {
     background-color: var(--tableDecorColour);
 }
 
-#score {
-    display: flex;
+#scoreboard {
+    flex-direction: row;
     position: absolute;
     top: calc(1rem - var(--playTopMargin));
     right: 0;
     height: 3rem;
     width: 6rem;
     font-weight: 700;
-}
-
-#score span {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 50%;
-    height: 100%;
-}
-
-#score #successes {
-    background-color: var(--successColour);
-    color: black;
-}
-
-#score #failures {
-    background-color: var(--failureColour);
-    color: white;
 }
 
 dialog#about {
@@ -417,32 +399,8 @@ dialog#scoring .trickCategory {
 }
 
 #selectedScore {
-    display: flex;
-    position: fixed;
-    visibility: hidden;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
     font-size: 24em;
     font-weight: 700;
-    letter-spacing: -0.1em;
-    text-indent: -0.1em;
-    filter: blur(0);
-    transition: filter 500ms ease-in;
-}
-
-#selectedScore.active {
-    visibility: visible;
-    filter: blur(0.25em);
-}
-
-#selectedScore.correct {
-    color: var(--successColour);
-}
-
-#selectedScore.incorrect {
-    color: var(--failureColour);
 }
 
 @media (hover: hover) {
@@ -472,7 +430,7 @@ dialog#scoring .trickCategory {
 }
 
 @media (width > 65rem) {
-    #play :is(.scoringButton, #score) {
+    #play :is(.scoringButton, #scoreboard) {
         position: fixed;
         top: 1rem;
         --titleEdge: calc((100vw - var(--maxTitleWidth)) / 2) - 1rem;
@@ -482,7 +440,7 @@ dialog#scoring .trickCategory {
         left: calc(var(--titleEdge) - var(--buttonWidth));
     }
 
-    #score {
+    #scoreboard {
         right: calc(var(--titleEdge) - 6rem);
     }
 }
