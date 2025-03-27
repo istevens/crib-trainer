@@ -82,36 +82,22 @@ ul {
     margin-inline-start: 0;
 }
 
-dialog, ::backdrop, #cribtrainer {
+custom-dialog, ::backdrop, #cribtrainer {
     overflow: hidden;
     overscroll-behavior: none;
     touch-action: none;
 }
 
-dialog {
-    padding: var(--outerPadding);
-    background-color: var(--dialogColour);
+custom-dialog {
+    display: none;
     border: 1px solid black;
 }
 
-dialog[open] {
-    display: flex;
-    flex-direction: column;
-    justify-items: center;
-    width: auto;
-    max-height: 90vh;
-    max-width: min(90vw, 45rem);
-}
-
-dialog span {
+custom-dialog span {
     font-weight: 700;
 }
 
-dialog form {
-    flex: 0 0 auto;
-}
-
-dialog card-set {
+custom-dialog card-set {
     height: auto;
     min-height: min(12vh, 5rem);
     max-height: min(20vh, 10rem);
@@ -222,10 +208,6 @@ card-set {
     padding: var(--interItemPadding);
 }
 
-#hand, #cutCard, .view nav *, select {
-    border: var(--uiElementBorder);
-}
-
 #hand {
     grid-template-columns: repeat(auto-fit, minmax(0, calc(100% / var(--cardGroupingFactor))));
     justify-items: center;
@@ -233,7 +215,11 @@ card-set {
     width: 100%;
 }
 
-#hand, dialog, #cutCard, .view nav *, select {
+#hand, #cutCard, .view nav *, select {
+    border: var(--uiElementBorder);
+}
+
+#hand, custom-dialog, #cutCard, .view nav *, select {
     border-radius: 11.5px;
 }
 
@@ -260,7 +246,7 @@ select {
     font-weight: 700;
 }
 
-dialog#about {
+custom-dialog#about {
     max-width: clamp(20rem, 90%, 30rem);
 }
 
@@ -367,33 +353,33 @@ dialog#about {
     width: 100%;
 }
 
-dialog#scoring .trickScore {
+#scoring .trickScore {
     font-size: 2rem;
 }
 
-dialog#scoring .trickCategory,
+#scoring .trickCategory,
 .trickCategory:not(:has(li:nth-child(2))) {
     flex: 1 1 calc(var(--trickWidth) - var(--interItemPadding));
     gap: 0;
 }
 
-dialog#scoring .trickLabel,
+#scoring .trickLabel,
 .trickCategory:not(:has(li:nth-child(2))) .trickLabel {
     min-width: var(--trickLabelWidth);
 }
 
-dialog#scoring :has(card-set+span) {
+#scoring :has(card-set+span) {
     position: relative;
 }
 
-dialog#scoring card-set+span {
+#scoring card-set+span {
     position: absolute;
     bottom: 1rem;
     left: 3rem;
     width: 3rem;
 }
 
-dialog#scoring .trickCategory {
+#scoring .trickCategory {
     display: flex;
     flex-direction: column;
 }
@@ -413,6 +399,11 @@ dialog#scoring .trickCategory {
 
 @media (width > 40rem /* maxTitleWidth */ ) {
     :root {
+        --outerPadding: 1rem;
+        --interItemPadding: 1rem;
+    }
+
+    :root {
         --playTopMargin: calc(-0.3 * (var(--maxTitleWidth) / (var(--titleAspectRatio))));
     }
 
@@ -424,7 +415,7 @@ dialog#scoring .trickCategory {
         min-width: var(--trickLabelWidth);
     }
 
-    dialog#scoring {
+    #scoring {
         --trickWidth: 33%;
     }
 }
@@ -448,10 +439,8 @@ dialog#scoring .trickCategory {
 @media (orientation: landscape) and (hover: none) {
     :root {
         --maxTitleWidth: calc(25vh * var(--titleAspectRatio));
-    }
-
-    dialog[open] {
-        gap: var(--outerPadding);
+        --outerPadding: 0.5rem;
+        --interItemPadding: 0.5rem;
     }
 
     .view {
@@ -482,7 +471,7 @@ dialog#scoring .trickCategory {
         animation: forceRedraw 0.01s forwards;
     }
 
-    dialog card-set {
+    custom-dialog card-set {
         height: auto;
         min-height: min(20vh, 6rem) !important;
         max-height: min(20vh, 10rem);
@@ -492,7 +481,7 @@ dialog#scoring .trickCategory {
         flex-direction: row;
     }
 
-    dialog#scoring {
+    #scoring {
         --trickWidth: 33%;
     }
 

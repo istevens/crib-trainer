@@ -55,8 +55,7 @@
             </nav>
         </section>
 
-        <dialog id="about">
-            <h2>About this game</h2>
+        <custom-dialog is="dialog" id="about" title="About this game">
             <p>For many cribbage players, especially those new to the game,
             scoring hands can be a challenge. Automated scorers exist, but
             being able to go without is an advantage when assessing one's discards.</p>
@@ -64,11 +63,9 @@
             an explainer if you score incorrectly. It keeps score, so you can
             track your progress.</p>
             <p>If you're interested in learning more, read my post on my dev blog.</p>
-            <form><button command="close" formmethod="dialog">Close</button></form>
-        </dialog>
+        </custom-dialog>
 
-        <dialog id="scoring">
-            <h2>Crib hand points</h2>
+        <custom-dialog is="dialog" id="scoring" title="Crib hand points">
             <ul class="trickList stacked">
                 <li class="trickCategory"><span class="trickLabel"><span class="trickScore">2</span> <span class="trickDescription">for sums to 15 (J,Q,K = 10)</span></span><ul>
                     <li><card-set cards="JH,5C" arrangeBy="fan"></card-set></li>
@@ -92,10 +89,9 @@
                     <li><card-set cards="10C,JC" arrangeBy="fan"></card-set></li>
                 </ul></li>
             </ul>
-            <form><button command="close" formmethod="dialog">Close</button></form>
-        </dialog>
+        </custom-dialog>
 
-        <dialog id="tricks">
+        <custom-dialog id="tricks">
             <section id="lastPlay" class="stacked">
                 <div id="correctScore">
                     <span class="trickLabel stacked">
@@ -111,8 +107,7 @@
                 </div>
             </section>
             <ul class="trickList stacked"></ul>
-        <form><button command="close" formmethod="dialog">Close</button></form>
-        </dialog>
+        </custom-dialog>
 
         <score-overlay id="selectedScore"></score-overlay>
     </div>
@@ -173,8 +168,7 @@
         }
 
         function openDialog(d) {
-            d = document.querySelector('dialog#' + d);
-            d.dispatchEvent(new Event('open'));
+            d = document.querySelector('custom-dialog#' + d);
             d.showModal();
         }
 
@@ -208,6 +202,7 @@
             var selector = _getEl('scoreSelect');
             var scoreOverlay = _getEl('selectedScore');
             var startNewRound = () => trainer.dispatchEvent(new CustomEvent(NEW_ROUND, {bubbles: true}));
+
             trainer.addEventListener(SCORE_SELECTED, _getEl('scoreboard'));
             trainer.addEventListener(SCORE_SELECTED, scoreOverlay);
             trainer.addEventListener(NEW_ROUND, displayNextHand);
@@ -232,7 +227,7 @@
             window.addEventListener('hashchange', switchSections);
             switchSections();
 
-            var tricks = trainer.querySelector("dialog#tricks");
+            var tricks = trainer.querySelector("custom-dialog#tricks");
             tricks.addEventListener("click", () => tricks.close());
             tricks.addEventListener("close", startNewRound);
 
@@ -271,7 +266,7 @@
                 });
             });
 
-            const dialogs = document.querySelectorAll('dialog');
+            const dialogs = document.querySelectorAll('custom-dialog');
             const events = ['open', 'close'];
             dialogs.forEach(d => {
                 const dialogName = d.id.replace('Dialog', '').toLowerCase();
