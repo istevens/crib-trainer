@@ -324,6 +324,11 @@ class CustomDialogComponent extends HTMLElement {
             all: unset;
             display: initial;
         }
+
+        .dialog-content ::slotted(p) {
+            display: block;
+            margin-bottom: var(--interItemPadding);
+        }
     `;
 
     static TEMPLATE = (title, content) => `<dialog>
