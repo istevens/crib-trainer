@@ -39,11 +39,7 @@
 
         <section id="play" class="stacked view">
             <score-board id="scoreboard" class="stacked" successes=0 failures=0></score-board>
-
-            <section id="cards" class="stacked">
-                <card-set id="cutCard"></card-set>
-                <card-set id="hand" jitter="3"></card-set>
-            </section>
+            <cribbage-cards id="cards" class="stacked"></cribbage-cards>
 
             <nav class="stacked">
                 <select id="scoreSelect" class="primary" autofocus>
@@ -133,12 +129,13 @@
         const tricksTemplate = (name, score, tricks) => `<li class="trickCategory">${trickLabelTemplate(name, score, tricks)}<ul>${tricks.join("")}</ul></li>`;
         const trickTemplate = x => `<li><card-set class='trick' cards='${x}' arrangeBy='fan'></card-set></li>`;
 
-        function displayNextHand() {
+        function startNewRound() {
             play = CribbageHand.randomPlay();
             //play = {cutCard: '5S', hand: CribbageHand.fromString('5C 5D 5H JS')};
 
-            _getEl('cutCard').setAttribute('cards', [play.cutCard]);
-            _getEl('hand').setAttribute('cards', play.hand.cards);
+            const trainer = _getEl('cribtrainer');
+            var evPayload = {bubbles: true, detail: {play: play}};
+            trainer.dispatchEvent(new CustomEvent(NEW_ROUND, evPayload));
 
             var select = _getEl('scoreSelect');
             select.selectedIndex = 0;
@@ -199,11 +196,10 @@
             var trainer = _getEl('cribtrainer');
             var selector = _getEl('scoreSelect');
             var scoreOverlay = _getEl('selectedScore');
-            var startNewRound = () => trainer.dispatchEvent(new CustomEvent(NEW_ROUND, {bubbles: true}));
 
             trainer.addEventListener(SCORE_SELECTED, _getEl('scoreboard'));
             trainer.addEventListener(SCORE_SELECTED, scoreOverlay);
-            trainer.addEventListener(NEW_ROUND, displayNextHand);
+            trainer.addEventListener(NEW_ROUND, _getEl('cards'));
             selector.addEventListener('change', handWasScored);
             scoreOverlay.addEventListener('transitionend', (ev) => {
                 let expectedScore = play.hand.getScore(play.cutCard);

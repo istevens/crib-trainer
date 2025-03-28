@@ -114,9 +114,6 @@ select {
 
 card-set {
     pointer-events: none;
-    flex: 1 1 0;
-    height: 100%;
-    min-height: 0;
 }
 
 :is(:hover, :focus) {
@@ -154,10 +151,8 @@ card-set {
     flex: 0;
 }
 
-#cards {
+cribbage-cards {
     flex: 1;
-    min-height: 0;
-    width: 100%;
     max-width: calc(var(--maxTitleWidth) - 5rem);
     gap: 1rem;
     box-sizing: border-box;
@@ -204,27 +199,16 @@ card-set {
     position: relative;
 }
 
-#cards card-set {
-    padding: var(--interItemPadding);
-}
-
-#hand {
-    grid-template-columns: repeat(auto-fit, minmax(0, calc(100% / var(--cardGroupingFactor))));
-    justify-items: center;
-    justify-content: center;
-    width: 100%;
-}
-
-#hand, #cutCard, .view nav *, select {
+#cards::part(cutCard), #cards::part(hand), .view nav *, select {
     border: var(--uiElementBorder);
 }
 
-#hand, custom-dialog, #cutCard, .view nav *, select {
+#cards::part(cutCard), #cards::part(hand), .view nav *, select, custom-dialog {
     border-radius: 11.5px;
 }
 
 .view nav *.primary:not(select),
-#cutCard {
+#cards::part(cutCard) {
     outline: var(--uiElementBorder);
     outline-offset: var(--outlineOffset);
     margin-bottom: var(--outlineOffset);
@@ -447,7 +431,7 @@ custom-dialog#about {
         max-height: 25rem;
     }
 
-    #start, #cards {
+    #start, cribbage-cards {
         flex-direction: row;
     }
 
@@ -460,13 +444,13 @@ custom-dialog#about {
         margin: 0 1rem;
     }
 
-    #cards {
+    cribbage-cards {
         --cardGroupingFactor: 6;
         max-width: calc(var(--maxTitleWidth) + 13rem);
         gap: 2rem;
     }
 
-    #cutCard {
+    #cards::part(cutCard) {
         flex: none !important;
         animation: forceRedraw 0.01s forwards;
     }
