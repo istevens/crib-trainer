@@ -35,7 +35,7 @@ class SimpleTemplateComponent extends HTMLElement {
     render() {
         const compiledTemplate = this._template.replace(
             /\${(\w+)}/g,
-            (match, key) => `\${this._state.${key}}`
+            (match, key) => `\${this._state[\'${key}\']}`
         );
         const templateFunction = new Function(`return \`${compiledTemplate}\``);
         this.shadowRoot.innerHTML = templateFunction.call(this);
