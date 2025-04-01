@@ -50,7 +50,7 @@
             </nav>
         </section>
 
-        <custom-dialog is="dialog" id="about" title="About this game">
+        <custom-dialog role="dialog" id="about" title="About this game">
             <p>Scoring cribbage hands can be tricky, especially if you're new
             to the game. You <em>could</em> use a scoring app, but
             knowing how to score in your head is a real advantage when you assess your discards.</p>
@@ -58,50 +58,8 @@
             an explainer if you're wrong, and keeps track of your success rate.</p>
             <p>If you're interested in learning more, read my post on my dev blog.</p>
         </custom-dialog>
-
-        <custom-dialog is="dialog" id="scoring" title="Crib hand points">
-            <ul class="trickList stacked">
-                <li class="trickCategory"><span class="trickLabel"><span class="trickScore">2</span> <span class="trickDescription">for sums to 15 (J,Q,K = 10)</span></span><ul>
-                    <li><card-set cards="JH,5C" arrangeBy="fan"></card-set></li>
-                    <li><card-set cards="2H,3C,6D,3S,AC" arrangeBy="fan"></card-set></li>
-                </ul></li>
-                <li class="trickCategory"><span class="trickLabel"><span class="trickScore">2</span> <span class="trickDescription">for each pair</span></span><ul>
-                    <li><card-set cards="3C,3D" arrangeBy="fan"></card-set></li>
-                    <li><card-set cards="8C,8H" arrangeBy="fan"></card-set></li>
-                </ul></li>
-                <li class="trickCategory"><span class="trickLabel"><span class="trickScore">6</span> <span class="trickDescription">for a triplet</span></span><ul>
-                    <li><card-set cards="9C,9D,9H" arrangeBy="fan"></card-set></li>
-                </ul></li>
-                <li class="trickCategory"><span class="trickLabel"><span class="trickScore">12</span> <span class="trickDescription">for four-of-a-kind</span></span><ul>
-                    <li><card-set cards="QH,QS,QD,QC" arrangeBy="fan"></card-set></li>
-                </ul></li>
-                <li class="trickCategory"><span class="trickLabel"><span class="trickScore">1</span> <span class="trickDescription">for each card in runs of 3+</span></span><ul>
-                    <li><card-set cards="6D,7C,8H" arrangeBy="fan"></card-set><span class="trickDescription"> = 3</span></li>
-                    <li><card-set cards="10H,JS,QD,KC" arrangeBy="fan"></card-set><span class="trickDescription"> = 4</span></li>
-                </ul></li>
-                <li class="trickCategory"><span class="trickLabel"><span class="trickScore">1</span> <span class="trickDescription">for a jack of the cut card's suit</span></span><ul>
-                    <li><card-set cards="10C,JC" arrangeBy="fan"></card-set></li>
-                </ul></li>
-            </ul>
-        </custom-dialog>
-
-        <custom-dialog id="tricks">
-            <section id="lastPlay" class="stacked">
-                <div id="correctScore">
-                    <span class="trickLabel stacked">
-                        <span class="trickDescription">
-                            Score is
-                        </span>
-                        <span class="trickScore"></span>
-                    </span>
-                </div>
-                <div id="lastCards" class="stacked">
-                    <card-set id="lastCutCard"></card-set>
-                    <card-set id="lastHand" jitter="2"></card-set>
-                </div>
-            </section>
-            <ul class="trickList stacked"></ul>
-        </custom-dialog>
+        <scoring-dialog role="dialog" id="scoring" title="Crib hand points"></scoring-dialog>
+        <tricks-dialog role="dialog" id="tricks"></tricks-dialog>
 
         <score-overlay id="selectedScore"></score-overlay>
     </div>
@@ -115,19 +73,6 @@
         var play = null;
         const SCORE_SELECTED = "scoreSelected";
         const NEW_ROUND = "newRound";
-
-        const scoreTemplate = (name, score, tricks) => {
-            var n = tricks.length;
-            var isHisNobs = name.includes('nobs');
-            name = !isHisNobs && (n == 1 && 'a' || n == 0 && 'no' || n) + ' ' + name || name;
-            name = !isHisNobs && n == 1 && name.replace(/s$/, '') || name;
-            var html = `<span class="trickScore">${score}</span>
-                <span class="trickDescription">for ${name}</span>`;
-            return html;
-        };
-        const trickLabelTemplate = (name, score, tricks) => `<span class="trickLabel stacked">${scoreTemplate(name, score, tricks)}</span>`;
-        const tricksTemplate = (name, score, tricks) => `<li class="trickCategory">${trickLabelTemplate(name, score, tricks)}<ul>${tricks.join("")}</ul></li>`;
-        const trickTemplate = x => `<li><card-set class='trick' cards='${x}' arrangeBy='fan'></card-set></li>`;
 
         function startNewRound() {
             play = CribbageHand.randomPlay();
@@ -156,31 +101,9 @@
             this.dispatchEvent(new CustomEvent(SCORE_SELECTED, evPayload));
         }
 
-        function renderTrick(t) {
-            var tricks = t[1].data.map(trickTemplate);
-            tricks = tricksTemplate(t[0], t[1].score, tricks);
-            return tricks;
-        }
-
         function openDialog(d) {
-            d = document.querySelector('custom-dialog#' + d);
+            d = document.querySelector('[role=dialog]#' + d);
             d.showModal();
-        }
-
-        function showTricks(play, expectedScore) {
-            var cutCard = play.cutCard;
-            var hand = play.hand;
-
-            _getEl('lastCutCard').setAttribute('cards', [cutCard]);
-            _getEl('lastHand').setAttribute('cards', hand.cards);
-            this.querySelector('#correctScore .trickScore').innerHTML = expectedScore;
-
-            var tricksEl = this.querySelector('#tricks .trickList');
-            var tricks = Object.entries(hand.getTricks(cutCard));
-            var hasTricks = tricks.length > 0;
-            tricksEl.innerHTML = hasTricks && tricks.map(renderTrick).join("") || tricksTemplate("tricks", 0, []);
-
-            openDialog('tricks');
         }
 
         function populateScoreOptions() {
@@ -190,6 +113,11 @@
                 o.label = o.value = i;
                 selector.appendChild(o);
             });
+        }
+
+        function showTricks(play, expectedScore) {
+            const dialog = document.getElementById('tricks');
+            dialog.showModal(play, expectedScore);
         }
 
         function addEventListeners() {
@@ -221,8 +149,7 @@
             window.addEventListener('hashchange', switchSections);
             switchSections();
 
-            var tricks = trainer.querySelector("custom-dialog#tricks");
-            tricks.addEventListener("click", () => tricks.close());
+            var tricks = trainer.querySelector("#tricks");
             tricks.addEventListener("close", startNewRound);
 
             var dialogButtons = trainer.querySelectorAll("[command=show-modal]");

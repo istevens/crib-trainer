@@ -73,34 +73,14 @@ p {
     font-size: 1.33rem;
 }
 
-li {
-    list-style: none;
-}
-
-ul {
-    padding-inline-start: 0;
-    margin-inline-start: 0;
-}
-
-custom-dialog, ::backdrop, #cribtrainer {
+[role=dialog], ::backdrop, #cribtrainer {
     overflow: hidden;
     overscroll-behavior: none;
     touch-action: none;
 }
 
-custom-dialog {
+[role=dialog] {
     display: none;
-    border: 1px solid black;
-}
-
-custom-dialog span {
-    font-weight: 700;
-}
-
-custom-dialog card-set {
-    height: auto;
-    min-height: min(12vh, 5rem);
-    max-height: min(20vh, 10rem);
 }
 
 select {
@@ -203,7 +183,7 @@ cribbage-cards {
     border: var(--uiElementBorder);
 }
 
-#cards::part(cutCard), #cards::part(hand), .view nav *, select, custom-dialog {
+#cards::part(cutCard), #cards::part(hand), .view nav *, select, [role=dialog] {
     border-radius: 11.5px;
 }
 
@@ -230,142 +210,8 @@ select {
     font-weight: 700;
 }
 
-custom-dialog#about {
+#about {
     max-width: clamp(20rem, 90%, 30rem);
-}
-
-.trickLabel {
-    position: relative;
-    text-align: center;
-    place-items: center;
-    min-width: var(--trickLabelWidth);
-    margin: auto;
-}
-
-.trickScore {
-    display: block;
-    font-size: 3rem;
-    line-height: 75%;
-}
-
-.trickList {
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    gap: calc(2*var(--interItemPadding)) var(--interItemPadding);
-    flex: 1;
-    margin: 0;
-    padding-top: calc(2*var(--interItemPadding));
-}
-
-.trickCategory {
-    display: grid;
-    grid-template-columns: var(--trickLabelWidth) 1fr;
-    gap: var(--interItemPadding);
-    flex: 1 1 100%;
-    max-width: 100%;
-}
-
-.trickDescription {
-    width: 75%;
-    font-size: 1rem;
-}
-
-#lastPlay {
-    position: relative;
-    gap: calc(2*var(--interItemPadding));
-    padding-bottom: calc(2*var(--interItemPadding));
-    margin: auto;
-    width: 75%;
-}
-
-#lastPlay::after {
-    position: absolute;
-    display: block;
-    width: 75%;
-    bottom: 0;
-    left: 12.5%;
-    content: '';
-    border-width: 1px 0 0 0;
-    border-image: radial-gradient(circle, var(--dialogDecorColour), 75%, rgba(0,0,0,0)) 1 0;
-    border-style: solid;
-}
-
-#lastPlay .trickScore {
-    font-size: 4rem;
-}
-
-#lastCutCard {
-    justify-items: flex-start;
-}
-
-#lastHand {
-    justify-items: flex-end;
-}
-
-#tricks .trickCategory .trickLabel::before {
-    position: absolute;
-    left: 0;
-    font-size: 2rem;
-    font-weight: 700;
-}
-
-#tricks .trickCategory:first-child .trickLabel::before {
-    content: '=';
-}
-
-#tricks .trickCategory:not(:first-child) .trickLabel::before {
-    content: '+';
-}
-
-#tricks .trickCategory:only-child .trickLabel::before {
-    content: '';
-}
-
-#tricks .trickCategory:only-child .trickScore {
-    display: none;
-}
-
-.trickCategory ul, #lastCards {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-evenly;
-    align-items: center;
-    place-items: center;
-    min-height: 0;
-    width: 100%;
-}
-
-#scoring .trickScore {
-    font-size: 2rem;
-}
-
-#scoring .trickCategory,
-.trickCategory:not(:has(li:nth-child(2))) {
-    flex: 1 1 calc(var(--trickWidth) - var(--interItemPadding));
-    gap: 0;
-}
-
-#scoring .trickLabel,
-.trickCategory:not(:has(li:nth-child(2))) .trickLabel {
-    min-width: var(--trickLabelWidth);
-}
-
-#scoring :has(card-set+span) {
-    position: relative;
-}
-
-#scoring card-set+span {
-    position: absolute;
-    bottom: 1rem;
-    left: 3rem;
-    width: 3rem;
-}
-
-#scoring .trickCategory {
-    display: flex;
-    flex-direction: column;
 }
 
 #selectedScore {
@@ -385,22 +231,7 @@ custom-dialog#about {
     :root {
         --outerPadding: 1rem;
         --interItemPadding: 1rem;
-    }
-
-    :root {
         --playTopMargin: calc(-0.3 * (var(--maxTitleWidth) / (var(--titleAspectRatio))));
-    }
-
-    .trickCategory:not(:has(li:nth-child(3))) {
-        flex: 1 1 calc(var(--trickWidth) - var(--interItemPadding));
-    }
-
-    .trickCategory:not(:has(li:nth-child(3))) .trickLabel {
-        min-width: var(--trickLabelWidth);
-    }
-
-    #scoring {
-        --trickWidth: 33%;
     }
 }
 
@@ -453,20 +284,6 @@ custom-dialog#about {
     #cards::part(cutCard) {
         flex: none !important;
         animation: forceRedraw 0.01s forwards;
-    }
-
-    custom-dialog card-set {
-        height: auto;
-        min-height: min(20vh, 6rem) !important;
-        max-height: min(20vh, 10rem);
-    }
-
-    #lastPlay {
-        flex-direction: row;
-    }
-
-    #scoring {
-        --trickWidth: 33%;
     }
 
     @keyframes forceRedraw {

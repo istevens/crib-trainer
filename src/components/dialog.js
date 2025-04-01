@@ -1,10 +1,18 @@
-class CustomDialogComponent extends HTMLElement {
+export default class CustomDialogComponent extends HTMLElement {
     static observedAttributes = ['title'];
 
     static STYLE = `
         :host {
             display: none;
             position: relative;
+            border: 1px solid black;
+        }
+
+        /* @TODO Fix duplication of .stacked from style.css  */
+        .stacked {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         :host([open]) {
@@ -57,6 +65,10 @@ class CustomDialogComponent extends HTMLElement {
             flex: 1;
         }
 
+        .dialog-content span {
+            font-weight: 700;
+        }
+
         .dialog-content ::slotted(*) {
             all: unset;
             display: initial;
@@ -66,25 +78,43 @@ class CustomDialogComponent extends HTMLElement {
             display: block;
             margin-bottom: var(--interItemPadding);
         }
-    `;
 
-    static TEMPLATE = (title, content) => `<dialog>
-        <header>
-            <h2 class="dialog-title">${title}</h2>
-            <button class="dialog-close" command="close">&times;</button>
-        </header>
-        <div class="dialog-content">
-            <slot></slot>
-        </div>
-    </dialog>
+        .dialog-content ::slotted(li) {
+            list-style: none;
+        }
+
+        .dialog-content ::slotted(ul) {
+            padding-inline-start: 0;
+            margin-inline-start: 0;
+        }
+
     `;
 
     constructor() {
         super();
         this.attachShadow({mode: "open"});
+        this.setupStyles();
+        this.setAttribute('role', 'dialog');
+    }
+
+    setupStyles() {
+        const base = this.getBaseStyleSheet();
+        const additional = this.getAdditionalStyles?.() || '';
+        const style = [base];
+
+        additional && (() => {
+            const additionalStyle = new CSSStyleSheet();
+            additionalStyle.replaceSync(additional);
+            style.push(additionalStyle);
+        })();
+
+        this.shadowRoot.adoptedStyleSheets = style;
+    }
+
+    getBaseStyleSheet() {
         const style = new CSSStyleSheet();
-        style.replaceSync(CustomDialogComponent.STYLE);
-        this.shadowRoot.adoptedStyleSheets = [style];
+        style.replaceSync(this.constructor.STYLE);
+        return style;
     }
 
     connectedCallback() {
@@ -93,8 +123,25 @@ class CustomDialogComponent extends HTMLElement {
     }
 
     render() {
+        this.shadowRoot.innerHTML = this.createDialogHTML();
+        this.afterRender?.();
+    }
+
+    createDialogHTML() {
         const title = this.getAttribute('title') || '';
-        this.shadowRoot.innerHTML = CustomDialogComponent.TEMPLATE(title);
+        return `<dialog>
+            <header>
+                <h2 class="dialog-title">${title}</h2>
+                <button class="dialog-close" command="close">&times;</button>
+            </header>
+            <div class="dialog-content">
+                ${this.createDialogContentHTML()}
+            </div>
+        </dialog>`;
+    }
+
+    createDialogContentHTML() {
+        return '<slot></slot>';
     }
 
     get dialog() {
@@ -134,5 +181,5 @@ class CustomDialogComponent extends HTMLElement {
         shouldUpdate && (el.textContent = newValue);
     }
 }
-customElements.define('custom-dialog', CustomDialogComponent);
 
+customElements.define('custom-dialog', CustomDialogComponent);
