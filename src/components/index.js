@@ -1,5 +1,6 @@
 'use strict';
 
+import * as analytics from "./analytics.js";
 import * as cardset from "./cardset.js";
 import * as cribbage_cards from "./cribbage_cards.js";
 import * as dialog from "./dialog.js";

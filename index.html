@@ -64,6 +64,8 @@
         <score-overlay id="selectedScore"></score-overlay>
     </div>
 
+    <analytics-tracking></analytics-tracking>
+
     <script type="module">
         import CribbageHand from "./src/cribbagescorer.js";
 
@@ -162,42 +164,17 @@
 
         function addAnalyticsListeners() {
             const trainer = document.getElementById('cribtrainer');
+            const analytics = document.getElementsByTagName('analytics-tracking')[0];
 
-            trainer.addEventListener(SCORE_SELECTED, (ev) => {
-                const { selectedScore, expectedScore, scoresMatch } = ev.detail;
-                gtag('event', 'hand_scored', {
-                    event_category: 'Game',
-                    event_label: scoresMatch ? 'Correct Score' : 'Incorrect Score',
-                });
-            });
+            trainer.addEventListener(SCORE_SELECTED, analytics);
+            trainer.addEventListener(NEW_ROUND, analytics);
+            window.addEventListener('hashchange', analytics);
 
-            trainer.addEventListener(NEW_ROUND, () => {
-                gtag('event', 'round_started', {
-                    event_category: 'Game',
-                    event_label: 'New Round',
-                });
-            });
-
-            window.addEventListener('hashchange', e => {
-                const getSection = u => u && u.indexOf('#') > 0 && u.split('#')[1] || 'start';
-                gtag('event', 'section_switched', {
-                    event_category: 'Navigation',
-                    event_label: getSection(e.newURL),
-                    from_url: getSection(e.oldURL),
-                });
-            });
-
-            const dialogs = document.querySelectorAll('custom-dialog');
+            const dialogs = document.querySelectorAll('[role=dialog]');
             const events = ['open', 'close'];
             dialogs.forEach(d => {
                 const dialogName = d.id.replace('Dialog', '').toLowerCase();
-                events.forEach(e => d.addEventListener(e, () => {
-                    e = e.at(-1) == 'e' && e.slice(0,-1) || e;
-                    gtag('event', `dialog_${e}ed`, {
-                        event_category: 'Dialogs',
-                        event_label: dialogName,
-                    });
-                }));
+                events.forEach(e => d.addEventListener(e, analytics));
             });
         }
 

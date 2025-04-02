@@ -1,5 +1,3 @@
-'use strict';
-
 import defineComponent from "./simple_template.js";
 
 defineComponent('score-overlay',
