@@ -148,6 +148,12 @@ cribbage-cards {
     cursor: pointer;
 }
 
+select:hover {
+    color: var(--tableDecorColour);
+    background-color: transparent;
+    background-image: var(--svgTrianglesActive);
+}
+
 .view nav *:not(.primary) {
     width: var(--buttonWidth);
 }
@@ -217,14 +223,6 @@ select {
 #selectedScore {
     font-size: 24em;
     font-weight: 700;
-}
-
-@media (hover: hover) {
-    select:hover {
-        color: var(--tableDecorColour);
-        background-color: transparent;
-        background-image: var(--svgTrianglesActive);
-    }
 }
 
 @media (width > 40rem /* maxTitleWidth */ ) {
