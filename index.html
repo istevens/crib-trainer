@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="utf-8">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://www.googletagmanager.com">
@@ -9,10 +10,11 @@
     <link rel="preload" as="script" href="https://www.googletagmanager.com/gtag/js?id=G-8JTHR1K2WP">
     <title>Crib Trainer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="description" content="A game meant to help people practice scoring cribbage hands so they have an advantage when playing the game with others." />
+    <meta name="description" content="A game to help people practice scoring cribbage hands so they have an advantage when playing the game with others." />
     <meta name="author" content="Ian Stevens" />
-    <script async type="module" src="src/components/index.js"></script>
-    <script async type="module" src="cardmeister.github.io/elements.cardmeister.min.js"></script>
+    <script defer type="module" src="src/components/index.js"></script>
+    <script defer type="module" src="src/crib_trainer.js"></script>
+    <script defer type="module" src="cardmeister.github.io/elements.cardmeister.min.js"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-8JTHR1K2WP"></script>
     <script>
           window.dataLayer = window.dataLayer || [];
@@ -28,7 +30,7 @@
     <div id="cribtrainer" class="stacked">
         <h1><a href="#" tabindex="0">Crib Trainer</a></h1>
 
-        <section id="start" class="stacked view">
+        <section id="start" class="stacked view activeContent">
             <h2>Improve your cribbage hand scoring with this training game.</h2>
             <nav class="stacked">
                 <a role="button" class="primary" href="#play" autofocus tabindex="0">Play</a>
@@ -62,130 +64,8 @@
         <tricks-dialog role="dialog" id="tricks"></tricks-dialog>
 
         <score-overlay id="selectedScore"></score-overlay>
+        <analytics-tracking></analytics-tracking>
     </div>
 
-    <analytics-tracking></analytics-tracking>
-
-    <script type="module">
-        import CribbageHand from "./src/cribbagescorer.js";
-
-        const _getEl = x => document.getElementById(x);
-        const isTouch = 'ontouchstart' in window;
-
-        var play = null;
-        const SCORE_SELECTED = "scoreSelected";
-        const NEW_ROUND = "newRound";
-
-        function startNewRound() {
-            play = CribbageHand.randomPlay();
-            //play = {cutCard: '5S', hand: CribbageHand.fromString('5C 5D 5H JS')};
-
-            const trainer = _getEl('cribtrainer');
-            var evPayload = {bubbles: true, detail: {play: play}};
-            trainer.dispatchEvent(new CustomEvent(NEW_ROUND, evPayload));
-
-            var select = _getEl('scoreSelect');
-            select.selectedIndex = 0;
-            select.focus();
-            isTouch && select.blur();
-        }
-
-        function handWasScored(ev) {
-            var selected = this.value;
-            var expected = play.hand.getScore(play.cutCard);
-            var evPayload = {bubbles: true, detail: {
-                    play: play,
-                    selectedScore: selected,
-                    expectedScore: expected,
-                    scoresMatch: selected == expected
-            }};
-
-            this.dispatchEvent(new CustomEvent(SCORE_SELECTED, evPayload));
-        }
-
-        function openDialog(d) {
-            d = document.querySelector('[role=dialog]#' + d);
-            d.showModal();
-        }
-
-        function populateScoreOptions() {
-            var selector = _getEl('scoreSelect');
-            new Array(30).fill().map((x, i) => {
-                var o = document.createElement('option');
-                o.label = o.value = i;
-                selector.appendChild(o);
-            });
-        }
-
-        function showTricks(play, expectedScore) {
-            const dialog = document.getElementById('tricks');
-            dialog.showModal(play, expectedScore);
-        }
-
-        function addEventListeners() {
-            var trainer = _getEl('cribtrainer');
-            var selector = _getEl('scoreSelect');
-            var scoreOverlay = _getEl('selectedScore');
-
-            trainer.addEventListener(SCORE_SELECTED, _getEl('scoreboard'));
-            trainer.addEventListener(SCORE_SELECTED, scoreOverlay);
-            trainer.addEventListener(NEW_ROUND, _getEl('cards'));
-            selector.addEventListener('change', handWasScored);
-            scoreOverlay.addEventListener('transitionend', (ev) => {
-                let expectedScore = play.hand.getScore(play.cutCard);
-                let scoresMatch = selector.value == expectedScore;
-                let next = scoresMatch && startNewRound || (() => showTricks.bind(trainer).call(trainer, play, expectedScore));
-                next();
-            });
-
-            var switchSections = () => {
-                var location = window.location.hash.replace('#', '');
-                location = location || 'start';
-                var sections = ['.activeContent', '#' + location];
-                sections.map(x => {
-                    x = trainer.querySelector(x);
-                    x = x && x.classList.toggle('activeContent');
-                });
-                location == 'play' && startNewRound();
-            };
-            window.addEventListener('hashchange', switchSections);
-            switchSections();
-
-            var tricks = trainer.querySelector("#tricks");
-            tricks.addEventListener("close", startNewRound);
-
-            var dialogButtons = trainer.querySelectorAll("[command=show-modal]");
-            Array.from(dialogButtons, b => b.addEventListener('click', () => openDialog(b.getAttribute('commandfor'))));
-
-            // Prevent double-tap to zoom and long-press
-            document.addEventListener('dblclick', e => e.preventDefault());
-            document.addEventListener('contextmenu', e => e.preventDefault());
-        }
-
-        function addAnalyticsListeners() {
-            const trainer = document.getElementById('cribtrainer');
-            const analytics = document.getElementsByTagName('analytics-tracking')[0];
-
-            trainer.addEventListener(SCORE_SELECTED, analytics);
-            trainer.addEventListener(NEW_ROUND, analytics);
-            window.addEventListener('hashchange', analytics);
-
-            const dialogs = document.querySelectorAll('[role=dialog]');
-            const events = ['open', 'close'];
-            dialogs.forEach(d => {
-                const dialogName = d.id.replace('Dialog', '').toLowerCase();
-                events.forEach(e => d.addEventListener(e, analytics));
-            });
-        }
-
-        function setup() {
-            populateScoreOptions();
-            addEventListeners();
-            addAnalyticsListeners();
-        }
-
-        setup();
-
-    </script>
 </body>
 </html>
