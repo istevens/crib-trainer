@@ -2,6 +2,8 @@
 export class CardSetComponent extends HTMLElement {
     static STYLE = `
         :host {
+            --cardset-slide-in: 0;
+            --cardset-is-active: 0;
             --cardset-card-count: 0;
             --cardset-card-rotation: 7;
             --cardset-card-aspect-ratio: 240/334;
@@ -28,12 +30,20 @@ export class CardSetComponent extends HTMLElement {
         }
 
         :host([arrangeBy=row])::part(card) {
+            --active: var(--cardset-is-active, 0);
+            --slide: var(--cardset-slide-in, 0);
             --xyjitterbase: calc(0.25rem * var(--cardset-card-jitter));
             --rotjitterbase: calc(3deg * var(--cardset-card-jitter));
+
             transform: translate(
-                calc(var(--xyjitterbase) * var(--cardset-card-xjitter)),
-                calc(var(--xyjitterbase) * var(--cardset-card-yjitter))
-            ) rotateZ(calc(var(--rotjitterbase) * var(--cardset-card-rotjitter)));
+                    calc(var(--xyjitterbase) * var(--cardset-card-xjitter)),
+                    calc(var(--xyjitterbase) * var(--cardset-card-yjitter))
+                ) rotateZ(calc(var(--rotjitterbase) * var(--cardset-card-rotjitter)))
+                translateX(calc((1 - var(--active)) * -100vw * var(--slide)));
+
+            will-change: transform;
+            transition: transform 500ms ease-in;
+            transition-delay: calc((var(--cardset-card-count) - 1 - var(--cardset-card-number)) * var(--slide) * var(--active) * 100ms);
         }
 
         :host([arrangeBy=fan])::part(card) {
@@ -93,7 +103,7 @@ export class CardSetComponent extends HTMLElement {
     }
 
     get cardNodes() {
-        let cards = Array.from(this.shadowRoot.childNodes);
+        let cards = Array.from(this.shadowRoot.querySelectorAll('playing-card'));
         return cards;
     }
 
