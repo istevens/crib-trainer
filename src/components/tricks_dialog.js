@@ -49,6 +49,15 @@ class TricksDialogComponent extends TrickListDialogComponent {
             margin-bottom: var(--interItemPadding);
         }
 
+        .trickCategory {
+            display: grid;
+            grid-template-columns: var(--trickLabelWidth) 1fr;
+        }
+
+        .trickCategory:has(li:nth-child(2)) {
+            flex: 1 1 100%;
+        }
+
         .trickCategory .trickLabel::before {
             position: absolute;
             left: 0;
@@ -77,6 +86,11 @@ class TricksDialogComponent extends TrickListDialogComponent {
             #lastPlay {
                 flex-direction: row;
             }
+
+            .trickCategory:not(:has(li:nth-child(3))) {
+                flex: 1 1 calc(var(--trickWidth) - 3 * var(--interItemPadding)) !important;
+            }
+
         }
     `;
 

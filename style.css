@@ -13,8 +13,6 @@
     --outlineOffset: 10px;
     --titleAspectRatio: 1310/403;
     --maxTitleWidth: 40rem;
-    --trickWidth: 50%;
-    --trickLabelWidth: 6rem;
     --playTopMargin: calc(-0.3 * (100vw / (var(--titleAspectRatio))));
     --cardGroupingFactor: 5;
     --svgTrianglesInactive: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -8 8 16"><polygon points="8,-1 4.5,-8 1,-1" fill="black"/><polygon points="4.5,8 1,1 8,1" fill="black"/></svg>');

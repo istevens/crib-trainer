@@ -2,10 +2,6 @@ import CustomDialogComponent from "./dialog.js";
 
 export default class TrickListDialogComponent extends CustomDialogComponent {
     static ADDITIONAL_STYLES = `
-        :root {
-            --trickWidth: 50%;
-        }
-
         li {
             list-style: none;
         }
@@ -36,6 +32,8 @@ export default class TrickListDialogComponent extends CustomDialogComponent {
         }
 
         .trickList {
+            --trickWidth: 50%;
+            display: flex;
             flex-direction: row;
             flex-wrap: wrap;
             align-items: flex-start;
@@ -45,20 +43,8 @@ export default class TrickListDialogComponent extends CustomDialogComponent {
         }
 
         .trickCategory {
-            display: grid;
-            grid-template-columns: var(--trickLabelWidth) 1fr;
-            gap: var(--interItemPadding);
-            flex: 1 1 100%;
-            max-width: 100%;
-        }
-
-        .trickCategory:not(:has(li:nth-child(2))) {
-            flex: 1 1 calc(var(--trickWidth) - 2 * var(--interItemPadding));
-            gap: 0;
-        }
-
-        .trickCategory:not(:has(li:nth-child(2))) .trickLabel {
-            min-width: var(--trickLabelWidth);
+            --trickWidth: 50%;
+            flex: 1 1 calc(var(--trickWidth) - 2 * var(--interItemPadding)) !important;
         }
 
         .trickDescription {
@@ -77,26 +63,16 @@ export default class TrickListDialogComponent extends CustomDialogComponent {
             width: 100%;
         }
 
-        @media (width > 40rem /* maxTitleWidth */ ) {
-            :root {
+        @media (width > 40rem /* maxTitleWidth */ )
+                or ((orientation: landscape) and (hover:none)) {
+            .trickCategory {
                 --trickWidth: 33%;
                 --trickLabelWidth: 6rem;
-            }
-
-            .trickCategory:not(:has(li:nth-child(3))) {
-                flex: 1 1 calc(var(--trickWidth) - 2 * var(--interItemPadding));
-            }
-
-            .trickCategory:not(:has(li:nth-child(3))) .trickLabel {
-                min-width: var(--trickLabelWidth);
+                flex: 1 1 calc(var(--trickWidth) - 3 * var(--interItemPadding)) !important;
             }
         }
 
         @media (orientation: landscape) and (hover: none) {
-            :root {
-                --trickWidth: 33%;
-            }
-
             card-set {
                 height: auto;
                 min-height: min(20vh, 6rem) !important;

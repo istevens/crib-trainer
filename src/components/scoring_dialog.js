@@ -6,15 +6,9 @@ class ScoringDialogComponent extends TrickListDialogComponent {
             font-size: 2rem;
         }
 
-        .trickCategory,
-        .trickCategory:not(:has(li:nth-child(2))) {
-            flex: 1 1 calc(var(--trickWidth) - 2 * var(--interItemPadding));
-            gap: 0;
-        }
-
-        .trickLabel,
-        .trickCategory:not(:has(li:nth-child(2))) .trickLabel {
-            min-width: var(--trickLabelWidth);
+        .trickCategory {
+            display: flex;
+            flex-direction: column;
         }
 
         :has(card-set+span) {
@@ -24,15 +18,8 @@ class ScoringDialogComponent extends TrickListDialogComponent {
         card-set+span {
             position: absolute;
             bottom: 1rem;
-            left: 3rem;
-            width: 3rem;
+            left: 3em;
         }
-
-        .trickCategory {
-            display: flex;
-            flex-direction: column;
-        }
-
     `;
 
     getAdditionalStyles() {
