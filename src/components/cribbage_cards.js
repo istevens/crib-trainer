@@ -23,19 +23,21 @@ defineComponent(
         justify-content: center;
         width: 100%;
     }
-
-    :host::part(hand).active {
-        transition: transform 500ms ease-in;
-    }
     `,
     function(ev) {
-        const play = ev.detail.play;
-        this.classList.toggle('active');
-        this.addEventListener('transitionend', () => this.classList.remove('active'), {once: true});
+        const getCardSet = partName => {
+            return this.shadowRoot.querySelector(`[part="${partName}"]`);
+        };
 
+        const dealAndFlipCards = () => {
+            getCardSet('hand').dealCards();
+        }
+
+        setTimeout(dealAndFlipCards, 0);
+        const play = ev.detail.play;
         return {
             cutCard: play.cutCard,
             hand: play.hand.cards
-        };
+        }
     }
 );

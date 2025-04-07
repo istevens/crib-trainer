@@ -2,8 +2,6 @@
 export class CardSetComponent extends HTMLElement {
     static STYLE = `
         :host {
-            --cardset-slide-in: 0;
-            --cardset-is-active: 0;
             --cardset-card-count: 0;
             --cardset-card-rotation: 7;
             --cardset-card-aspect-ratio: 240/334;
@@ -30,20 +28,29 @@ export class CardSetComponent extends HTMLElement {
         }
 
         :host([arrangeBy=row])::part(card) {
-            --active: var(--cardset-is-active, 0);
-            --slide: var(--cardset-slide-in, 0);
             --xyjitterbase: calc(0.25rem * var(--cardset-card-jitter));
             --rotjitterbase: calc(3deg * var(--cardset-card-jitter));
+        }
 
-            transform: translate(
-                    calc(var(--xyjitterbase) * var(--cardset-card-xjitter)),
-                    calc(var(--xyjitterbase) * var(--cardset-card-yjitter))
-                ) rotateZ(calc(var(--rotjitterbase) * var(--cardset-card-rotjitter)))
-                translateX(calc((1 - var(--active)) * -100vw * var(--slide)));
+        @keyframes slideInFromLeft {
+            from {
+                transform: translateX(-100vw) translate(0) rotateZ(0);
+            }
+            to {
+                transform: translateX(0)
+                        translate(
+                            calc(var(--xyjitterbase) * var(--cardset-card-xjitter)),
+                            calc(var(--xyjitterbase) * var(--cardset-card-yjitter))
+                        ) rotateZ(calc(var(--rotjitterbase) * var(--cardset-card-rotjitter)));
+            }
+        }
 
-            will-change: transform;
-            transition: transform 500ms ease-in;
-            transition-delay: calc((var(--cardset-card-count) - 1 - var(--cardset-card-number)) * var(--slide) * var(--active) * 100ms);
+        :host([arrangeBy=row].dealing) playing-card {
+            transform: translateX(-100vw);
+        }
+
+        :host([arrangeBy=row]) playing-card.slide-in {
+            animation: slideInFromLeft 200ms ease-in forwards !important;
         }
 
         :host([arrangeBy=fan])::part(card) {
@@ -56,6 +63,7 @@ export class CardSetComponent extends HTMLElement {
             transform-origin: left bottom;
             transform-box: fill-box;
         }
+
     `;
 
     static observedAttributes = ['cards'];
@@ -102,6 +110,25 @@ export class CardSetComponent extends HTMLElement {
         return card;
     }
 
+    dealCards() {
+        let dealNextCard = cards => {
+            let card = this.slideCardIn(cards.length-1);
+            card.addEventListener('animationend', () => {
+                cards = cards.slice(0, -1);
+                cards.length > 0 && dealNextCard(cards);
+            }, {once:true});
+        }
+
+        this.classList.add('dealing');
+        dealNextCard(this.cardNodes);
+    }
+
+    slideCardIn(index) {
+        let card = this.cardNodes[index];
+        card.classList.add('slide-in');
+        return card;
+    }
+
     get cardNodes() {
         let cards = Array.from(this.shadowRoot.querySelectorAll('playing-card'));
         return cards;
@@ -122,12 +149,10 @@ export class CardSetComponent extends HTMLElement {
     attributeChangedCallback(name, oldVal, newVal) {
         let shouldRender = name == 'cards' && newVal != oldVal;
         let newCards = newVal.split(',').map(x => x.trim()) || [];
-        let updateCount = (c) => this.style.setProperty('--cardset-card-count', c);
+        let updateCount = (c) => this.style.setProperty(this.getCardStyleName('count'), c);
         shouldRender && updateCount(newCards.length);
         shouldRender && this.renderCards(newCards);
         shouldRender && this.cardNodes.forEach(x => this.jitterCard(x));
     }
 }
 customElements.define("card-set", CardSetComponent);
-
-
