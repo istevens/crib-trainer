@@ -5,9 +5,12 @@ defineComponent(
     '<card-set part="cutCard" cards="${cutCard}"></card-set><card-set part="hand" cards="${hand}" jitter="3"></card-set>',
     `
     :host {
+        --cardGroupingFactor: 5;
         display: flex;
+        gap: 1rem;
         min-height: 0;
         width: 100%;
+        box-sizing: border-box;
     }
 
     card-set {
@@ -22,6 +25,25 @@ defineComponent(
         justify-items: center;
         justify-content: center;
         width: 100%;
+    }
+
+    @media (orientation: landscape) and (hover: none) {
+        :host {
+            --cardGroupingFactor: 6;
+            flex-direction: row !important;
+            max-width: calc(var(--maxTitleWidth) + 13rem);
+            gap: 2rem;
+        }
+
+        :host::part(cutCard) {
+            flex: none !important;
+            animation: forceRedraw 0.01s forwards;
+        }
+
+        @keyframes forceRedraw {
+            from { opacity: 0.99; }
+            to { opacity: 1; }
+        }
     }
     `,
     function(ev) {

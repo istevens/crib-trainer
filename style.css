@@ -14,7 +14,6 @@
     --titleAspectRatio: 1310/403;
     --maxTitleWidth: 40rem;
     --playTopMargin: calc(-0.3 * (100vw / (var(--titleAspectRatio))));
-    --cardGroupingFactor: 5;
     --svgTrianglesInactive: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -8 8 16"><polygon points="8,-1 4.5,-8 1,-1" fill="black"/><polygon points="4.5,8 1,1 8,1" fill="black"/></svg>');
     --svgTrianglesActive: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -8 8 16"><polygon points="8,-1 4.5,-8 1,-1" fill="rgba(255, 255, 130, 0.5)"/><polygon points="4.5,8 1,1 8,1" fill="rgba(255, 255, 130, 0.5)"/></svg>');
 }
@@ -132,8 +131,6 @@ card-set {
 cribbage-cards {
     flex: 1;
     max-width: calc(var(--maxTitleWidth) - 5rem);
-    gap: 1rem;
-    box-sizing: border-box;
 }
 
 .view nav *, select {
@@ -258,7 +255,7 @@ select {
         max-height: 25rem;
     }
 
-    #start, cribbage-cards {
+    #start {
         flex-direction: row;
     }
 
@@ -267,23 +264,6 @@ select {
     }
 
     #play {
-        flex-direction: column; padding-top: var(--outlineOffset);
         margin: 0 1rem;
-    }
-
-    cribbage-cards {
-        --cardGroupingFactor: 6;
-        max-width: calc(var(--maxTitleWidth) + 13rem);
-        gap: 2rem;
-    }
-
-    #cards::part(cutCard) {
-        flex: none !important;
-        animation: forceRedraw 0.01s forwards;
-    }
-
-    @keyframes forceRedraw {
-        from { opacity: 0.99; }
-        to { opacity: 1; }
     }
 }
