@@ -3,6 +3,8 @@ export default class CustomDialogComponent extends HTMLElement {
 
     static STYLE = `
         :host {
+            --dialogColour: hsl(43, 100%, 92%);
+            --dialogDecorColour: hsl(43, 100%, 20%);
             display: none;
             position: relative;
             border: 1px solid black;

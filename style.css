@@ -5,8 +5,6 @@
     --uiElementBorder: 5px solid var(--tableDecorColour);
     --successColour: chartreuse;
     --failureColour: red;
-    --dialogColour: hsl(43, 100%, 92%);
-    --dialogDecorColour: hsl(43, 100%, 20%);
     --buttonWidth: 12rem;
     --outerPadding: 0.5rem;
     --interItemPadding: 0.5rem;
