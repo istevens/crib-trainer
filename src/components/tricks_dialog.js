@@ -29,11 +29,11 @@ class TricksDialogComponent extends TrickListDialogComponent {
             font-size: 4rem;
         }
 
-        #lastCutCard {
+        cribbage-cards::part(cut-card) {
             justify-items: flex-start;
         }
 
-        #lastHand {
+        cribbage-cards::part(hand) {
             justify-items: flex-end;
         }
 
@@ -116,10 +116,8 @@ class TricksDialogComponent extends TrickListDialogComponent {
                         <span class="trickScore"></span>
                     </span>
                 </div>
-                <div id="lastCards" class="stacked">
-                    <card-set id="lastCutCard"></card-set>
-                    <card-set id="lastHand" jitter="2"></card-set>
-                </div>
+                <cribbage-cards id="lastCards" class="stacked">
+                </cribbage-cards>
             </section>
             <ul class="trickList stacked"></ul>
         `;
@@ -145,10 +143,9 @@ class TricksDialogComponent extends TrickListDialogComponent {
         const scoreElement = _qs('#correctScore .trickScore');
         scoreElement && (scoreElement.textContent = expectedScore);
 
-        const lastCutCard = _qs('#lastCutCard');
-        const lastHand = _qs('#lastHand');
-        lastCutCard?.setAttribute('cards', cutCard);
-        lastHand?.setAttribute('cards', hand.cards.join(' '));
+        const cards = _qs('cribbage-cards');
+        cards.setAttribute('cut_card', cutCard);
+        cards.setAttribute('hand', hand.cards.join(','));
 
         const tricksEl = _qs('.trickList');
         tricksEl && this.renderTricks(tricksEl, hand, cutCard);

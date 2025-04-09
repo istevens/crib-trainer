@@ -126,7 +126,8 @@ card-set {
     flex: 0;
 }
 
-cribbage-cards {
+#cards {
+    --cardset-should-animate: 1;
     flex: 1;
     max-width: calc(var(--maxTitleWidth) - 5rem);
 }
@@ -178,16 +179,20 @@ select:hover {
     position: relative;
 }
 
-#cards::part(cutCard), #cards::part(hand), .view nav *, select {
+#cards::part(cut_card), #cards::part(hand) {
+    padding: var(--interItemPadding);
+}
+
+#cards::part(cut_card), #cards::part(hand), .view nav *, select {
     border: var(--uiElementBorder);
 }
 
-#cards::part(cutCard), #cards::part(hand), .view nav *, select, [role=dialog] {
+#cards::part(cut_card), #cards::part(hand), .view nav *, select, [role=dialog] {
     border-radius: 11.5px;
 }
 
 .view nav *.primary:not(select),
-#cards::part(cutCard) {
+#cards::part(cut_card) {
     outline: var(--uiElementBorder);
     outline-offset: var(--outlineOffset);
     margin-bottom: var(--outlineOffset);

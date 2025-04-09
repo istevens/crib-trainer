@@ -20,6 +20,12 @@ class SimpleTemplateComponent extends HTMLElement {
         this.render();
     }
 
+    attributeChangedCallback(name, oldValue, newValue) {
+        let valueChanged = oldValue !== newValue;
+        let changeState = () => this._state[name] = newValue;
+        valueChanged && changeState() && this.render();
+    }
+
     handleEvent(ev) {
         this._updateHandler && this.update(this._updateHandler.call(this, ev));
     }
@@ -28,7 +34,14 @@ class SimpleTemplateComponent extends HTMLElement {
         class DynamicComponent extends SimpleTemplateComponent {
             constructor() {
                 super(template, updateHandler, styles);
-        }}
+            }
+
+            static get observedAttributes() {
+                const attributeMatches = template.match(/\${(\w+)}/g) || [];
+                return attributeMatches.map(match => match.slice(2, -1));
+            }
+        }
+
         return DynamicComponent;
     }
 
@@ -60,4 +73,3 @@ export default function defineComponent(name, template, styles='', updateHandler
     customElements.define(name, ComponentClass);
     return ComponentClass;
 }
-

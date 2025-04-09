@@ -11,6 +11,8 @@ export default class TrickListDialogComponent extends CustomDialogComponent {
             margin-inline-start: 0;
         }
 
+        cribbage-cards::part(cut_card),
+        cribbage-cards::part(hand),
         card-set {
             height: auto;
             min-height: min(12vh, 5rem);
@@ -73,6 +75,8 @@ export default class TrickListDialogComponent extends CustomDialogComponent {
         }
 
         @media (orientation: landscape) and (hover: none) {
+            cribbage-cards::part(cut_card),
+            cribbage-cards::part(hand),
             card-set {
                 height: auto;
                 min-height: min(20vh, 6rem) !important;
