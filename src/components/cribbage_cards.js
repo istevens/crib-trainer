@@ -7,7 +7,7 @@ defineComponent(
     :host {
         --cardGroupingFactor: 5;
         display: flex;
-        gap: 1rem;
+        gap: calc(2*var(--interItemPadding));
         min-height: 0;
         width: 100%;
         box-sizing: border-box;
@@ -17,10 +17,10 @@ defineComponent(
         flex: 1 1 0;
         height: 100%;
         min-height: 0;
-        padding: var(--interItemPadding);
     }
 
     :host::part(hand) {
+        display: grid;
         grid-template-columns: repeat(auto-fit, minmax(0, calc(100% / var(--cardGroupingFactor))));
         justify-items: center;
         justify-content: center;

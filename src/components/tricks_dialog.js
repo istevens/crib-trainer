@@ -6,11 +6,13 @@ class TricksDialogComponent extends TrickListDialogComponent {
     static ADDITIONAL_STYLES = `
         #lastPlay {
             position: relative;
-            gap: calc(2*var(--interItemPadding));
-            padding-bottom: calc(2*var(--interItemPadding));
             margin: auto;
-            width: 100%;
-            flex-direction: row;
+            width: 75%;
+            max-width: 20rem;
+            flex-direction: column;
+            margin-bottom: calc(2*var(--interItemPadding));
+            padding-bottom: calc(2*var(--interItemPadding));
+            gap: calc(2*var(--interItemPadding));
         }
 
         #lastPlay::after {
@@ -29,7 +31,7 @@ class TricksDialogComponent extends TrickListDialogComponent {
             font-size: 4rem;
         }
 
-        cribbage-cards::part(cut-card) {
+        cribbage-cards::part(cut_card) {
             justify-items: flex-start;
         }
 
@@ -39,23 +41,19 @@ class TricksDialogComponent extends TrickListDialogComponent {
 
         #correctScore {
             text-align: center;
-            margin-bottom: var(--interItemPadding);
-        }
-
-        #lastCards {
-            display: flex;
-            align-items: center;
-            gap: var(--interItemPadding);
-            margin-bottom: var(--interItemPadding);
         }
 
         .trickCategory {
             display: grid;
             grid-template-columns: var(--trickLabelWidth) 1fr;
+            flex: 1 1 100%;
+            width: 100%;
+            max-width: 100%;
+            gap: var(--interItemPadding);
         }
 
-        .trickCategory:has(li:nth-child(2)) {
-            flex: 1 1 100%;
+        .trickCategory:not(:has(li:nth-child(2))) {
+            flex: 1 1 calc(var(--trickWidth) - 2 * var(--interItemPadding));
         }
 
         .trickCategory .trickLabel::before {
@@ -85,12 +83,12 @@ class TricksDialogComponent extends TrickListDialogComponent {
         @media (orientation: landscape) and (hover: none) {
             #lastPlay {
                 flex-direction: row;
+                max-width: 30rem;
             }
 
             .trickCategory:not(:has(li:nth-child(3))) {
                 flex: 1 1 calc(var(--trickWidth) - 3 * var(--interItemPadding)) !important;
             }
-
         }
     `;
 

@@ -7,8 +7,8 @@ class ScoringDialogComponent extends TrickListDialogComponent {
         }
 
         .trickCategory {
-            display: flex;
             flex-direction: column;
+            flex: 1 1 calc(var(--trickWidth) - 2 * var(--interItemPadding)) !important;
         }
 
         :has(card-set+span) {

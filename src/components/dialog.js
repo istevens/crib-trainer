@@ -27,9 +27,10 @@ export default class CustomDialogComponent extends HTMLElement {
             background: var(--dialogColour);
             border: inherit;
             border-radius: inherit;
-            max-width: min(90vw, 45rem);
+            max-width: min(90vw, var(--maxTitleWidth));
             max-height: 90vh;
             width: auto;
+            touch-action: inherit;
         }
 
         dialog[open] {
@@ -90,6 +91,11 @@ export default class CustomDialogComponent extends HTMLElement {
             margin-inline-start: 0;
         }
 
+        @media (orientation: landscape) and (hover: none) {
+            dialog {
+                max-width: min(90vw, calc(2*var(--maxTitleWidth)));
+            }
+        }
     `;
 
     constructor() {

@@ -17,11 +17,11 @@ export default class TrickListDialogComponent extends CustomDialogComponent {
             height: auto;
             min-height: min(12vh, 5rem);
             max-height: min(20vh, 10rem);
+            pointer-events: none;
         }
 
         .trickLabel {
             position: relative;
-            text-align: center;
             place-items: center;
             min-width: var(--trickLabelWidth);
             margin: auto;
@@ -31,22 +31,20 @@ export default class TrickListDialogComponent extends CustomDialogComponent {
             display: block;
             font-size: 3rem;
             line-height: 75%;
+            padding: 0 calc(2*var(--interItemPadding));
         }
 
         .trickList {
             --trickWidth: 50%;
+            --trickLabelWidth: 5rem;
+            text-align: center;
             display: flex;
             flex-direction: row;
-            flex-wrap: wrap;
+            flex-flow: wrap;
             align-items: flex-start;
             gap: calc(2*var(--interItemPadding)) var(--interItemPadding);
             flex: 1;
             margin: 0;
-        }
-
-        .trickCategory {
-            --trickWidth: 50%;
-            flex: 1 1 calc(var(--trickWidth) - 2 * var(--interItemPadding)) !important;
         }
 
         .trickDescription {
@@ -57,20 +55,21 @@ export default class TrickListDialogComponent extends CustomDialogComponent {
         .trickCategory ul, #lastCards {
             display: flex;
             flex-direction: row;
+        }
+
+        .trickCategory ul {
+            flex-direction: row;
             flex-wrap: wrap;
             justify-content: space-evenly;
             align-items: center;
             place-items: center;
-            min-height: 0;
-            width: 100%;
         }
 
         @media (width > 40rem /* maxTitleWidth */ )
                 or ((orientation: landscape) and (hover:none)) {
-            .trickCategory {
+            .trickList {
                 --trickWidth: 33%;
                 --trickLabelWidth: 6rem;
-                flex: 1 1 calc(var(--trickWidth) - 3 * var(--interItemPadding)) !important;
             }
         }
 
@@ -81,6 +80,10 @@ export default class TrickListDialogComponent extends CustomDialogComponent {
                 height: auto;
                 min-height: min(20vh, 6rem) !important;
                 max-height: min(20vh, 10rem);
+            }
+
+            #trickList {
+                flex-direction: column;
             }
         }
     `
