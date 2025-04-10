@@ -87,10 +87,6 @@ select {
     padding-right: 1.5em !important;
 }
 
-card-set {
-    pointer-events: none;
-}
-
 :is(:hover, :focus) {
     outline: none;
 }

@@ -17,6 +17,7 @@ defineComponent(
         flex: 1 1 0;
         height: 100%;
         min-height: 0;
+        pointer-events: none;
     }
 
     :host::part(hand) {
