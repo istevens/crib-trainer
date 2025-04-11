@@ -12,8 +12,6 @@
     --titleAspectRatio: 1310/403;
     --maxTitleWidth: 40rem;
     --playTopMargin: calc(-0.3 * (100vw / (var(--titleAspectRatio))));
-    --svgTrianglesInactive: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -8 8 16"><polygon points="8,-1 4.5,-8 1,-1" fill="black"/><polygon points="4.5,8 1,1 8,1" fill="black"/></svg>');
-    --svgTrianglesActive: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -8 8 16"><polygon points="8,-1 4.5,-8 1,-1" fill="rgba(255, 255, 130, 0.5)"/><polygon points="4.5,8 1,1 8,1" fill="rgba(255, 255, 130, 0.5)"/></svg>');
 }
 
 * {
@@ -78,15 +76,6 @@ p {
     display: none;
 }
 
-select {
-    appearance: none;
-    background-image: var(--svgTrianglesInactive);
-    background-repeat: no-repeat;
-    background-position: right 0.5em center;
-    background-size: 0.5em;
-    padding-right: 1.5em !important;
-}
-
 :is(:hover, :focus) {
     outline: none;
 }
@@ -128,32 +117,26 @@ select {
     max-width: calc(var(--maxTitleWidth) - 5rem);
 }
 
-.view nav *, select {
-    padding: 10px;
+.view nav>* {
     text-align: center;
-    background-color: transparent;
     font-size: 2rem;
     font-family: inherit;
-    color: var(--tableDecorColour);
     cursor: pointer;
 }
 
-select:hover {
-    color: var(--tableDecorColour);
+.view nav>*:not(score-select) {
     background-color: transparent;
-    background-image: var(--svgTrianglesActive);
-}
-
-.view nav *:not(.primary) {
+    color: var(--tableDecorColour);
     width: var(--buttonWidth);
+    padding: var(--interItemPadding);
 }
 
-:is(.view nav *):hover {
+.view nav>*:not(score-select):hover {
     background-color: var(--tableDecorColour);
     color: black;
 }
 
-:is(.view nav *.primary):hover {
+:is(.view nav>*.primary):hover {
     color: var(--tableDecorColour);
     background-color: transparent;
 }
@@ -179,23 +162,22 @@ select:hover {
     padding: var(--interItemPadding);
 }
 
-#cards::part(cut_card), #cards::part(hand), .view nav *, select {
+#cards::part(cut_card), #cards::part(hand), .view nav>* {
     border: var(--uiElementBorder);
 }
 
-#cards::part(cut_card), #cards::part(hand), .view nav *, select, [role=dialog] {
+#cards::part(cut_card), #cards::part(hand), .view nav>*, [role=dialog] {
     border-radius: 11.5px;
 }
 
-.view nav *.primary:not(select),
+.view nav>*.primary,
 #cards::part(cut_card) {
     outline: var(--uiElementBorder);
     outline-offset: var(--outlineOffset);
     margin-bottom: var(--outlineOffset);
 }
 
-.view nav *.primary,
-select {
+.view nav>*.primary {
     color: black;
     background-color: var(--tableDecorColour);
 }

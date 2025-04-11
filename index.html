@@ -44,10 +44,7 @@
             <cribbage-cards id="cards" class="stacked"></cribbage-cards>
 
             <nav class="stacked">
-                <select id="scoreSelect" class="primary" autofocus>
-                    <option disabled>This hand's score is:</option>
-                </select>
-
+                <score-select role="select" id="scoreSelect" min="0" max="29" autofocus></score-select>
                 <button class="scoringButton" command="show-modal" commandfor="scoring">Scoring</button>
             </nav>
         </section>

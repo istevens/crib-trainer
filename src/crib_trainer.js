@@ -16,11 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const trainer = _getEl('cribtrainer');
             var evPayload = {bubbles: true, detail: {play: play}};
             trainer.dispatchEvent(new CustomEvent(NEW_ROUND, evPayload));
-
-            var select = _getEl('scoreSelect');
-            select.selectedIndex = 0;
-            select.focus();
-            isTouch && select.blur();
         }
 
         function finishRound() {
@@ -50,15 +45,6 @@ document.addEventListener('DOMContentLoaded', () => {
             d.showModal();
         }
 
-        function populateScoreOptions() {
-            var selector = _getEl('scoreSelect');
-            new Array(30).fill().map((x, i) => {
-                var o = document.createElement('option');
-                o.label = o.value = i;
-                selector.appendChild(o);
-            });
-        }
-
         function showTricks(play, expectedScore) {
             const dialog = document.getElementById('tricks');
             dialog.showModal(play, expectedScore);
@@ -78,11 +64,13 @@ document.addEventListener('DOMContentLoaded', () => {
         function addEventListeners() {
             var trainer = _getEl('cribtrainer');
             var scoreOverlay = _getEl('selectedScore');
+            var selector = _getEl('scoreSelect');
 
             trainer.addEventListener(SCORE_SELECTED, _getEl('scoreboard'));
             trainer.addEventListener(SCORE_SELECTED, scoreOverlay);
             trainer.addEventListener(NEW_ROUND, _getEl('cards'));
-            _getEl('scoreSelect').addEventListener('change', handWasScored);
+            trainer.addEventListener(NEW_ROUND, selector);
+            selector.addEventListener('change', handWasScored);
             scoreOverlay.addEventListener('transitionend', finishRound);
             window.addEventListener('hashchange', switchSections);
             _getEl('tricks').addEventListener("close", startNewRound);
@@ -112,7 +100,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         function setup() {
-            populateScoreOptions();
             addEventListeners();
             addAnalyticsListeners();
             switchSections();
