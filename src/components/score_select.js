@@ -10,29 +10,20 @@ export default class ScoreSelect extends HTMLElement {
             border: var(--uiElementBorder);
         }
 
-        :host(:focus) {
-            color: var(--tableDecorColour);
-            background-color: transparent;
-        }
-
-        :host(:focus) select {
-            background-image: var(--svgTrianglesActive);
-        }
-
         select {
             appearance: none;
-            padding: var(--interItemPadding);
+            border: none;
+            outline: none;
+            color: inherit;
             font-family: inherit;
             font-size: inherit;
+            padding: var(--interItemPadding);
+            padding-right: 1.5em !important;
             background-color: transparent;
             background-image: var(--svgTrianglesInactive);
             background-repeat: no-repeat;
             background-position: right 0.5em center;
             background-size: 0.5em;
-            padding-right: 1.5em !important;
-            border: none;
-            outline: none;
-            color: inherit;
         }
 
         select:focus {
@@ -44,13 +35,24 @@ export default class ScoreSelect extends HTMLElement {
                 color: var(--tableDecorColour);
                 background-color: transparent;
             }
-
             :host(:hover) select {
                 background-image: var(--svgTrianglesActive);
             }
         }
 
+        @media (hover: none) {
+            :host(:focus) {
+                color: var(--tableDecorColour);
+                background-color: transparent;
+            }
+
+            :host(:focus) select {
+                background-image: var(--svgTrianglesActive);
+            }
+        }
     `;
+
+    static observedAttributes = ['autofocus', 'min', 'max'];
 
     constructor() {
         super();
@@ -61,7 +63,13 @@ export default class ScoreSelect extends HTMLElement {
         this.shadowRoot.adoptedStyleSheets = [style];
 
         let _se = this.selectElement = document.createElement('select');
+        let o = document.createElement('option');
+        o.disabled = o.selected = true;
+        o.textContent = "This hand's score is:";
+        _se.appendChild(o);
         this.shadowRoot.appendChild(_se);
+
+        this.addEventListener('focus', () => _se.focus());
         _se.addEventListener('change', e => {
             e = new Event('change', {bubbles: true, composed: true});
             this.dispatchEvent(e);
@@ -72,28 +80,27 @@ export default class ScoreSelect extends HTMLElement {
         return this.selectElement.value;
     }
 
-    connectedCallback() {
-        const addDefaultOption = () => {
-            const o = document.createElement('option');
-            o.disabled = true;
-            o.selected = true;
-            o.textContent = "This hand's score is:";
-            this.selectElement.appendChild(o);
-        }
-        const hasNoOptions = this.selectElement.options.length === 0;
-        hasNoOptions && addDefaultOption();
-
+    attributeChangedCallback(name, oldVal, newVal) {
         const _ga = x => parseInt(this.getAttribute(x) || 0);
-        this.generateScores(_ga('min'), _ga('max'));
+        const shouldChangeOptions = ['min', 'max'].includes(name);
+        const changeOptions = () => this.generateScores(_ga('min'), _ga('max'));
+        shouldChangeOptions && changeOptions();
+
+        const shouldChangeAutofocus = name == 'autofocus';
+        shouldChangeAutofocus && setTimeout(() => {
+            this.selectElement.autofocus = newVal;
+            newVal && this.selectElement.focus();
+        }, 0);
+    }
+
+    get hasAutoFocus() {
+        return this.getAttribute('autofocus') && true || false;
     }
 
     generateScores(min, max) {
-        while (this.selectElement.options.length > 1) {
-            this.remove(1);
-        }
+        if(min > max) return;
 
-        // Generate options from min to max
-        for (let score = min; score <= max; score++) {
+        for(let score = min; score <= max; score++) {
             const option = document.createElement('option');
             option.value = score;
             option.textContent = score;
@@ -104,8 +111,8 @@ export default class ScoreSelect extends HTMLElement {
     handleEvent(e) {
         const _e = this.selectElement;
         _e.selectedIndex = 0;
-        this.blur();
-        'ontouchstart' in window && _e.blur();
+        const f = 'ontouchstart' in window && (() => _e.blur()) || (() => _e.focus());
+        f();
     }
 }
 
