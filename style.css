@@ -213,7 +213,7 @@ p {
     #play :is(.scoringButton, #scoreboard) {
         position: fixed;
         top: 1rem;
-        --titleEdge: calc((100vw - var(--maxTitleWidth)) / 2) - 1rem;
+        --titleEdge: calc((100vw - var(--maxTitleWidth)) / 2 - 1rem);
     }
 
     #play .scoringButton {
