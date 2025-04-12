@@ -12,11 +12,40 @@ defineComponent(
         const DIALOG_OPEN = "open";
         const DIALOG_CLOSE = "close";
 
+        // Set up a temporary queue for events until gtag is loaded.
+        // These scripts would be in the template but scripts
+        // added via innerHTML are not executed.
+        if(!this._initialized) {
+            this._initialized = true;
+            this._eventQueue = [];
+            const gid = this.getAttribute('gid');
+
+            const scriptGA = document.createElement('script');
+            scriptGA.src = `https://www.googletagmanager.com/gtag/js?id=${gid}`;
+            scriptGA.async = true;
+            scriptGA.onload = () => setTimeout(processQueueAndEnableDirectTracking, 100);
+            document.head.appendChild(scriptGA);
+
+            const scriptInit = document.createElement('script');
+            scriptInit.textContent = `
+                window.dataLayer = window.dataLayer || [];
+                window.gtag = function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${gid}');
+            `;
+            document.head.appendChild(scriptInit);
+        }
+
+        const trackEvent = (eventName, params) =>
+            this._gtagReady
+                ? window.gtag('event', eventName, params)
+                : this._eventQueue.push({ name: eventName, params });
+
         const dialogHandler = e => {
             let dialogName = e.srcElement.id;
             e = e.type;
             e = e.at(-1) != 'e' && e + 'e' || e;
-            gtag('event', `dialog_${e}d`, {
+            trackEvent(`dialog_${e}d`, {
                 event_category: 'Dialogs',
                 event_label: dialogName
             });
@@ -25,14 +54,14 @@ defineComponent(
         const handlers = {
             [SCORE_SELECTED]: e => {
                 const { selectedScore, expectedScore, scoresMatch } = e.detail;
-                gtag('event', 'hand_scored', {
+                trackEvent('hand_scored', {
                     event_category: 'Game',
                     event_label: scoresMatch ? 'Correct Score' : 'Incorrect Score',
                 });
             },
 
             [NEW_ROUND]: e => {
-                gtag('event', 'round_started', {
+                trackEvent('round_started', {
                     event_category: 'Game',
                     event_label: 'New Round',
                 });
@@ -40,7 +69,7 @@ defineComponent(
 
             [HASH_CHANGE]: e => {
                 const getSection = u => u && u.indexOf('#') > 0 && u.split('#')[1] || 'start';
-                gtag('event', 'section_switched', {
+                trackEvent('section_switched', {
                     event_category: 'Navigation',
                     event_label: getSection(e.newURL),
                     from_url: getSection(e.oldURL),
