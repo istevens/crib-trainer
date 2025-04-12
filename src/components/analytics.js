@@ -24,7 +24,7 @@ defineComponent(
             scriptGA.src = `https://www.googletagmanager.com/gtag/js?id=${gid}`;
             scriptGA.async = true;
             scriptGA.onload = () => setTimeout(processQueueAndEnableDirectTracking, 100);
-            document.head.appendChild(scriptGA);
+            this.shadowRoot.appendChild(scriptGA);
 
             const scriptInit = document.createElement('script');
             scriptInit.textContent = `
@@ -33,7 +33,7 @@ defineComponent(
                 gtag('js', new Date());
                 gtag('config', '${gid}');
             `;
-            document.head.appendChild(scriptInit);
+            this.shadowRoot.appendChild(scriptInit);
         }
 
         const trackEvent = (eventName, params) =>

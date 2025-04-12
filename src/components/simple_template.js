@@ -51,7 +51,8 @@ class SimpleTemplateComponent extends HTMLElement {
             (match, key) => `\${this._state[\'${key}\']}`
         );
         const templateFunction = new Function(`return \`${compiledTemplate}\``);
-        this.shadowRoot.innerHTML = templateFunction.call(this);
+        const contents = templateFunction.call(this);
+        contents && (this.shadowRoot.innerHTML = contents);
     }
 
     update(newState) {
