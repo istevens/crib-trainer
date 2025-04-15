@@ -25,11 +25,11 @@ export default class EventManager {
         root.addEventListener(Constants.NEW_ROUND, selector);
         root.addEventListener('change', e => app.handWasScored(e));
         scoreOverlay.addEventListener('transitionend', () => app.finishRound());
-        window.addEventListener(Constants.HASH_CHANGE, () => app.switchSections());
+        window.addEventListener(Constants.HASH_CHANGE, () => app.uiController.switchSections());
         _getEl('tricks').addEventListener(Constants.DIALOG_CLOSE, () => app.startNewRound());
 
         var dialogButtons = root.querySelectorAll("[command=show-modal]");
-        Array.from(dialogButtons, b => b.addEventListener('click', () => app.openDialog(b.getAttribute('commandfor'))));
+        Array.from(dialogButtons, b => b.addEventListener('click', () => app.uiController.openDialog(b.getAttribute('commandfor'))));
 
         // Prevent double-tap to zoom and long-press
         root.addEventListener('dblclick', e => e.preventDefault());

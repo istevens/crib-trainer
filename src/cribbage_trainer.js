@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 import * as Constants from "./constants.js";
 import EventManager from "./controllers/EventManager.js";
+import UIController from "./controllers/UIController.js";
 
 const _getEl = x => document.getElementById(x);
 
@@ -18,6 +19,7 @@ class CribbageApp {
         this.play = null;
         this.root = _getEl('cribtrainer');
         this.eventManager = new EventManager(this);
+        this.uiController = new UIController(this);
     }
 
     startNewRound() {
@@ -31,7 +33,7 @@ class CribbageApp {
     finishRound() {
         let expectedScore = this.play.hand.getScore(this.play.cutCard);
         let scoresMatch = _getEl('scoreSelect').value == expectedScore;
-        let next = scoresMatch && (() => this.startNewRound()) || (() => this.showTricks(expectedScore));
+        let next = scoresMatch && (() => this.startNewRound()) || (() => this.uiController.showTricks(expectedScore));
         next();
     }
 
@@ -48,28 +50,8 @@ class CribbageApp {
         this.root.dispatchEvent(new CustomEvent(Constants.SCORE_SELECTED, evPayload));
     }
 
-    openDialog(d) {
-        d = document.querySelector('[role=dialog]#' + d);
-        d.showModal();
-    }
-
-    showTricks(expectedScore) {
-        const dialog = document.getElementById('tricks');
-        dialog.showModal(this.play, expectedScore);
-    }
-
-    switchSections() {
-        var location = window.location.hash.replace('#', '');
-        location = location || 'start';
-        var sections = ['.activeContent', '#' + location];
-        sections.map(x => {
-            this.root.querySelector(x)?.classList.toggle('activeContent');
-        });
-        location == 'play' && this.startNewRound();
-    };
-
     initialize() {
         this.eventManager.initialize();
-        this.switchSections();
+        this.uiController.switchSections();
     }
 }
