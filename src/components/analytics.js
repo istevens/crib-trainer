@@ -1,6 +1,6 @@
 import defineComponent from "./simple_template.js";
 
-defineComponent(
+export default defineComponent(
     'analytics-tracking',
     '',
     '',
@@ -12,9 +12,12 @@ defineComponent(
         const DIALOG_OPEN = "open";
         const DIALOG_CLOSE = "close";
 
-        // Set up a temporary queue for events until gtag is loaded.
-        // These scripts would be in the template but scripts
-        // added via innerHTML are not executed.
+        function processQueueAndEnableDirectTracking(e) {
+            this._gtagReady = true;
+            this._eventQueue.forEach(e => trackEvent(e.name, e.params));
+            this._eventQueue = [];
+        }
+
         if(!this._initialized) {
             this._initialized = true;
             this._eventQueue = [];
@@ -23,7 +26,7 @@ defineComponent(
             const scriptGA = document.createElement('script');
             scriptGA.src = `https://www.googletagmanager.com/gtag/js?id=${gid}`;
             scriptGA.async = true;
-            scriptGA.onload = () => setTimeout(processQueueAndEnableDirectTracking, 100);
+            scriptGA.onload = () => setTimeout(processQueueAndEnableDirectTracking.bind(this), 100);
             this.shadowRoot.appendChild(scriptGA);
 
             const scriptInit = document.createElement('script');
@@ -36,10 +39,12 @@ defineComponent(
             this.shadowRoot.appendChild(scriptInit);
         }
 
-        const trackEvent = (eventName, params) =>
+        function trackEvent(eventName, params) {
             this._gtagReady
                 ? window.gtag('event', eventName, params)
                 : this._eventQueue.push({ name: eventName, params });
+        }
+        trackEvent = trackEvent.bind(this);
 
         const dialogHandler = e => {
             let dialogName = e.srcElement.id;
@@ -78,7 +83,6 @@ defineComponent(
 
             [DIALOG_OPEN]: dialogHandler,
             [DIALOG_CLOSE]: dialogHandler
-
         };
 
         let h = handlers[ev.type];
