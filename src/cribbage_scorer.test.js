@@ -1,6 +1,6 @@
 'use strict';
 
-import CribbageHand from './cribbagescorer.js';
+import CribbageHand from './cribbage_scorer.js';
 
 describe('testing Hand.fromString', () => {
     const expectHandsEqual = (v, e) => {
