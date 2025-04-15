@@ -6,10 +6,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-const SCORE_SELECTED = "scoreSelected";
-const NEW_ROUND = "newRound";
+import * as Constants from "./constants.js";
+
 const _getEl = x => document.getElementById(x);
-const isTouch = 'ontouchstart' in window;
 
 class CribbageApp {
 
@@ -24,7 +23,7 @@ class CribbageApp {
         //this.play = {cutCard: '5S', hand: CribbageHand.fromString('5C 5D 5H JS')};
 
         var evPayload = {bubbles: true, detail: {play: this.play}};
-        this.root.dispatchEvent(new CustomEvent(NEW_ROUND, evPayload));
+        this.root.dispatchEvent(new CustomEvent(Constants.NEW_ROUND, evPayload));
     }
 
     finishRound() {
@@ -44,7 +43,7 @@ class CribbageApp {
                 scoresMatch: selected == expected
         }};
 
-        this.root.dispatchEvent(new CustomEvent(SCORE_SELECTED, evPayload));
+        this.root.dispatchEvent(new CustomEvent(Constants.SCORE_SELECTED, evPayload));
     }
 
     openDialog(d) {
@@ -72,14 +71,14 @@ class CribbageApp {
         var scoreOverlay = _getEl('selectedScore');
         var selector = _getEl('scoreSelect');
 
-        root.addEventListener(SCORE_SELECTED, _getEl('scoreboard'));
-        root.addEventListener(SCORE_SELECTED, scoreOverlay);
-        root.addEventListener(NEW_ROUND, _getEl('cards'));
-        root.addEventListener(NEW_ROUND, selector);
+        root.addEventListener(Constants.SCORE_SELECTED, _getEl('scoreboard'));
+        root.addEventListener(Constants.SCORE_SELECTED, scoreOverlay);
+        root.addEventListener(Constants.NEW_ROUND, _getEl('cards'));
+        root.addEventListener(Constants.NEW_ROUND, selector);
         root.addEventListener('change', e => this.handWasScored(e));
         scoreOverlay.addEventListener('transitionend', () => this.finishRound());
-        window.addEventListener('hashchange', () => this.switchSections());
-        _getEl('tricks').addEventListener("close", () => this.startNewRound());
+        window.addEventListener(Constants.HASH_CHANGE, () => this.switchSections());
+        _getEl('tricks').addEventListener(Constants.DIALOG_CLOSE, () => this.startNewRound());
 
         var dialogButtons = root.querySelectorAll("[command=show-modal]");
         Array.from(dialogButtons, b => b.addEventListener('click', () => this.openDialog(b.getAttribute('commandfor'))));
@@ -93,12 +92,12 @@ class CribbageApp {
         const root = this.root;
         const analytics = root.getElementsByTagName('analytics-tracking')[0];
 
-        root.addEventListener(SCORE_SELECTED, analytics);
-        root.addEventListener(NEW_ROUND, analytics);
-        window.addEventListener('hashchange', analytics);
+        root.addEventListener(Constants.SCORE_SELECTED, analytics);
+        root.addEventListener(Constants.NEW_ROUND, analytics);
+        window.addEventListener(Constants.HASH_CHANGE, analytics);
 
         const dialogs = document.querySelectorAll('[role=dialog]');
-        const events = ['open', 'close'];
+        const events = [Constants.DIALOG_OPEN, Constants.DIALOG_CLOSE];
         dialogs.forEach(d => {
             const dialogName = d.id.replace('Dialog', '').toLowerCase();
             events.forEach(e => d.addEventListener(e, analytics));

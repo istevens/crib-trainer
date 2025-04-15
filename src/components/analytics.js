@@ -1,3 +1,4 @@
+import * as Constants from "../constants.js";
 import defineComponent from "./simple_template.js";
 
 export default defineComponent(
@@ -5,13 +6,6 @@ export default defineComponent(
     '',
     '',
     function(ev) {
-        // @TODO: Move event constants to shared spot
-        const SCORE_SELECTED = "scoreSelected";
-        const NEW_ROUND = "newRound";
-        const HASH_CHANGE = "hashchange";
-        const DIALOG_OPEN = "open";
-        const DIALOG_CLOSE = "close";
-
         function processQueueAndEnableDirectTracking(e) {
             this._gtagReady = true;
             this._eventQueue.forEach(e => trackEvent(e.name, e.params));
@@ -57,7 +51,7 @@ export default defineComponent(
         }
 
         const handlers = {
-            [SCORE_SELECTED]: e => {
+            [Constants.SCORE_SELECTED]: e => {
                 const { selectedScore, expectedScore, scoresMatch } = e.detail;
                 trackEvent('hand_scored', {
                     event_category: 'Game',
@@ -65,14 +59,14 @@ export default defineComponent(
                 });
             },
 
-            [NEW_ROUND]: e => {
+            [Constants.NEW_ROUND]: e => {
                 trackEvent('round_started', {
                     event_category: 'Game',
                     event_label: 'New Round',
                 });
             },
 
-            [HASH_CHANGE]: e => {
+            [Constants.HASH_CHANGE]: e => {
                 const getSection = u => u && u.indexOf('#') > 0 && u.split('#')[1] || 'start';
                 trackEvent('section_switched', {
                     event_category: 'Navigation',
@@ -81,8 +75,8 @@ export default defineComponent(
                 });
             },
 
-            [DIALOG_OPEN]: dialogHandler,
-            [DIALOG_CLOSE]: dialogHandler
+            [Constants.DIALOG_OPEN]: dialogHandler,
+            [Constants.DIALOG_CLOSE]: dialogHandler
         };
 
         let h = handlers[ev.type];

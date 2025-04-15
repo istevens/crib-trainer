@@ -1,3 +1,5 @@
+import * as Constants from '../constants.js';
+
 export default class CustomDialogComponent extends HTMLElement {
     static observedAttributes = ['title'];
 
@@ -157,16 +159,19 @@ export default class CustomDialogComponent extends HTMLElement {
         return dialog;
     }
 
+    finishOpen() {
+        this.setAttribute('open', '');
+        this.dispatchEvent(new Event(Constants.DIALOG_OPEN));
+    }
+
     open() {
         this.dialog.open();
-        this.setAttribute('open', '');
-        this.dispatchEvent(new Event('open'));
+        this.finishOpen();
     }
 
     showModal() {
         this.dialog.showModal();
-        this.setAttribute('open', '');
-        this.dispatchEvent(new Event('open'));
+        this.finishOpen();
     }
 
     close() {
@@ -180,7 +185,8 @@ export default class CustomDialogComponent extends HTMLElement {
         closeButton && closeButton.addEventListener('click', () => this.close());
 
         const dialog = _qs('dialog');
-        dialog.addEventListener('close', ev => this.dispatchEvent(new Event('close')));
+        dialog.addEventListener('close',
+            () => this.dispatchEvent(new Event(Constants.DIALOG_CLOSE)));
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
