@@ -2,7 +2,7 @@ import defineComponent from "./simple_template.js";
 
 defineComponent(
     'cribbage-cards',
-    '<card-set part="cut_card" cards="${cut_card}" class="hidden"></card-set><card-set part="hand" cards="${hand}" jitter="3"></card-set>',
+    '<card-set class="${cut_card_class}" part="cut_card" cards="${cut_card}"></card-set><card-set part="hand" cards="${hand}" jitter="3"></card-set>',
     `
     :host {
         --cardGroupingFactor: 5;
