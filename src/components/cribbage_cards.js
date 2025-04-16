@@ -2,7 +2,7 @@ import defineComponent from "./simple_template.js";
 
 defineComponent(
     'cribbage-cards',
-    '<card-set part="cut_card" cards="${cut_card}"></card-set><card-set part="hand" cards="${hand}" jitter="3"></card-set>',
+    '<card-set part="cut_card" cards="${cut_card}" class="hidden"></card-set><card-set part="hand" cards="${hand}" jitter="3"></card-set>',
     `
     :host {
         --cardGroupingFactor: 5;
@@ -53,7 +53,10 @@ defineComponent(
         };
 
         const dealAndFlipCards = () => {
-            getCardSet('hand').dealCards();
+            let hand = getCardSet('hand');
+            let flipCutCard = () => getCardSet('cut_card').reveal();
+            hand.addEventListener('animationend', flipCutCard, {once:true});
+            hand.dealCards();
         }
 
         let shouldAnimate = window.getComputedStyle(this).getPropertyValue('--cardset-should-animate');

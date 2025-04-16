@@ -5,15 +5,19 @@ export class CardSetComponent extends HTMLElement {
             --cardset-card-count: 0;
             --cardset-card-rotation: 7;
             --cardset-card-aspect-ratio: 240/334;
+            --cardset-background-colour: lightblue;
             display: grid;
             grid-auto-flow: column;
             box-sizing: border-box;
+            perspective: 1000px;
         }
 
         :host::part(card) {
             aspect-ratio: var(--cardset-card-aspect-ratio);
             height: 100%;
             overflow: hidden;
+            position: relative;
+            transform: rotateY(0deg);
         }
 
         :host([arrangeBy=fan]) {
@@ -45,12 +49,43 @@ export class CardSetComponent extends HTMLElement {
             }
         }
 
-        :host([arrangeBy=row].dealing) playing-card {
+        :host([arrangeBy=row].dealing)::part(card) {
             transform: translateX(-100vw);
         }
 
         :host([arrangeBy=row]) playing-card.slide-in {
             animation: slideInFromLeft 200ms ease-in forwards !important;
+        }
+
+        :host(.hidden) playing-card img,
+        :host(.hidden)::part(card)::before {
+            backface-visibility: hidden;
+            transition: transform 0.1s ease-in-out;
+            transform-style: preserve-3d;
+        }
+
+        :host(.hidden) playing-card img {
+            transform: rotateY(-180deg);
+        }
+
+        :host(.hidden)::part(card)::before {
+            position: absolute;
+            content: '';
+            height: 100%;
+            width: 100%;
+            background-color: var(--cardset-background-colour, #d00);
+            outline: 3px solid #eee;
+            outline-offset: -1rem;
+            border-radius: 6px;
+            transform: rotateY(0deg);
+        }
+
+        :host(.hidden.reveal) playing-card img {
+            transform: rotateY(0deg);
+        }
+
+        :host(.hidden.reveal)::part(card)::before {
+            transform: rotateY(180deg);
         }
 
         :host([arrangeBy=fan])::part(card) {
@@ -63,7 +98,6 @@ export class CardSetComponent extends HTMLElement {
             transform-origin: left bottom;
             transform-box: fill-box;
         }
-
     `;
 
     static observedAttributes = ['cards'];
@@ -115,8 +149,9 @@ export class CardSetComponent extends HTMLElement {
             let card = this.slideCardIn(cards.length-1);
             card.addEventListener('animationend', () => {
                 cards = cards.slice(0, -1);
-                cards.length > 0 && dealNextCard(cards);
+                cards.length > 0 && dealNextCard(cards) || this.dispatchEvent(new CustomEvent('animationend'));
             }, {once:true});
+            return cards;
         }
 
         this.classList.add('dealing');
@@ -127,6 +162,10 @@ export class CardSetComponent extends HTMLElement {
         let card = this.cardNodes[index];
         card.classList.add('slide-in');
         return card;
+    }
+
+    reveal() {
+        this.classList.add('reveal');
     }
 
     get cardNodes() {
