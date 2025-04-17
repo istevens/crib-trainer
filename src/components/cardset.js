@@ -5,7 +5,9 @@ export class CardSetComponent extends HTMLElement {
             --cardset-card-count: 0;
             --cardset-card-rotation: 7;
             --cardset-card-aspect-ratio: 240/334;
-            --cardset-background-colour: lightblue;
+            --cardset-card-background-colour: #c00;
+            --cardset-card-decor-colour: #f8f8f8;
+            --cardset-card-outline-width-pct: 0.075;
             display: grid;
             grid-auto-flow: column;
             box-sizing: border-box;
@@ -69,13 +71,17 @@ export class CardSetComponent extends HTMLElement {
         }
 
         :host(.hidden)::part(card)::before {
+            --outline-width: calc(var(--cardset-card-width) * var(--cardset-card-outline-width-pct));
             position: absolute;
             content: '';
             height: 100%;
             width: 100%;
-            background-color: var(--cardset-background-colour, #d00);
-            outline: 3px solid #eee;
-            outline-offset: -1rem;
+            background: var(--cardset-card-background-colour, #d00) var(--cardset-card-background-image);
+            background-repeat: repeat;
+            background-position: center;
+            background-size: 20%;
+            outline: var(--outline-width) solid var(--cardset-card-decor-colour);
+            outline-offset: calc(-1 * var(--outline-width));
             border-radius: 6px;
             transform: rotateY(0deg);
         }
@@ -181,8 +187,17 @@ export class CardSetComponent extends HTMLElement {
         let createNew = () => (root.innerHTML = cards.map((...x) => this.cardTemplate(...x)).join(""));
 
         shouldUpdateExisting && updateExisting() || createNew();
+        this.updateCardWidths();
 
         return cards.length;
+    }
+
+    updateCardWidths() {
+        const updateCardWidth = card => {
+            const width = card.getBoundingClientRect().width;
+            card.style.setProperty('--cardset-card-width', `${width}px`);
+        }
+        this.cardNodes.forEach(updateCardWidth);
     }
 
     attributeChangedCallback(name, oldVal, newVal) {

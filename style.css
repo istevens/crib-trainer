@@ -50,7 +50,7 @@ h1 a {
     margin: auto;
     color: transparent;
     background: var(--titleColour);
-    mask-image: url(img/cribtrainer-arched.svg);
+    mask-image: url(/img/cribtrainer-arched.svg);
     mask-size: contain;
     mask-repeat: no-repeat;
     mask-position: center;
@@ -113,6 +113,7 @@ p {
 
 #cards {
     --cardset-should-animate: 1;
+    --cardset-card-background-image: url(/img/card-back.svg);
     flex: 1;
     max-width: calc(var(--maxTitleWidth) - 5rem);
 }
