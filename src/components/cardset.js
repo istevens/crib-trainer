@@ -71,17 +71,14 @@ export class CardSetComponent extends HTMLElement {
         }
 
         :host(.hidden)::part(card)::before {
-            --outline-width: calc(var(--cardset-card-width) * var(--cardset-card-outline-width-pct));
             position: absolute;
             content: '';
             height: 100%;
             width: 100%;
             background: var(--cardset-card-background-colour, #d00) var(--cardset-card-background-image);
-            background-repeat: repeat;
+            background-repeat: none;
             background-position: center;
-            background-size: 20%;
-            outline: var(--outline-width) solid var(--cardset-card-decor-colour);
-            outline-offset: calc(-1 * var(--outline-width));
+            background-size: 100%;
             border-radius: 6px;
             transform: rotateY(0deg);
         }

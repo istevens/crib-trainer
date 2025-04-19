@@ -1,12 +1,36 @@
-<svg width="160" height="120" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <pattern id="scallop-pattern" patternUnits="userSpaceOnUse" width="80" height="60">
-      <circle cx="0" cy="0" r="20" fill="none" stroke="white" stroke-width="5" />
-      <circle cx="80" cy="0" r="20" fill="none" stroke="white" stroke-width="5" />
-      <circle cx="40" cy="60" r="20" fill="none" stroke="white" stroke-width="5" />
-      <circle cx="120" cy="60" r="20" fill="none" stroke="white" stroke-width="5" />
-    </pattern>
-  </defs>
+<svg width="250" height="350" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <pattern id="scallop-pattern" patternUnits="userSpaceOnUse" stroke="white" width="10" height="10">
+            <path id="scallop" stroke-width="1" fill="none"
+                d="M 0 0 C 0 0, 0 5, 5 5 S 10 0, 10 0"
+            />
+            <use href="#scallop" x="10" y="0"/>
+            <use href="#scallop" x="-5" y="5"/>
+            <use href="#scallop" x="5" y="5"/>
+        </pattern>
 
-  <rect width="100%" height="100%" fill="url(#scallop-pattern)" />
+        <rect id="inner" stroke="white" width="71.43%" height="80%" x="35.5" y="35" rx="10" ry="10"/>
+        <g id="outer">
+            <rect fill="white" width="100%" height="100%"/>
+            <use href="#inner" fill="black"/>
+        </g>
+
+        <mask id="mask_outer" maskUnits="userSpaceOnUse">
+            <rect width="100%" height="100%" fill="white"/>
+            <use href="#outer" fill="white"/>
+        </mask>
+    </defs>
+
+    <rect width="100%" height="100%" mask="url(#mask_outer)" fill="url(#scallop-pattern)" />
+    <g stroke="white" stroke-linecap="round" stroke-width="1" fill="none">
+        <use href="#inner"/>
+        <rect width="100%" height="100%" stroke-width="25" rx="20" ry="20" />
+        <circle r="2%" cx="50%" cy="50%" fill="white"/>
+        <g id="circles">
+          <circle r="12%" cx="50%" cy="36%"/>
+          <circle r="20.5%" cx="50%" cy="28.90%"/>
+          <ellipse rx="35.5%" ry="18.5%" cx="50%" cy="29%"/>
+        </g>
+        <use href="#circles" transform-origin="center" transform="rotate(180)" />
+    </g>
 </svg>
