@@ -32,10 +32,10 @@
             <use href="#innerEllipse" fill="black" transform-origin="center" transform="rotate(180)"/>
         </g>
 
-        <g id="circles">
-          <use href="#innerEllipse"/>
-          <circle r="12%" cx="50%" cy="36%"/>
-          <circle r="20.5%" cx="50%" cy="28.90%"/>
+        <g id="circles" fill="black">
+          <use href="#innerEllipse" fill-opacity="0.1"/>
+          <circle r="20.5%" cx="50%" cy="28.90%" fill-opacity="0.2"/>
+          <circle r="12%" cx="50%" cy="36%" fill-opacity="0.3"/>
         </g>
 
         <mask id="mask_outer" maskUnits="userSpaceOnUse">
@@ -50,6 +50,7 @@
     </defs>
 
     <rect width="100%" height="100%" mask="url(#mask_inner)" fill="url(#diamond-pattern)"/>
+    <rect width="100%" height="100%" mask="url(#mask_outer)" fill="black" fill-opacity="0.2"/>
     <rect width="100%" height="100%" mask="url(#mask_outer)" fill="url(#scallop-pattern)" />
     <g stroke="white" stroke-linecap="round" stroke-width="1" fill="none">
         <use href="#innerBox"/>
