@@ -113,7 +113,7 @@ p {
 
 #cards {
     --cardset-should-animate: 1;
-    --cardset-card-background-image: url(/img/card-back.svg);
+    --cardset-card-background-image: url('/img/card-back.svg');
     flex: 1;
     max-width: calc(var(--maxTitleWidth) - 5rem);
 }

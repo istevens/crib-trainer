@@ -105,6 +105,7 @@ export class CardSetComponent extends HTMLElement {
 
     static observedAttributes = ['cards'];
     static STYLE_PREFIX = '--cardset-card-';
+    static preloadedUrls = new Array();
 
     constructor() {
         super();
@@ -117,7 +118,40 @@ export class CardSetComponent extends HTMLElement {
         jitter = jitter == "" && 1 || jitter || 0;
         this.setAttribute('jitter', jitter);
         this.setAttribute('arrangeBy', this.getAttribute('arrangeBy') || 'row');
+
+        this.preloadCardBack();
     }
+
+    preloadCardBack() {
+        let url = getComputedStyle(this).getPropertyValue('--cardset-card-background-image').trim();
+        url = url.replace(/^url\(['"]?/, '');
+        url = url.replace(/['"]?\)$/, '');
+        url && CardSetComponent.preloadImage(url);
+    }
+
+    // @TODO: Refactor preloading once it's needed twice
+    static preloadImage(url) {
+        var _preload = url => {
+            CardSetComponent.preloadedUrls.push(url);
+
+            const link = document.createElement('link');
+            link.href = url;
+            link.rel = 'preload';
+            link.as = 'image';
+
+            document.head.appendChild(link);
+            return true;
+        }
+
+        var isPreloaded = url && url !== 'none';
+        const urlMatch = url?.match(/url\(['"]?(.*?)['"]?\)/i);
+        url = urlMatch && urlMatch[1] || url ;
+        isPreloaded = isPreloaded
+            && !CardSetComponent.preloadedUrls.includes(url)
+            && _preload(url);
+
+        return isPreloaded;
+  }
 
     cardTemplate(card, i, a) {
         let style = [
