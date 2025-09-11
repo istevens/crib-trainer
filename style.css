@@ -66,10 +66,13 @@ p {
     font-size: 1.33rem;
 }
 
-[role=dialog], ::backdrop, #cribtrainer {
+#cribtrainer, [role=dialog], #scoreboard {
+    touch-action: none;
+}
+
+::backdrop, #cribtrainer, [role=dialog] {
     overflow: hidden;
     overscroll-behavior: none;
-    touch-action: none;
 }
 
 [role=dialog] {

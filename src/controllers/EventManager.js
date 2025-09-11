@@ -31,8 +31,17 @@ export default class EventManager {
         var dialogButtons = root.querySelectorAll("[command=show-modal]");
         Array.from(dialogButtons, b => b.addEventListener('click', () => app.uiController.openDialog(b.getAttribute('commandfor'))));
 
-        // Prevent double-tap to zoom and long-press
-        root.addEventListener('dblclick', e => e.preventDefault());
+        // Prevent double-tap to zoom, invocation of context menu
+        // @TODO Determine why double-tap still occurs with precise double-tap
+        var preventDoubleTap = e1 => {
+            const checkForDoubleTap = e2 => {
+                const timeSinceTouchEnd = e2.timeStamp - e1.timeStamp;
+                const isDoubleTap = e1.target == e2.target && timeSinceTouchEnd <= 300;
+                isDoubleTap && e2.preventDefault();
+            }
+            e1.target.addEventListener('touchstart', checkForDoubleTap, {once: true, passive: false});
+        }
+        root.addEventListener('touchend', preventDoubleTap, {passive: false});
         root.addEventListener('contextmenu', e => e.preventDefault());
     }
 
