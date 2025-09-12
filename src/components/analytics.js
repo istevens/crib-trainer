@@ -31,6 +31,17 @@ export default defineComponent(
                 gtag('config', '${gid}');
             `;
             this.shadowRoot.appendChild(scriptInit);
+
+            document.addEventListener(Constants.SCORE_SELECTED, this);
+            document.addEventListener(Constants.NEW_ROUND, this);
+            window.addEventListener(Constants.HASH_CHANGE, this);
+
+            const dialogs = document.querySelectorAll('[role=dialog]');
+            const events = [Constants.DIALOG_OPEN, Constants.DIALOG_CLOSE];
+            dialogs.forEach(d => {
+                const dialogName = d.id.replace('Dialog', '').toLowerCase();
+                events.forEach(e => d.addEventListener(e, this));
+            });
         }
 
         function trackEvent(eventName, params) {

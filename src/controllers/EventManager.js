@@ -10,7 +10,6 @@ export default class EventManager {
 
     initialize() {
         this.addEventListeners();
-        this.addAnalyticsListeners();
     }
 
     addEventListeners() {
@@ -43,21 +42,5 @@ export default class EventManager {
         }
         root.addEventListener('touchend', preventDoubleTap, {passive: false});
         root.addEventListener('contextmenu', e => e.preventDefault());
-    }
-
-    addAnalyticsListeners() {
-        const root = this.app.root;
-        const analytics = root.getElementsByTagName('analytics-tracking')[0];
-
-        root.addEventListener(Constants.SCORE_SELECTED, analytics);
-        root.addEventListener(Constants.NEW_ROUND, analytics);
-        window.addEventListener(Constants.HASH_CHANGE, analytics);
-
-        const dialogs = document.querySelectorAll('[role=dialog]');
-        const events = [Constants.DIALOG_OPEN, Constants.DIALOG_CLOSE];
-        dialogs.forEach(d => {
-            const dialogName = d.id.replace('Dialog', '').toLowerCase();
-            events.forEach(e => d.addEventListener(e, analytics));
-        });
     }
 }
