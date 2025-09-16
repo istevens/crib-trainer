@@ -1,4 +1,4 @@
-import CustomDialogComponent from "./dialog.js";
+import CustomDialogComponent from "./custom_dialog.js";
 
 export default class TrickListDialogComponent extends CustomDialogComponent {
     static ADDITIONAL_STYLES = `

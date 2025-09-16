@@ -1,5 +1,5 @@
 import * as Constants from "../constants.js";
-import defineComponent from "./simple_template.js";
+import defineComponent from "./SimpleTemplateComponent.js";
 
 defineComponent(
     'cribbage-cards',

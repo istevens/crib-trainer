@@ -4,7 +4,7 @@
 import {jest} from '@jest/globals';
 
 beforeEach(async () => {
-    await jest.unstable_mockModule('./simple_template.js', () => ({
+    await jest.unstable_mockModule('./SimpleTemplateComponent.js', () => ({
         default: (name, styles, template, eventHandler) => {
             return class {
                 constructor() {
@@ -22,7 +22,7 @@ beforeEach(async () => {
 
 let AnalyticsComponent;
 beforeEach(async () => {
-    const module = await import('./analytics.js');
+    const module = await import('./analytics_tracker.js');
     AnalyticsComponent = module.default;
 });
 
