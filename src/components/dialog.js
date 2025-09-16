@@ -187,6 +187,11 @@ export default class CustomDialogComponent extends HTMLElement {
         const dialog = _qs('dialog');
         dialog.addEventListener('close',
             () => this.dispatchEvent(new Event(Constants.DIALOG_CLOSE)));
+
+        // Wire up dialog to any matching buttons
+        var buttons = `[command=show-modal][commandfor=${this.id}]`;
+        buttons = document.querySelectorAll(buttons);
+        buttons.forEach(b => b.addEventListener('click', () => this.showModal()));
     }
 
     attributeChangedCallback(name, oldValue, newValue) {

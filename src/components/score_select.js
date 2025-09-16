@@ -1,3 +1,5 @@
+import * as Constants from "../constants.js";
+
 export default class ScoreSelect extends HTMLElement {
     static STYLE = `
         :host {
@@ -61,7 +63,9 @@ export default class ScoreSelect extends HTMLElement {
         style.replaceSync(ScoreSelect.STYLE);
         this.attachShadow({mode: 'open'});
         this.shadowRoot.adoptedStyleSheets = [style];
+    }
 
+    connectedCallback() {
         let _se = this.selectElement = document.createElement('select');
         let o = document.createElement('option');
         o.disabled = o.selected = true;
@@ -69,6 +73,10 @@ export default class ScoreSelect extends HTMLElement {
         _se.appendChild(o);
         this.shadowRoot.appendChild(_se);
 
+        const _ga = x => parseInt(this.getAttribute(x) || 0);
+        this.generateScores(_ga('min'), _ga('max'));
+
+        document.addEventListener(Constants.NEW_ROUND, this);
         this.addEventListener('focus', () => _se.focus());
         _se.addEventListener('change', e => {
             e = new Event('change', {bubbles: true, composed: true});
@@ -81,11 +89,6 @@ export default class ScoreSelect extends HTMLElement {
     }
 
     attributeChangedCallback(name, oldVal, newVal) {
-        const _ga = x => parseInt(this.getAttribute(x) || 0);
-        const shouldChangeOptions = ['min', 'max'].includes(name);
-        const changeOptions = () => this.generateScores(_ga('min'), _ga('max'));
-        shouldChangeOptions && changeOptions();
-
         const shouldChangeAutofocus = name == 'autofocus';
         shouldChangeAutofocus && setTimeout(() => {
             this.selectElement.autofocus = newVal;

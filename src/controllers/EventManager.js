@@ -15,20 +15,12 @@ export default class EventManager {
     addEventListeners() {
         const root = this.app.root;
         var scoreOverlay = _getEl('selectedScore');
-        var selector = _getEl('scoreSelect');
         var app = this.app;
 
-        root.addEventListener(Constants.SCORE_SELECTED, _getEl('scoreboard'));
-        root.addEventListener(Constants.SCORE_SELECTED, scoreOverlay);
-        root.addEventListener(Constants.NEW_ROUND, _getEl('cards'));
-        root.addEventListener(Constants.NEW_ROUND, selector);
         root.addEventListener('change', e => app.handWasScored(e));
         scoreOverlay.addEventListener('transitionend', () => app.finishRound());
         window.addEventListener(Constants.HASH_CHANGE, () => app.uiController.switchSections());
         _getEl('tricks').addEventListener(Constants.DIALOG_CLOSE, () => app.startNewRound());
-
-        var dialogButtons = root.querySelectorAll("[command=show-modal]");
-        Array.from(dialogButtons, b => b.addEventListener('click', () => app.uiController.openDialog(b.getAttribute('commandfor'))));
 
         // Prevent double-tap to zoom, invocation of context menu
         // @TODO Determine why double-tap still occurs with precise double-tap

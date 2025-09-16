@@ -151,7 +151,7 @@ export class CardSetComponent extends HTMLElement {
             && _preload(url);
 
         return isPreloaded;
-  }
+    }
 
     cardTemplate(card, i, a) {
         let style = [

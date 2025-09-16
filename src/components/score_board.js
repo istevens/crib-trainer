@@ -1,3 +1,4 @@
+import * as Constants from "../constants.js";
 import defineComponent from "./simple_template.js";
 
 defineComponent(
@@ -27,11 +28,17 @@ defineComponent(
     }`,
 
     function(ev) {
+        if(!this._initialized) {
+            this._initialized = true;
+            document.addEventListener(Constants.SCORE_SELECTED, this);
+        }
+
         const newState = ev.detail.scoresMatch
             ? { successes: parseInt(this._state.successes) + 1 }
             : { failures: parseInt(this._state.failures) + 1 };
         return newState;
-    }
+    },
+
+    [Constants.SCORE_SELECTED]
+
 );
-
-

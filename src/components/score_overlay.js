@@ -1,3 +1,4 @@
+import * as Constants from "../constants.js";
 import defineComponent from "./simple_template.js";
 
 defineComponent('score-overlay',
@@ -44,5 +45,7 @@ defineComponent('score-overlay',
         return {
             selectedScore: ev.detail.selectedScore
         };
-    }
+    },
+
+    [Constants.SCORE_SELECTED]
 );

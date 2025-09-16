@@ -3,11 +3,6 @@ export default class UIController {
         this.app = app;
     }
 
-    openDialog(d) {
-        d = this.app.root.querySelector(`[role=dialog]#${d}`);
-        d.showModal();
-    }
-
     showTricks(expectedScore) {
         const dialog = this.app.root.querySelector('#tricks');
         dialog.showModal(this.app.play, expectedScore);

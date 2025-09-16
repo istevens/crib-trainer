@@ -1,3 +1,4 @@
+import * as Constants from "../constants.js";
 import defineComponent from "./simple_template.js";
 
 defineComponent(
@@ -67,5 +68,7 @@ defineComponent(
             cut_card: play.cutCard,
             hand: play.hand.cards
         }
-    }
+    },
+
+    [Constants.NEW_ROUND]
 );
