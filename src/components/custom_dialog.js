@@ -9,7 +9,6 @@ export default class CustomDialogComponent extends HTMLElement {
             --dialogDecorColour: hsl(43, 100%, 20%);
             display: none;
             position: relative;
-            border: 1px solid black;
         }
 
         /* @TODO Fix duplication of .stacked from style.css  */
@@ -24,11 +23,11 @@ export default class CustomDialogComponent extends HTMLElement {
         }
 
         dialog {
-            display: none;
             padding: var(--outerPadding);
             background: var(--dialogColour);
             border: inherit;
             border-radius: inherit;
+            border: 1px solid black;
             max-width: min(90vw, var(--maxTitleWidth));
             max-height: 90vh;
             width: auto;
