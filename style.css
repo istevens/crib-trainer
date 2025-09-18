@@ -75,6 +75,7 @@ p {
     overscroll-behavior: none;
 }
 
+
 [role=dialog] {
     display: none;
 }
@@ -194,10 +195,6 @@ p {
     height: 3rem;
     width: 6rem;
     font-weight: 700;
-}
-
-#about {
-    max-width: clamp(20rem, 90%, 30rem);
 }
 
 #selectedScore {

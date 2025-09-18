@@ -8,7 +8,6 @@ export default class CustomDialogComponent extends HTMLElement {
             --dialogColour: hsl(43, 100%, 92%);
             --dialogDecorColour: hsl(43, 100%, 20%);
             display: none;
-            position: relative;
         }
 
         /* @TODO Fix duplication of .stacked from style.css  */
@@ -36,6 +35,7 @@ export default class CustomDialogComponent extends HTMLElement {
 
         dialog[open] {
             display: flex;
+            position: absolute;
             flex-direction: column;
             justify-items: center;
             gap: var(--interItemPadding);
@@ -158,19 +158,10 @@ export default class CustomDialogComponent extends HTMLElement {
         return dialog;
     }
 
-    finishOpen() {
-        this.setAttribute('open', '');
-        this.dispatchEvent(new Event(Constants.DIALOG_OPEN));
-    }
-
-    open() {
-        this.dialog.open();
-        this.finishOpen();
-    }
-
     showModal() {
         this.dialog.showModal();
-        this.finishOpen();
+        this.setAttribute('open', '');
+        this.dispatchEvent(new Event(Constants.DIALOG_OPEN));
     }
 
     close() {

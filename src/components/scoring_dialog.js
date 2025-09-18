@@ -11,14 +11,10 @@ class ScoringDialogComponent extends TrickListDialogComponent {
             flex: 1 1 calc(var(--trickWidth) - 2 * var(--interItemPadding)) !important;
         }
 
-        :has(card-set+span) {
-            position: relative;
-        }
-
         card-set+span {
-            position: absolute;
-            bottom: 1rem;
-            left: 3em;
+            position: relative;
+            bottom: 2rem;
+            left: 3.5rem;
         }
     `;
 
