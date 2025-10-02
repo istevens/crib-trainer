@@ -6,7 +6,7 @@ export default class CustomDialogComponent extends HTMLElement {
     static STYLE = `
         :host {
             --dialogColour: hsl(43, 100%, 92%);
-            --dialogDecorColour: hsl(43, 100%, 20%);
+            --dialogDecorColour: hsl(from var(--dialogColour) h s calc(l * 0.1));
             display: none;
         }
 
@@ -24,6 +24,7 @@ export default class CustomDialogComponent extends HTMLElement {
         dialog {
             padding: var(--outerPadding);
             background: var(--dialogColour);
+            background: fixed radial-gradient(circle at 50% 10rem, var(--dialogColour) 0%, hsl(from var(--dialogColour) h s calc(l * 0.75)) 85%, var(--dialogDecorColour) 98%);
             border: inherit;
             border-radius: inherit;
             border: 1px solid black;
@@ -31,6 +32,7 @@ export default class CustomDialogComponent extends HTMLElement {
             max-height: 90vh;
             width: auto;
             touch-action: inherit;
+            color: var(--dialogDecorColour);
         }
 
         dialog[open] {

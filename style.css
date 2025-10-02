@@ -92,7 +92,7 @@ p {
 
 #cribtrainer {
     flex: 1;
-    background: fixed radial-gradient(circle at 50% 10rem, var(--tableColour) 0%, rgb(0,120,24) 40%, rgb(0,0,0) 100%);
+    background: fixed radial-gradient(circle at 50% 10rem, var(--tableColour) 0%, hsl(from var(--tableColour) h s calc(l * 0.75)) 40%, rgb(0,0,0) 100%);
     font-family: 'Public Sans', sans-serif;
     font-optical-sizing: auto;
     font-weight: 400;
