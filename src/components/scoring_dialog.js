@@ -13,8 +13,9 @@ class ScoringDialogComponent extends TrickListDialogComponent {
 
         card-set+span {
             position: relative;
-            bottom: 2rem;
-            left: 3.5rem;
+            bottom: 1em;
+            left: 3em;
+            z-index: 1;
         }
     `;
 
@@ -25,7 +26,8 @@ class ScoringDialogComponent extends TrickListDialogComponent {
     }
 
     createDialogContentHTML() {
-        return `
+        var s = super.createDialogContentHTML();
+        s += `
             <ul class="trickList stacked">
                 <li class="trickCategory"><span class="trickLabel"><span class="trickScore">2</span> <span class="trickDescription">for sums to 15 (J,Q,K = 10)</span></span><ul>
                     <li><card-set cards="JH,5C" arrangeBy="fan"></card-set></li>
@@ -50,6 +52,7 @@ class ScoringDialogComponent extends TrickListDialogComponent {
                 </ul></li>
             </ul>
         `;
+        return s;
     }
 }
 

@@ -10,20 +10,12 @@ export default class CustomDialogComponent extends HTMLElement {
             display: none;
         }
 
-        /* @TODO Fix duplication of .stacked from style.css  */
-        .stacked {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
         :host([open]) {
             display: block !important;
         }
 
         dialog {
-            padding: var(--outerPadding);
-            background: var(--dialogColour);
+            padding: calc(1.5*var(--outerPadding)) var(--outerPadding);
             background: fixed radial-gradient(circle at 50% 10rem, var(--dialogColour) 0%, hsl(from var(--dialogColour) h s calc(l * 0.75)) 85%, var(--dialogDecorColour) 98%);
             border: inherit;
             border-radius: inherit;
@@ -33,42 +25,50 @@ export default class CustomDialogComponent extends HTMLElement {
             width: auto;
             touch-action: inherit;
             color: var(--dialogDecorColour);
-        }
-
-        dialog[open] {
-            display: flex;
-            position: absolute;
-            flex-direction: column;
-            justify-items: center;
-            gap: var(--interItemPadding);
+            overflow: hidden;
         }
 
         header {
-            display: flex;
-            justify-content: space-between;
+            position: relative;
+            width: 100%;
+        }
+
+        header::after {
+            position: absolute;
+            display: block;
+            width: 33%;
+            bottom: calc(-0.5em * var(--interItemPadding));
+            left: 33%;
+            content: '';
+            border-width: 1px 0 0 0;
+            border-image: radial-gradient(circle, var(--dialogDecorColour), 75%, rgba(0,0,0,0)) 1 0;
+            border-style: solid;
         }
 
         .dialog-title {
-            width: 100%;
-            font-size: 2rem;
+            font-size: 1.5rem;
             font-weight: 700;
             text-align: center;
             margin: 0;
+            text-transform: uppercase;
         }
 
-        .dialog-close {
-            position: absolute;
-            top: 0;
-            right: 0;
-            background: none;
+        [command=close] {
             border: none;
+            outline: none;
+            position: absolute;
+            z-index: 1;
+            padding: 0;
+            right: 0.25rem;
+            top: -0.25rem;
+            background: none;
             font-size: 1.5rem;
             cursor: pointer;
             color: inherit;
         }
 
         .dialog-content {
-            flex: 1;
+            margin-top: calc(2*var(--interItemPadding));
         }
 
         .dialog-content span {
@@ -80,9 +80,9 @@ export default class CustomDialogComponent extends HTMLElement {
             display: initial;
         }
 
-        .dialog-content ::slotted(p) {
+        .dialog-content ::slotted(p:not(:last-child:not(:first-child))) {
             display: block;
-            margin-bottom: var(--interItemPadding);
+            margin-bottom: 1em;
         }
 
         .dialog-content ::slotted(li) {
@@ -138,12 +138,16 @@ export default class CustomDialogComponent extends HTMLElement {
         this.afterRender?.();
     }
 
-    createDialogHTML() {
+    createDialogHeaderHTML() {
         const title = this.getAttribute('title') || '';
+        return `<h2 class="dialog-title">${title}</h2>`;
+    }
+
+    createDialogHTML() {
         return `<dialog>
+            <button command="close" title="Close dialog">&times;</button>
             <header>
-                <h2 class="dialog-title">${title}</h2>
-                <button class="dialog-close" command="close">&times;</button>
+                ${this.createDialogHeaderHTML()}
             </header>
             <div class="dialog-content">
                 ${this.createDialogContentHTML()}
@@ -173,7 +177,7 @@ export default class CustomDialogComponent extends HTMLElement {
 
     setupEventListeners() {
         const _qs = x => this.shadowRoot.querySelector(x);
-        const closeButton = _qs('.dialog-close');
+        const closeButton = _qs('[command=close]');
         closeButton && closeButton.addEventListener('click', () => this.close());
 
         const dialog = _qs('dialog');

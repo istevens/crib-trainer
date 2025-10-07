@@ -20,6 +20,13 @@ export default class TrickListDialogComponent extends CustomDialogComponent {
             pointer-events: none;
         }
 
+        /* @TODO Fix duplication of .stacked from style.css  */
+        .stacked {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
         .trickLabel {
             position: relative;
             place-items: center;
@@ -34,6 +41,12 @@ export default class TrickListDialogComponent extends CustomDialogComponent {
             padding: 0 calc(2*var(--interItemPadding));
         }
 
+        .trickList .trickScore::before {
+            content: '+';
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
         .trickList {
             --trickWidth: 50%;
             --trickLabelWidth: 5rem;
@@ -42,7 +55,7 @@ export default class TrickListDialogComponent extends CustomDialogComponent {
             flex-direction: row;
             flex-flow: wrap;
             align-items: flex-start;
-            gap: calc(2*var(--interItemPadding)) var(--interItemPadding);
+            gap: calc(3*var(--interItemPadding)) var(--interItemPadding);
             flex: 1;
             margin: 0;
         }

@@ -5,30 +5,17 @@ class TricksDialogComponent extends TrickListDialogComponent {
 
     static ADDITIONAL_STYLES = `
         #lastPlay {
-            position: relative;
             margin: auto;
             width: 75%;
             max-width: 20rem;
             flex-direction: column;
-            margin-bottom: calc(2*var(--interItemPadding));
-            padding-bottom: calc(2*var(--interItemPadding));
             gap: calc(2*var(--interItemPadding));
-        }
-
-        #lastPlay::after {
-            position: absolute;
-            display: block;
-            width: 75%;
-            bottom: 0;
-            left: 12.5%;
-            content: '';
-            border-width: 1px 0 0 0;
-            border-image: radial-gradient(circle, var(--dialogDecorColour), 75%, rgba(0,0,0,0)) 1 0;
-            border-style: solid;
+            margin-bottom: var(--interItemPadding);
         }
 
         #lastPlay .trickScore {
             font-size: 4rem;
+            font-weight: 700;
         }
 
         cribbage-cards::part(cut_card) {
@@ -56,22 +43,11 @@ class TricksDialogComponent extends TrickListDialogComponent {
             flex: 1 1 calc(var(--trickWidth) - 2 * var(--interItemPadding));
         }
 
-        .trickCategory .trickLabel::before {
-            position: absolute;
-            left: 0;
-            font-size: 2rem;
-            font-weight: 700;
-        }
-
-        .trickCategory:first-child .trickLabel::before {
+        .trickList .trickCategory:first-child .trickScore::before {
             content: '=';
         }
 
-        .trickCategory:not(:first-child) .trickLabel::before {
-            content: '+';
-        }
-
-        .trickCategory:only-child .trickLabel::before {
+        .trickList .trickCategory:only-child .trickScore::before {
             content: '';
         }
 
@@ -103,7 +79,7 @@ class TricksDialogComponent extends TrickListDialogComponent {
         return style;
     }
 
-    createDialogContentHTML() {
+    createDialogHeaderHTML() {
         return `
             <section id="lastPlay" class="stacked">
                 <div id="correctScore">
@@ -116,9 +92,11 @@ class TricksDialogComponent extends TrickListDialogComponent {
                 </div>
                 <cribbage-cards id="lastCards" class="stacked">
                 </cribbage-cards>
-            </section>
-            <ul class="trickList stacked"></ul>
-        `;
+            </section>`;
+    }
+
+    createDialogContentHTML() {
+        return '<ul class="trickList stacked"></ul>';
     }
 
     setupEventListeners() {
