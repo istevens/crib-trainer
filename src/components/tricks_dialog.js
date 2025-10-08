@@ -51,10 +51,15 @@ class TricksDialogComponent extends TrickListDialogComponent {
             content: '';
         }
 
+        .trickCategory:only-child {
+            grid-template-columns: var(--trickLabelWidth);
+            justify-content: center;
+            margin: calc(2*var(--interItemPadding)) auto;
+        }
+
         .trickCategory:only-child .trickScore {
             display: none;
         }
-
 
         @media (orientation: landscape) and (hover: none) {
             #lastPlay {
@@ -141,16 +146,17 @@ class TricksDialogComponent extends TrickListDialogComponent {
         const [name, {score, data = []}] = trick;
         const count = data.length;
 
-        const trickElements = data.map(cards =>
+        var trickElements = data.map(cards =>
             `<li><card-set class='trick' cards='${cards}' arrangeBy='fan'></card-set></li>`
         ).join("");
+        trickElements = trickElements && `<ul>${trickElements}</ul>`;
 
         return `<li class="trickCategory">
             <span class="trickLabel stacked">
                 <span class="trickScore">${score}</span>
                 <span class="trickDescription">for ${this.formatTrickName(name, count)}</span>
             </span>
-            <ul>${trickElements}</ul>
+            ${trickElements}
         </li>`;
     }
 
