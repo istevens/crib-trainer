@@ -65,12 +65,8 @@ export default class TrickListDialogComponent extends CustomDialogComponent {
             font-size: 1rem;
         }
 
-        .trickCategory ul, #lastCards {
-            display: flex;
-            flex-direction: row;
-        }
-
         .trickCategory ul {
+            display: flex;
             flex-direction: row;
             flex-wrap: wrap;
             justify-content: space-evenly;

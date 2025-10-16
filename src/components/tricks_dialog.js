@@ -4,6 +4,10 @@ class TricksDialogComponent extends TrickListDialogComponent {
     static observedAttributes = ['play'];
 
     static ADDITIONAL_STYLES = `
+        dialog {
+            min-width: 16rem;
+        }
+
         #lastPlay {
             margin: auto;
             width: 75%;
@@ -13,9 +17,22 @@ class TricksDialogComponent extends TrickListDialogComponent {
             margin-bottom: var(--interItemPadding);
         }
 
+        #lastPlay {
+            font-weight: 700;
+        }
+
         #lastPlay .trickScore {
             font-size: 4rem;
-            font-weight: 700;
+        }
+
+        #lastCards {
+            display: grid;
+            grid-auto-flow: column;
+            grid-template-columns: 1fr 2fr;
+        }
+
+        cribbage-cards {
+            gap: var(--interItemPadding);
         }
 
         cribbage-cards::part(cut_card) {
@@ -24,6 +41,7 @@ class TricksDialogComponent extends TrickListDialogComponent {
 
         cribbage-cards::part(hand) {
             justify-items: flex-end;
+            justify-content: flex-end;
         }
 
         #correctScore {
@@ -95,7 +113,7 @@ class TricksDialogComponent extends TrickListDialogComponent {
                         <span class="trickScore"></span>
                     </span>
                 </div>
-                <cribbage-cards id="lastCards" class="stacked">
+                <cribbage-cards id="lastCards">
                 </cribbage-cards>
             </section>`;
     }

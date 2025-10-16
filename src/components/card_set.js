@@ -218,17 +218,8 @@ export class CardSetComponent extends HTMLElement {
         let createNew = () => (root.innerHTML = cards.map((...x) => this.cardTemplate(...x)).join(""));
 
         shouldUpdateExisting && updateExisting() || createNew();
-        this.updateCardWidths();
 
         return cards.length;
-    }
-
-    updateCardWidths() {
-        const updateCardWidth = card => {
-            const width = card.getBoundingClientRect().width;
-            card.style.setProperty('--cardset-card-width', `${width}px`);
-        }
-        this.cardNodes.forEach(updateCardWidth);
     }
 
     attributeChangedCallback(name, oldVal, newVal) {
