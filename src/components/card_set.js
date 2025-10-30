@@ -3,7 +3,7 @@ export class CardSetComponent extends HTMLElement {
     static STYLE = `
         :host {
             --cardset-card-count: 0;
-            --cardset-card-rotation: 7;
+            --cardset-card-rotation: 6;
             --cardset-card-aspect-ratio: 240/334;
             --cardset-card-background-colour: #c00;
             --cardset-card-decor-colour: #f8f8f8;
@@ -25,12 +25,11 @@ export class CardSetComponent extends HTMLElement {
         :host([arrangeBy=fan]) {
             --cardset-card-maxrotation: calc(var(--cardset-card-rotation) * var(--cardset-card-count) / 2);
             --cardset-card-maxrotationrad: calc(var(--cardset-card-maxrotation) * 3.14159 / 180);
-            --cardset-card-padding: calc(0.66rem * abs(sin(var(--cardset-card-maxrotationrad))) * var(--cardset-card-count));
+            --cardset-card-padding: calc(0.4rem * abs(sin(var(--cardset-card-maxrotationrad))) * var(--cardset-card-count));
 
             padding: var(--cardset-card-padding);
-            min-height: 100%;
-            height: auto;
-            width: cover;
+			min-width: 0;
+			flex: 1 1 auto;
         }
 
         :host([arrangeBy=row])::part(card) {
@@ -95,11 +94,12 @@ export class CardSetComponent extends HTMLElement {
             grid-area: 1 / 1;
             --cardset-card-thiscardrotation: calc(
                 360deg + var(--cardset-card-rotation) * 1deg
-                    * (var(--cardset-card-number) - 1/2 * var(--cardset-card-count))
+                    * (var(--cardset-card-number) - calc(var(--cardset-card-count) / 2 - 0.5))
                 );
             transform: rotateZ(var(--cardset-card-thiscardrotation));
-            transform-origin: left bottom;
+            transform-origin: bottom center;
             transform-box: fill-box;
+            width: 100%;
         }
     `;
 
