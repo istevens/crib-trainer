@@ -2,20 +2,23 @@ import TrickListDialogComponent from "./tricklist_dialog.js";
 
 class ScoringDialogComponent extends TrickListDialogComponent {
     static ADDITIONAL_STYLES = `
-        .trickScore {
-            font-size: 2rem;
-        }
-
-        .trickCategory {
-            flex-direction: column;
-            flex: 1 1 calc(var(--trickWidth) - 2 * var(--interItemPadding)) !important;
+        .trickList {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
         }
 
         card-set+span {
             position: relative;
             bottom: 1em;
-            left: 3em;
+            left: 2rem;
             z-index: 1;
+        }
+
+        @media (width > 40rem /* maxTitleWidth */ )
+                or ((orientation: landscape) and (hover:none)) {
+            .trickList {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
         }
     `;
 

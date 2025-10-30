@@ -2,6 +2,11 @@ import CustomDialogComponent from "./custom_dialog.js";
 
 export default class TrickListDialogComponent extends CustomDialogComponent {
     static ADDITIONAL_STYLES = `
+        :host, ::slotted(p) {
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
         li {
             list-style: none;
         }
@@ -17,7 +22,6 @@ export default class TrickListDialogComponent extends CustomDialogComponent {
             height: auto;
             min-height: min(12vh, 5rem);
             max-height: min(20vh, 10rem);
-            pointer-events: none;
         }
 
         /* @TODO Fix duplication of .stacked from style.css  */
@@ -34,17 +38,14 @@ export default class TrickListDialogComponent extends CustomDialogComponent {
             margin: auto;
         }
 
-        .trickScore {
-            display: block;
-            font-size: 3rem;
-            line-height: 75%;
-            padding: 0 calc(2*var(--interItemPadding));
+        .dialog-content .trickScore::before {
+            content: '+';
         }
 
-        .trickList .trickScore::before {
-            content: '+';
+        .trickScore {
+            display: block;
             font-size: 2rem;
-            font-weight: 700;
+            line-height: 75%;
         }
 
         .trickList {
@@ -55,14 +56,20 @@ export default class TrickListDialogComponent extends CustomDialogComponent {
             flex-direction: row;
             flex-flow: wrap;
             align-items: flex-start;
-            gap: calc(3*var(--interItemPadding)) var(--interItemPadding);
+            gap: calc(2*var(--interItemPadding));
             flex: 1;
             margin: 0;
         }
 
         .trickDescription {
             width: 75%;
-            font-size: 1rem;
+        }
+
+        .trickCategory {
+            display: grid;
+            gap: var(--interItemPadding);
+            width: 100%;
+            max-width: 100%;
         }
 
         .trickCategory ul {
@@ -72,6 +79,27 @@ export default class TrickListDialogComponent extends CustomDialogComponent {
             justify-content: space-evenly;
             align-items: center;
             place-items: center;
+            gap: var(--interItemPadding);
+        }
+
+        ::slotted(p) {
+            text-align: center;
+        }
+
+        @media (height > 42rem) {
+            :host {
+                --outerPadding: 1rem;
+                --interItemPadding: 0.75rem;
+            }
+
+            :host, ::slotted(p) {
+                font-size: 1.25rem;
+            }
+
+            .trickScore,
+            .trickScore::before {
+                font-size: 3rem;
+            }
         }
 
         @media (width > 40rem /* maxTitleWidth */ )
@@ -86,13 +114,8 @@ export default class TrickListDialogComponent extends CustomDialogComponent {
             cribbage-cards::part(cut_card),
             cribbage-cards::part(hand),
             card-set {
-                height: auto;
                 min-height: min(20vh, 6rem) !important;
                 max-height: min(20vh, 10rem);
-            }
-
-            #trickList {
-                flex-direction: column;
             }
         }
     `

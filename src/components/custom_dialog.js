@@ -71,25 +71,25 @@ export default class CustomDialogComponent extends HTMLElement {
             margin-top: calc(2*var(--interItemPadding));
         }
 
-        .dialog-content span {
-            font-weight: 700;
-        }
-
-        .dialog-content ::slotted(*) {
+        ::slotted(*) {
             all: unset;
             display: initial;
         }
 
-        .dialog-content ::slotted(p:not(:last-child:not(:first-child))) {
+        ::slotted(p) {
             display: block;
+            font-size: 1.33rem;
+        }
+
+        ::slotted(p:not(:last-child:not(:only-child))) {
             margin-bottom: 1em;
         }
 
-        .dialog-content ::slotted(li) {
+        ::slotted(li) {
             list-style: none;
         }
 
-        .dialog-content ::slotted(ul) {
+        ::slotted(ul) {
             padding-inline-start: 0;
             margin-inline-start: 0;
         }

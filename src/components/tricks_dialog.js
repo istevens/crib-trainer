@@ -4,34 +4,23 @@ class TricksDialogComponent extends TrickListDialogComponent {
     static observedAttributes = ['play'];
 
     static ADDITIONAL_STYLES = `
-        dialog {
-            min-width: 16rem;
-        }
-
         #lastPlay {
-            margin: auto;
             width: 75%;
             max-width: 20rem;
             flex-direction: column;
             gap: calc(2*var(--interItemPadding));
-            margin-bottom: var(--interItemPadding);
-        }
-
-        #lastPlay {
-            font-weight: 700;
+            margin: auto;
+            margin-bottom: calc(2*var(--interItemPadding));
         }
 
         #lastPlay .trickScore {
-            font-size: 4rem;
-        }
-
-        #lastCards {
-            display: grid;
-            grid-auto-flow: column;
-            grid-template-columns: 1fr 2fr;
+            font-size: 3rem;
         }
 
         cribbage-cards {
+            display: grid;
+            grid-auto-flow: column;
+            grid-template-columns: 1fr 2fr;
             gap: var(--interItemPadding);
         }
 
@@ -48,35 +37,57 @@ class TricksDialogComponent extends TrickListDialogComponent {
             text-align: center;
         }
 
+        .trickList {
+            margin-top: calc(4*var(--interItemPadding));
+        }
+
         .trickCategory {
-            display: grid;
             grid-template-columns: var(--trickLabelWidth) 1fr;
-            flex: 1 1 100%;
-            width: 100%;
-            max-width: 100%;
-            gap: var(--interItemPadding);
         }
 
         .trickCategory:not(:has(li:nth-child(2))) {
             flex: 1 1 calc(var(--trickWidth) - 2 * var(--interItemPadding));
         }
 
-        .trickList .trickCategory:first-child .trickScore::before {
-            content: '=';
-        }
-
-        .trickList .trickCategory:only-child .trickScore::before {
+        .trickCategory:first-child .trickScore::before {
             content: '';
         }
 
+        .trickCategory:only-child .trickScore::before {
+            display: none;
+        }
+
         .trickCategory:only-child {
-            grid-template-columns: var(--trickLabelWidth);
+            grid-template-columns: unset;
+            grid-template-rows: 1fr;
             justify-content: center;
             margin: calc(2*var(--interItemPadding)) auto;
         }
 
+        .trickCategory:not(:has(li:nth-child(2))):has(ul:only-child)) .trickLabel {
+            justify-content: flex-start;
+            margin: 0;
+        }
+
         .trickCategory:only-child .trickScore {
             display: none;
+        }
+
+
+        @media (height > 40rem) {
+
+            :host {
+                --outerPadding: 1rem;
+                --interItemPadding: 0.75rem;
+            }
+
+            #lastPlay .trickScore {
+                font-size: 5rem;
+            }
+
+            .trickList {
+                --trickWidth: 6rem;
+            }
         }
 
         @media (orientation: landscape) and (hover: none) {
@@ -85,8 +96,12 @@ class TricksDialogComponent extends TrickListDialogComponent {
                 max-width: 30rem;
             }
 
+            .trickList {
+                --trickLabelWidth: 6rem;
+            }
+
             .trickCategory:not(:has(li:nth-child(3))) {
-                flex: 1 1 calc(var(--trickWidth) - 3 * var(--interItemPadding)) !important;
+                flex: 1 1 calc(var(--trickWidth) - 4 * var(--interItemPadding)) !important;
             }
         }
     `;
@@ -113,8 +128,7 @@ class TricksDialogComponent extends TrickListDialogComponent {
                         <span class="trickScore"></span>
                     </span>
                 </div>
-                <cribbage-cards id="lastCards">
-                </cribbage-cards>
+                <cribbage-cards id="lastCards"></cribbage-cards>
             </section>`;
     }
 
