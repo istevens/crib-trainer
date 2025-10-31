@@ -96,6 +96,12 @@ export default class TrickListDialogComponent extends CustomDialogComponent {
                 font-size: 1.25rem;
             }
 
+            cribbage-cards::part(cut_card),
+            cribbage-cards::part(hand),
+            card-set {
+                min-height: min(15vh, 6rem);
+            }
+
             .trickScore,
             .trickScore::before {
                 font-size: 3rem;

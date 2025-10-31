@@ -24,7 +24,7 @@ class CribbageApp {
 
     startNewRound() {
         this.play = this.CribbageHand.randomPlay();
-        //this.play = {cutCard: '5S', hand: CribbageHand.fromString('5C 5D 5H JS')};
+//        this.play = {cutCard: '5S', hand: this.CribbageHand.fromString('5C 5D 5H JS')};
 
         var evPayload = {bubbles: true, detail: {play: this.play}};
         this.root.dispatchEvent(new CustomEvent(Constants.NEW_ROUND, evPayload));
