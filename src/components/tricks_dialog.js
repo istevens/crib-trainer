@@ -4,6 +4,10 @@ class TricksDialogComponent extends TrickListDialogComponent {
     static observedAttributes = ['play'];
 
     static ADDITIONAL_STYLES = `
+        :root {
+            min-width: calc(4*var(--trickLabelWidth));
+        }
+
         #lastPlay {
             width: 75%;
             max-width: 20rem;
@@ -58,10 +62,11 @@ class TricksDialogComponent extends TrickListDialogComponent {
         }
 
         .trickCategory:only-child {
-            grid-template-columns: unset;
-            grid-template-rows: 1fr;
+            display: flex;
+            flex-direction: column;
             justify-content: center;
-            margin: calc(2*var(--interItemPadding)) auto;
+            margin: calc(2*var(--interItemPadding)) inherit;
+            width: 100%;
         }
 
         .trickCategory:not(:has(li:nth-child(2))):has(ul:only-child)) .trickLabel {
@@ -73,6 +78,13 @@ class TricksDialogComponent extends TrickListDialogComponent {
             display: none;
         }
 
+        .trickCategory:only-child ul {
+            flex-direction: row;
+        }
+
+        .trickCategory:only-child ul li {
+            flex: 0 0 var(--trickLabelWidth);
+        }
 
         @media (height > 40rem) {
 

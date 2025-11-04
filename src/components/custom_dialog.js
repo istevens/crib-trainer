@@ -20,9 +20,10 @@ export default class CustomDialogComponent extends HTMLElement {
             border: inherit;
             border-radius: inherit;
             border: 1px solid black;
+            min-width: min(90vw, 20rem);
             max-width: min(90vw, var(--maxTitleWidth));
             max-height: 90vh;
-            width: auto;
+            width: fit-content;
             touch-action: inherit;
             color: var(--dialogDecorColour);
             overflow: hidden;
