@@ -36,16 +36,6 @@ defineComponent(
             max-width: calc(var(--maxTitleWidth) + 13rem);
             gap: 2rem;
         }
-
-        :host::part(cut_card) {
-            flex: none !important;
-            animation: forceRedraw 0.01s forwards;
-        }
-
-        @keyframes forceRedraw {
-            from { opacity: 0.99; }
-            to { opacity: 1; }
-        }
     }
     `,
     function(ev) {
