@@ -6,6 +6,7 @@ class TricksDialogComponent extends TrickListDialogComponent {
     static ADDITIONAL_STYLES = `
         :root {
             min-width: calc(4*var(--trickLabelWidth));
+            margin-bottom: calc(2*var(--interItemPadding));
         }
 
         #lastPlay {
@@ -86,7 +87,7 @@ class TricksDialogComponent extends TrickListDialogComponent {
             flex: 0 0 var(--trickLabelWidth);
         }
 
-        @media (height > 40rem) {
+        @media (height > 46rem) {
 
             :host {
                 --outerPadding: 1rem;
@@ -184,35 +185,6 @@ class TricksDialogComponent extends TrickListDialogComponent {
             : this.renderTrickCategory(["tricks", { score: 0, data: [] }]);
 
         tricksElement.innerHTML = content;
-
-        const mightOverlap = tricks.length > 3;
-        mightOverlap && this.resetMinHeightToAvoidOverlap(tricksElement);
-    }
-
-    // measure rows after paint and set each row's max height to avoid overlap
-    // Suggested by Github Copilot, but it's a hack that needs a proper fix
-    resetMinHeightToAvoidOverlap(tricksElement) {
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-                const items = Array.from(tricksElement.getElementsByClassName('trickCategory'));
-                if (!items.length) return;
-
-                // clear any previous inline heights
-                items.forEach(i => i.style.minHeight = '');
-
-                // group by computed top and set each group's minHeight to the group's max height
-                const rows = {};
-                items.forEach(i => {
-                    const t = Math.round(i.getBoundingClientRect().top);
-                    (rows[t] = rows[t] || []).push(i);
-                });
-
-                Object.values(rows).forEach(row => {
-                    const h = Math.max(...row.map(i => Math.round(i.getBoundingClientRect().height)));
-                    row.forEach(i => i.style.minHeight = h + 'px');
-                });
-            });
-        });
     }
 
     renderTrickCategory(trick) {

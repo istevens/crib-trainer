@@ -10,7 +10,7 @@ class ScoringDialogComponent extends TrickListDialogComponent {
         card-set+span {
             position: relative;
             bottom: 1em;
-            left: 2rem;
+            left: 2.75em;
             z-index: 1;
         }
 

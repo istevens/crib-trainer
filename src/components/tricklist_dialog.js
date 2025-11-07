@@ -5,6 +5,8 @@ export default class TrickListDialogComponent extends CustomDialogComponent {
         :host, ::slotted(p) {
             font-size: 1rem;
             font-weight: 700;
+            --min-card-height: min(12vh, 3rem);
+            --max-card-height: min(20vh, 10rem);
         }
 
         li {
@@ -20,8 +22,9 @@ export default class TrickListDialogComponent extends CustomDialogComponent {
         cribbage-cards::part(hand),
         card-set {
             height: auto;
-            min-height: min(12vh, 5rem);
-            max-height: min(20vh, 10rem);
+            min-height: var(--min-card-height);
+            max-height: var(--max-card-height);
+            min-inline-size: var(--min-card-height);
         }
 
         /* @TODO Fix duplication of .stacked from style.css  */
@@ -86,20 +89,15 @@ export default class TrickListDialogComponent extends CustomDialogComponent {
             text-align: center;
         }
 
-        @media (height > 42rem) {
+        @media (height > 46rem) {
             :host {
                 --outerPadding: 1rem;
                 --interItemPadding: 0.75rem;
+                --min-card-height: min(15vh, 5rem);
             }
 
             :host, ::slotted(p) {
                 font-size: 1.25rem;
-            }
-
-            cribbage-cards::part(cut_card),
-            cribbage-cards::part(hand),
-            card-set {
-                min-height: min(15vh, 6rem);
             }
 
             .trickScore,
@@ -108,20 +106,17 @@ export default class TrickListDialogComponent extends CustomDialogComponent {
             }
         }
 
+        @media (width > 40rem) /* maxTitleWidth */ {
+            :host {
+                --min-card-height: min(15vh, 5rem);
+            }
+        }
+
         @media (width > 40rem /* maxTitleWidth */ )
                 or ((orientation: landscape) and (hover:none)) {
             .trickList {
                 --trickWidth: 33%;
                 --trickLabelWidth: 6rem;
-            }
-        }
-
-        @media (orientation: landscape) and (hover: none) {
-            cribbage-cards::part(cut_card),
-            cribbage-cards::part(hand),
-            card-set {
-                min-height: min(20vh, 6rem) !important;
-                max-height: min(20vh, 10rem);
             }
         }
     `
