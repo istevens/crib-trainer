@@ -7,7 +7,6 @@ defineComponent(
     `
     :host {
         --cardGroupingFactor: 5;
-        display: flex;
         gap: calc(2*var(--interItemPadding));
         min-height: 0;
         width: 100%;
@@ -15,7 +14,6 @@ defineComponent(
     }
 
     card-set {
-        flex: 1 1 0;
         height: 100%;
         min-height: 0;
         pointer-events: none;

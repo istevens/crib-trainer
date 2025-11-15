@@ -78,7 +78,6 @@ export class CardSetComponent extends HTMLElement {
             background-repeat: none;
             background-position: center;
             background-size: 100%;
-            border-radius: 6px;
             transform: rotateY(0deg);
         }
 

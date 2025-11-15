@@ -26,6 +26,9 @@ export default class ScoreSelect extends HTMLElement {
             background-repeat: no-repeat;
             background-position: right 0.5em center;
             background-size: 0.5em;
+            height: 100%;
+            width: 100%;
+            text-wrap: wrap;
         }
 
         select:focus {

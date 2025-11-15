@@ -11,6 +11,7 @@
     --outlineOffset: 10px;
     --titleAspectRatio: 1310/403;
     --maxTitleWidth: 40rem;
+    --titleEdge: calc((100vw - var(--maxTitleWidth)) / 2 - 1rem);
     --playTopMargin: calc(-0.3 * (100vw / (var(--titleAspectRatio))));
 }
 
@@ -71,7 +72,6 @@ a {
     overscroll-behavior: none;
 }
 
-
 [role=dialog] {
     display: none;
 }
@@ -107,7 +107,6 @@ a {
 
 .view nav {
     gap: 1rem;
-    padding-bottom: 1rem;
     flex: 0;
 }
 
@@ -151,6 +150,10 @@ a {
     display: flex;
     max-width: calc(var(--maxTitleWidth) * 0.75);
     align-items: center;
+}
+
+#start>* {
+    justify-items: center;
 }
 
 #play {
@@ -206,11 +209,16 @@ a {
     }
 }
 
+@media (height > 46rem) {
+    .view nav {
+        padding-bottom: 1rem;
+    }
+}
+
 @media (width > 65rem) {
     #play :is(.scoringButton, #scoreboard) {
         position: fixed;
         top: 1rem;
-        --titleEdge: calc((100vw - var(--maxTitleWidth)) / 2 - 1rem);
     }
 
     #play .scoringButton {
@@ -230,18 +238,41 @@ a {
     }
 
     .view {
-        max-height: 25rem;
+        max-width: 100%;
     }
 
     #start {
         flex-direction: row;
     }
 
-    #start h2 {
-        flex: 1;
+    #start nav {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
     }
 
-    #play {
-        margin: 0 1rem;
+    #start nav > *:first-child {
+        grid-column: 1 / -1;
+    }
+
+    #play.activeContent {
+        display: grid;
+        grid-template-columns: 1fr calc(var(--maxTitleWidth)) 1fr;
+        margin: var(--outerPadding);
+    }
+
+    #cards,
+    #play nav {
+        display: contents;
+    }
+
+    #cards::part(cut_card) {
+        width: auto;
+        justify-self: flex-end;
+    }
+
+    score-select {
+        height: 75%;
+        width: 75%;
+        justify-self: flex-start;
     }
 }
