@@ -6,8 +6,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://www.googletagmanager.com">
     <link rel="preconnect" href="https://www.google-analytics.com">
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;700&display=swap">
-    <link rel="preload" as="script" href="https://www.googletagmanager.com/gtag/js?id=G-8JTHR1K2WP">
     <title>Crib Trainer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
     <meta name="description" content="A game to help people practice scoring cribbage hands so they have an advantage when playing the game with others." />
@@ -15,9 +13,11 @@
     <script defer type="module" src="src/components/index.js"></script>
     <script defer type="module" src="src/cribbage_trainer.js"></script>
     <script defer type="module" src="cardmeister.github.io/elements.cardmeister.min.js"></script>
+
+    <!-- Use the single stylesheet link for Google Fonts (display=swap) to avoid duplicate fetch/timing issues -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;700&display=swap">
     <link rel="stylesheet" href="style.css"/>
-    <link rel="manifest" href="manifest.json"/>
+    <link rel="manifest" href="manifest.json"/> 
 </head>
 <body>
     <div id="cribtrainer" class="stacked">
