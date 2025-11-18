@@ -1,5 +1,5 @@
 'use strict';
-export class CardSetComponent extends HTMLElement {
+export default class CardSetComponent extends HTMLElement {
     static STYLE = `
         :host {
             --cardset-card-count: 0;
