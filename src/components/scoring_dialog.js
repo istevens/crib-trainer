@@ -7,8 +7,12 @@ class ScoringDialogComponent extends TrickListDialogComponent {
             grid-template-columns: 1fr 1fr;
         }
 
-        card-set+span {
+        .trickList li {
             position: relative;
+        }
+
+        card-set+span {
+            position: absolute;
             bottom: 1em;
             left: 2.75em;
             z-index: 1;
@@ -50,7 +54,7 @@ class ScoringDialogComponent extends TrickListDialogComponent {
                     <li><card-set cards="6D,7C,8H" arrangeBy="fan"></card-set><span class="trickDescription"> = 3</span></li>
                     <li><card-set cards="10H,JS,QD,KC" arrangeBy="fan"></card-set><span class="trickDescription"> = 4</span></li>
                 </ul></li>
-                <li class="trickCategory"><span class="trickLabel"><span class="trickScore">1</span> <span class="trickDescription">for a jack of the cut card's suit</span></span><ul>
+                <li class="trickCategory"><span class="trickLabel"><span class="trickScore">1</span> <span class="trickDescription">for "his nobs" (jack of cut card's suit)</span></span><ul>
                     <li><card-set cards="10C,JC" arrangeBy="fan"></card-set></li>
                 </ul></li>
             </ul>

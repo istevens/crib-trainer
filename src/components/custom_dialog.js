@@ -15,13 +15,13 @@ export default class CustomDialogComponent extends HTMLElement {
         }
 
         dialog {
-            padding: calc(1.5*var(--outerPadding)) var(--outerPadding);
+            padding: var(--outerPadding);
             background: fixed radial-gradient(circle at 50% 10rem, var(--dialogColour) 0%, hsl(from var(--dialogColour) h s calc(l * 0.75)) 85%, var(--dialogDecorColour) 98%);
             border: inherit;
             border-radius: inherit;
             border: 1px solid black;
-            min-width: min(90vw, 20rem);
-            max-width: min(90vw, var(--maxTitleWidth));
+            min-width: min(90vw, 30rem);
+            max-width: min(90vw, calc(var(--maxTitleWidth)+0));
             max-height: 90vh;
             width: fit-content;
             touch-action: inherit;
@@ -80,10 +80,8 @@ export default class CustomDialogComponent extends HTMLElement {
         ::slotted(p) {
             display: block;
             font-size: 1.33rem;
-        }
-
-        ::slotted(p:not(:last-child:not(:only-child))) {
             margin-bottom: 1em;
+            max-width: 30em;
         }
 
         ::slotted(li) {
@@ -95,9 +93,9 @@ export default class CustomDialogComponent extends HTMLElement {
             margin-inline-start: 0;
         }
 
-        @media (orientation: landscape) and (hover: none) {
+        @media (orientation: landscape) and (height <= 46rem) and (hover: none) {
             dialog {
-                max-width: min(90vw, calc(2*var(--maxTitleWidth)));
+                max-width: 85vw;
             }
         }
     `;

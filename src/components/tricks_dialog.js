@@ -87,13 +87,7 @@ class TricksDialogComponent extends TrickListDialogComponent {
             flex: 0 0 var(--trickLabelWidth);
         }
 
-        @media (height > 46rem) {
-
-            :host {
-                --outerPadding: 1rem;
-                --interItemPadding: 0.75rem;
-            }
-
+        @media (height > 45rem) {
             #lastPlay .trickScore {
                 font-size: 5rem;
             }
@@ -103,14 +97,24 @@ class TricksDialogComponent extends TrickListDialogComponent {
             }
         }
 
-        @media (orientation: landscape) and (hover: none) {
+        @media (width >= 40rem /* maxTitleWidth */ )
+                or ((orientation: landscape) and (hover:none)) {
+            :host {
+                --min-card-height: min(14vh, 5rem);
+            }
+
+            #lastPlay .trickScore {
+                font-size: 4rem;
+            }
+        }
+
+        @media (orientation: landscape) and (height < 45rem) and (hover: none) {
             #lastPlay {
                 flex-direction: row;
-                max-width: 30rem;
             }
 
             .trickList {
-                --trickLabelWidth: 6rem;
+                gap: calc(4*var(--interItemPadding));
             }
 
             .trickCategory:not(:has(li:nth-child(3))) {

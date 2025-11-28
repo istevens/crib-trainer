@@ -47,8 +47,12 @@ export default class TrickListDialogComponent extends CustomDialogComponent {
 
         .trickScore {
             display: block;
-            font-size: 2rem;
             line-height: 75%;
+        }
+
+        .trickScore,
+        .trickScore::before {
+            font-size: 2rem;
         }
 
         .trickList {
@@ -92,28 +96,30 @@ export default class TrickListDialogComponent extends CustomDialogComponent {
         @media (height > 46rem) {
             :host {
                 --outerPadding: 1rem;
-                --interItemPadding: 0.75rem;
                 --min-card-height: min(15vh, 5rem);
             }
 
             :host, ::slotted(p) {
                 font-size: 1.25rem;
             }
+        }
+
+        @media (height > 46rem) or (width > 40rem) /* maxTitleWidth */ {
+            :host {
+                --interItemPadding: 0.75rem;
+            }
 
             .trickScore,
             .trickScore::before {
-                font-size: 3rem;
+                font-size: 2.5rem;
             }
         }
 
-        @media (width > 40rem) /* maxTitleWidth */ {
+        @media (width > 40rem /* maxTitleWidth */ ) {
             :host {
-                --min-card-height: min(15vh, 5rem);
+                --min-card-height: min(10vh, 5rem);
             }
-        }
 
-        @media (width > 40rem /* maxTitleWidth */ )
-                or ((orientation: landscape) and (hover:none)) {
             .trickList {
                 --trickWidth: 33%;
                 --trickLabelWidth: 6rem;

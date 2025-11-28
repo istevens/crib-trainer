@@ -215,7 +215,7 @@ a {
     }
 }
 
-@media (width > 65rem) {
+@media (width > 66rem) {
     #play :is(.scoringButton, #scoreboard) {
         position: fixed;
         top: 1rem;
