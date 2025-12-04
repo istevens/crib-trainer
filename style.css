@@ -170,7 +170,11 @@ a {
     border: var(--uiElementBorder);
 }
 
-#cards::part(cut_card), #cards::part(hand), .view nav>*, [role=dialog] {
+#cards::part(cut_card),
+#cards::part(hand),
+.view nav>*,
+[role=dialog],
+#scoreboard {
     border-radius: 11.5px;
 }
 

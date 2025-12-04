@@ -7,6 +7,7 @@ defineComponent(
     `
     :host {
         display: flex;
+        overflow: hidden;
     }
 
     span {
