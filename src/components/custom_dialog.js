@@ -21,7 +21,7 @@ export default class CustomDialogComponent extends HTMLElement {
             border-radius: inherit;
             border: 1px solid black;
             min-width: min(90vw, 30rem);
-            max-width: min(90vw, calc(var(--maxTitleWidth)+0));
+            max-width: min(90vw, var(--maxTitleWidth));
             max-height: 90vh;
             width: fit-content;
             touch-action: inherit;
@@ -95,7 +95,7 @@ export default class CustomDialogComponent extends HTMLElement {
 
         @media (orientation: landscape) and (height <= 46rem) and (hover: none) {
             dialog {
-                max-width: 85vw;
+                max-width: 75vw;
             }
         }
     `;

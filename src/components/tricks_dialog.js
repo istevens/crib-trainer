@@ -9,6 +9,13 @@ class TricksDialogComponent extends TrickListDialogComponent {
             margin-bottom: calc(2*var(--interItemPadding));
         }
 
+        /* @TODO Fix duplication of .stacked from style.css  */
+        .stacked {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
         #lastPlay {
             width: 75%;
             max-width: 20rem;
@@ -43,57 +50,41 @@ class TricksDialogComponent extends TrickListDialogComponent {
         }
 
         .trickList {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            align-items: center;
             margin-top: calc(4*var(--interItemPadding));
         }
 
         .trickCategory {
+            flex: 1 1 auto;
             grid-template-columns: var(--trickLabelWidth) 1fr;
-        }
-
-        .trickCategory:not(:has(li:nth-child(2))) {
-            flex: 1 1 calc(var(--trickWidth) - 2 * var(--interItemPadding));
+            gap: calc(var(--interItemPadding));
         }
 
         .trickCategory:first-child .trickScore::before {
             content: '';
         }
 
-        .trickCategory:only-child .trickScore::before {
-            display: none;
-        }
-
         .trickCategory:only-child {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            margin: calc(2*var(--interItemPadding)) inherit;
-            width: 100%;
+            grid-template-columns: 1fr;
+            min-height: 10rem;
         }
 
-        .trickCategory:not(:has(li:nth-child(2))):has(ul:only-child)) .trickLabel {
-            justify-content: flex-start;
-            margin: 0;
+        .trickCategory:only-child ul {
+            grid-column: 1;
         }
 
         .trickCategory:only-child .trickScore {
             display: none;
         }
 
-        .trickCategory:only-child ul {
-            flex-direction: row;
-        }
-
-        .trickCategory:only-child ul li {
-            flex: 0 0 var(--trickLabelWidth);
-        }
 
         @media (height > 45rem) {
             #lastPlay .trickScore {
                 font-size: 5rem;
-            }
-
-            .trickList {
-                --trickWidth: 6rem;
             }
         }
 
@@ -106,6 +97,14 @@ class TricksDialogComponent extends TrickListDialogComponent {
             #lastPlay .trickScore {
                 font-size: 4rem;
             }
+
+            .trickList {
+                justify-content: center;
+            }
+
+            .trickCategory {
+                flex: initial;
+            }
         }
 
         @media (orientation: landscape) and (height < 45rem) and (hover: none) {
@@ -115,10 +114,6 @@ class TricksDialogComponent extends TrickListDialogComponent {
 
             .trickList {
                 gap: calc(4*var(--interItemPadding));
-            }
-
-            .trickCategory:not(:has(li:nth-child(3))) {
-                flex: 1 1 calc(var(--trickWidth) - 4 * var(--interItemPadding)) !important;
             }
         }
     `;
@@ -150,7 +145,7 @@ class TricksDialogComponent extends TrickListDialogComponent {
     }
 
     createDialogContentHTML() {
-        return '<ul class="trickList stacked"></ul>';
+        return '<ul class="trickList"></ul>';
     }
 
     setupEventListeners() {

@@ -7,14 +7,18 @@ class ScoringDialogComponent extends TrickListDialogComponent {
             grid-template-columns: 1fr 1fr;
         }
 
-        .trickList li {
+        .trickCategory {
+            gap: calc(1/2*var(--interItemPadding));
+        }
+
+        .trickCategory li {
             position: relative;
         }
 
-        card-set+span {
+        .trickCategory li card-set+span {
             position: absolute;
-            bottom: 1em;
-            left: 2.75em;
+            top: 50%;
+            right: -2rem;
             z-index: 1;
         }
 
@@ -35,7 +39,7 @@ class ScoringDialogComponent extends TrickListDialogComponent {
     createDialogContentHTML() {
         var s = super.createDialogContentHTML();
         s += `
-            <ul class="trickList stacked">
+            <ul class="trickList">
                 <li class="trickCategory"><span class="trickLabel"><span class="trickScore">2</span> <span class="trickDescription">for sums to 15 (J,Q,K = 10)</span></span><ul>
                     <li><card-set cards="JH,5C" arrangeBy="fan"></card-set></li>
                     <li><card-set cards="2H,3C,6D,3S,AC" arrangeBy="fan"></card-set></li>

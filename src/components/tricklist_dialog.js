@@ -27,18 +27,10 @@ export default class TrickListDialogComponent extends CustomDialogComponent {
             min-inline-size: var(--min-card-height);
         }
 
-        /* @TODO Fix duplication of .stacked from style.css  */
-        .stacked {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
         .trickLabel {
-            position: relative;
             place-items: center;
-            min-width: var(--trickLabelWidth);
-            margin: auto;
+            grid-column: 1;
+            grid-row: 1 / span all;
         }
 
         .dialog-content .trickScore::before {
@@ -56,12 +48,8 @@ export default class TrickListDialogComponent extends CustomDialogComponent {
         }
 
         .trickList {
-            --trickWidth: 50%;
             --trickLabelWidth: 5rem;
             text-align: center;
-            display: flex;
-            flex-direction: row;
-            flex-flow: wrap;
             align-items: flex-start;
             gap: calc(2*var(--interItemPadding));
             flex: 1;
@@ -74,26 +62,23 @@ export default class TrickListDialogComponent extends CustomDialogComponent {
 
         .trickCategory {
             display: grid;
-            gap: var(--interItemPadding);
-            width: 100%;
+            align-items: center;
             max-width: 100%;
         }
 
         .trickCategory ul {
             display: flex;
-            flex-direction: row;
             flex-wrap: wrap;
-            justify-content: space-evenly;
-            align-items: center;
-            place-items: center;
-            gap: var(--interItemPadding);
+            gap: calc(2*var(--interItemPadding));
+            justify-content: center;
         }
 
         ::slotted(p) {
+            margin: 0 auto calc(2*var(--interItemPadding)) auto;
             text-align: center;
         }
 
-        @media (height > 46rem) {
+        @media (height > 42rem) {
             :host {
                 --outerPadding: 1rem;
                 --min-card-height: min(15vh, 5rem);
@@ -104,24 +89,22 @@ export default class TrickListDialogComponent extends CustomDialogComponent {
             }
         }
 
-        @media (height > 46rem) or (width > 40rem) /* maxTitleWidth */ {
+        @media (height > 42rem) {
             :host {
                 --interItemPadding: 0.75rem;
+                --min-card-height: min(10vh, 5rem);
             }
+        }
 
+        @media (height > 42rem) or (width > 40rem) /* maxTitleWidth */ {
             .trickScore,
             .trickScore::before {
                 font-size: 2.5rem;
             }
         }
 
-        @media (width > 40rem /* maxTitleWidth */ ) {
-            :host {
-                --min-card-height: min(10vh, 5rem);
-            }
-
+        @media (width > 40rem) /* maxTitleWidth */ {
             .trickList {
-                --trickWidth: 33%;
                 --trickLabelWidth: 6rem;
             }
         }
