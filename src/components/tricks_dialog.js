@@ -32,7 +32,7 @@ class TricksDialogComponent extends TrickListDialogComponent {
         cribbage-cards {
             display: grid;
             grid-auto-flow: column;
-            grid-template-columns: 1fr 2fr;
+            grid-template-columns: 1fr 4fr;
             gap: var(--interItemPadding);
         }
 

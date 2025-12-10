@@ -37,6 +37,10 @@ export default class CardSetComponent extends HTMLElement {
             --rotjitterbase: calc(3deg * var(--cardset-card-jitter));
         }
 
+        :host([arrangeBy=row].single) {
+            aspect-ratio: var(--cardset-card-aspect-ratio) auto;
+        }
+
         @keyframes slideInFromLeft {
             from {
                 transform: translateX(-100vw) translate(0) rotateZ(0);
@@ -224,10 +228,14 @@ export default class CardSetComponent extends HTMLElement {
     attributeChangedCallback(name, oldVal, newVal) {
         let shouldRender = name == 'cards' && newVal != oldVal;
         let newCards = newVal.split(',').map(x => x.trim()) || [];
-        let updateCount = (c) => this.style.setProperty(this.getCardStyleName('count'), c);
-        shouldRender && updateCount(newCards.length);
-        shouldRender && this.renderCards(newCards);
-        shouldRender && this.cardNodes.forEach(x => this.jitterCard(x));
+        let updateCount = c => this.style.setProperty(this.getCardStyleName('count'), c);
+        let render = c => {
+            updateCount(newCards.length);
+            this.renderCards(newCards);
+            this.cardNodes.forEach(x => this.jitterCard(x));
+            newCards.length == 1 && this.classList.add('single');
+        }
+        shouldRender && render();
     }
 }
 customElements.define("card-set", CardSetComponent);
