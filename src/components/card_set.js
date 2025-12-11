@@ -6,15 +6,14 @@ export default class CardSetComponent extends HTMLElement {
             --cardset-card-rotation: 6;
             --cardset-card-aspect-ratio: 240/334;
             --cardset-card-background-colour: #c00;
-            --cardset-card-decor-colour: #f8f8f8;
-            --cardset-card-outline-width-pct: 0.075;
             display: grid;
             grid-auto-flow: column;
             box-sizing: border-box;
             perspective: 1000px;
         }
 
-        :host::part(card) {
+        :host playing-card,
+        :host playing-card::before {
             aspect-ratio: var(--cardset-card-aspect-ratio);
             height: 100%;
             overflow: hidden;
@@ -28,8 +27,8 @@ export default class CardSetComponent extends HTMLElement {
             --cardset-card-padding: calc(0.4rem * abs(sin(var(--cardset-card-maxrotationrad))) * var(--cardset-card-count));
 
             padding: var(--cardset-card-padding);
-			min-width: 0;
-			flex: 1 1 auto;
+            min-width: 0;
+            flex: 1 1 auto;
         }
 
         :host([arrangeBy=row])::part(card) {
@@ -62,8 +61,12 @@ export default class CardSetComponent extends HTMLElement {
             animation: slideInFromLeft 200ms ease-in forwards !important;
         }
 
+        :host(.hidden) playing-card {
+            border-radius: 6px;
+        }
+
         :host(.hidden) playing-card img,
-        :host(.hidden)::part(card)::before {
+        :host(.hidden) playing-card::before {
             backface-visibility: hidden;
             transition: transform 0.1s ease-in-out;
             transform-style: preserve-3d;
@@ -73,7 +76,7 @@ export default class CardSetComponent extends HTMLElement {
             transform: rotateY(-180deg);
         }
 
-        :host(.hidden)::part(card)::before {
+        :host(.hidden) playing-card::before {
             position: absolute;
             content: '';
             height: 100%;
@@ -83,13 +86,15 @@ export default class CardSetComponent extends HTMLElement {
             background-position: center;
             background-size: 100%;
             transform: rotateY(0deg);
+            border-radius: inherit;
+            border: 0.01px solid;
         }
 
         :host(.hidden.reveal) playing-card img {
             transform: rotateY(0deg);
         }
 
-        :host(.hidden.reveal)::part(card)::before {
+        :host(.hidden.reveal) playing-card::before {
             transform: rotateY(180deg);
         }
 
@@ -123,9 +128,9 @@ export default class CardSetComponent extends HTMLElement {
         this.setAttribute('arrangeBy', this.getAttribute('arrangeBy') || 'row');
     }
 
-	connectedCallback() {
+    connectedCallback() {
         this.preloadCardBack();
-	}
+    }
 
     preloadCardBack() {
         let url = getComputedStyle(this).getPropertyValue('--cardset-card-background-image').trim();
