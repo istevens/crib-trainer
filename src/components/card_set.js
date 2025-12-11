@@ -121,9 +121,11 @@ export default class CardSetComponent extends HTMLElement {
         jitter = jitter == "" && 1 || jitter || 0;
         this.setAttribute('jitter', jitter);
         this.setAttribute('arrangeBy', this.getAttribute('arrangeBy') || 'row');
-
-        this.preloadCardBack();
     }
+
+	connectedCallback() {
+        this.preloadCardBack();
+	}
 
     preloadCardBack() {
         let url = getComputedStyle(this).getPropertyValue('--cardset-card-background-image').trim();
