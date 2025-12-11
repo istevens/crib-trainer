@@ -219,8 +219,8 @@ a {
     }
 }
 
-@media (width > 65rem) {
-    #play :is(.scoringButton, #scoreboard) {
+@media (width > 65rem) or (orientation: landscape) {
+    #play .scoringButton, #scoreboard {
         position: fixed;
         top: 1rem;
     }

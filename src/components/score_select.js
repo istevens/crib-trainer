@@ -122,4 +122,4 @@ export default class ScoreSelect extends HTMLElement {
     }
 }
 
-customElements.define('score-select', ScoreSelect, { extends: 'select' });
+customElements.define('score-select', ScoreSelect);
