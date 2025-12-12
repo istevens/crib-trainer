@@ -200,11 +200,6 @@ a {
     font-weight: 700;
 }
 
-#selectedScore {
-    font-size: 24em;
-    font-weight: 700;
-}
-
 @media (width > 40rem /* maxTitleWidth */ ) {
     :root {
         --outerPadding: 0.75rem;
