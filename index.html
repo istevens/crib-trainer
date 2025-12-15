@@ -20,10 +20,10 @@
     <link rel="manifest" href="manifest.json"/>
 </head>
 <body>
-    <div id="cribtrainer" class="stacked">
+    <div id="cribtrainer">
         <h1><a href="#" tabindex="0">Crib Trainer</a></h1>
 
-        <section id="start" class="stacked view activeContent">
+        <section id="start" class="view activeContent">
             <h2>Improve your cribbage hand scoring with this training game.</h2>
             <nav class="stacked">
                 <a role="button" class="primary" href="#play" autofocus tabindex="0">Play</a>
@@ -32,8 +32,8 @@
             </nav>
         </section>
 
-        <section id="play" class="stacked view">
-            <score-board id="scoreboard" class="stacked" successes=0 failures=0></score-board>
+        <section id="play" class="view">
+            <score-board id="scoreboard" successes=0 failures=0></score-board>
             <cribbage-cards id="cards" class="stacked" cut_card_class="hidden"></cribbage-cards>
 
             <nav class="stacked">

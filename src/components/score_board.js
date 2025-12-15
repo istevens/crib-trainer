@@ -6,16 +6,15 @@ defineComponent(
     '<span id="successes">${successes}</span><span id="failures">${failures}</span>',
     `
     :host {
-        display: flex;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        aspect-ratio: 2/1;
         overflow: hidden;
     }
 
     span {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 50%;
-        height: 100%;
+        display: grid;
+        place-items: center;
     }
 
     #successes {

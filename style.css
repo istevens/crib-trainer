@@ -11,8 +11,8 @@
     --outlineOffset: 10px;
     --titleAspectRatio: 1310/403;
     --maxTitleWidth: 40rem;
-    --titleEdge: calc((100vw - var(--maxTitleWidth)) / 2 - 1rem);
-    --playTopMargin: calc(-0.3 * (100vw / (var(--titleAspectRatio))));
+    --playTopMargin: calc(-0.35 * (100% / (var(--titleAspectRatio))));
+    --sidebarWidth: minmax(0, var(--buttonWidth));
 }
 
 * {
@@ -33,22 +33,14 @@ html, body, #cribtrainer {
 }
 
 h1 {
+    grid-area: title;
     margin: 0;
     align-self: stretch;
-}
-
-h2 {
-    font-size: 2rem;
-    font-weight: 700;
-    text-align: center;
-    margin: 0;
 }
 
 h1 a {
     display: block;
     aspect-ratio: var(--titleAspectRatio);
-    max-width: var(--maxTitleWidth);
-    margin: auto;
     color: transparent;
     background: var(--titleColour);
     mask-image: url("/img/cribtrainer-arched.svg");
@@ -67,11 +59,6 @@ a {
     touch-action: none;
 }
 
-::backdrop, #cribtrainer, [role=dialog] {
-    overflow: hidden;
-    overscroll-behavior: none;
-}
-
 [role=dialog] {
     display: none;
 }
@@ -87,7 +74,19 @@ a {
 }
 
 #cribtrainer {
-    flex: 1;
+    display: grid;
+    grid-template-columns:
+        var(--sidebarWidth)
+        min(100%, var(--maxTitleWidth))
+        var(--sidebarWidth);
+    grid-template-rows: auto 1fr auto;
+    grid-template-areas:
+        "sidebar-left title sidebar-right"
+        ". view ."
+        ". nav .";
+    gap: var(--interItemPadding);
+    place-content: center;
+
     background: fixed radial-gradient(circle at 50% 10rem, var(--tableColour) 0%, hsl(from var(--tableColour) h s calc(l * 0.75)) 40%, rgb(0,0,0) 100%);
     font-family: 'Public Sans', sans-serif;
     font-optical-sizing: auto;
@@ -97,24 +96,24 @@ a {
 }
 
 .view {
-    width: 100%;
-    max-width: calc(var(--maxTitleWidth) - 1rem);
-    gap: 2rem;
-    flex: 1;
-    max-height: 50rem;
-    justify-content: center;
+    display: contents;
 }
 
 .view nav {
     gap: 1rem;
     flex: 0;
+    grid-area: nav;
 }
 
 #cards {
     --cardset-should-animate: 1;
     --cardset-card-background-image: url("/img/card-back.svg");
-    flex: 1;
+    grid-area: view;
+    margin-top: var(--playTopMargin);
+    margin-bottom: calc(2*var(--interItemPadding));
+    height: stretch;
     max-width: calc(var(--maxTitleWidth) - 5rem);
+    justify-self: center;
 }
 
 .view nav>* {
@@ -146,20 +145,16 @@ a {
 }
 
 #start h2 {
-    flex: 1;
-    display: flex;
+    grid-area: view;
+    place-self: center;
     max-width: calc(var(--maxTitleWidth) * 0.75);
-    align-items: center;
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 700;
 }
 
-#start>* {
-    justify-items: center;
-}
-
-#play {
-    min-height: 0;
-    margin-top: var(--playTopMargin);
-    position: relative;
+.view#play .scoringButton {
+    grid-area: nav;
 }
 
 #cards::part(cut_card), #cards::part(hand) {
@@ -191,82 +186,86 @@ a {
 }
 
 #scoreboard {
-    flex-direction: row;
-    position: absolute;
-    top: calc(1rem - var(--playTopMargin));
-    right: 0;
-    height: 3rem;
+    grid-area: view;
+    place-self: start end;
     width: 6rem;
     font-weight: 700;
 }
 
-@media (width > 40rem /* maxTitleWidth */ ) {
+#selectedScore {
+    font-size: 24em;
+    font-weight: 700;
+}
+
+
+@media ((hover: hover) and (width > 65rem)), ((hover: none) and (orientation: landscape) /* maxTitleWidth + sidebars of width buttonWidth and gap */ ) {
     :root {
         --outerPadding: 0.75rem;
         --interItemPadding: 0.75rem;
-        --playTopMargin: calc(-0.3 * (var(--maxTitleWidth) / (var(--titleAspectRatio))));
-    }
-}
-
-@media (height > 46rem) {
-    .view nav {
-        padding-bottom: 1rem;
-    }
-}
-
-@media (width > 65rem) or (orientation: landscape) {
-    #play .scoringButton, #scoreboard {
-        position: fixed;
-        top: 1rem;
+        --playTopMargin: calc(-0.35 * (var(--maxTitleWidth) / (var(--titleAspectRatio))));
     }
 
-    #play .scoringButton {
-        left: calc(var(--titleEdge) - var(--buttonWidth));
-    }
-
-    #scoreboard {
-        right: calc(var(--titleEdge) - 6rem);
-    }
-}
-
-
-@media (orientation: landscape) and (hover: none) {
-    :root {
-        --maxTitleWidth: calc(25vh * var(--titleAspectRatio));
-        --outerPadding: 0.5rem;
-        --interItemPadding: 0.5rem;
-    }
-
-    .view {
-        flex-direction: row;
-        max-width: 87vw;
-    }
-
-    #start {
-        margin: 0;
-    }
-
-    #start nav {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-    }
-
-    #start nav > *:first-child {
-        grid-column: 1 / -1;
-    }
-
-    #play {
-        margin: auto;
-        max-height: 40vh;
-    }
-
-    #cards,
     #play nav {
         display: contents;
     }
 
+    #scoreboard {
+        grid-area: sidebar-right;
+        place-self: start;
+    }
+
+    .view#play .scoringButton {
+        grid-area: sidebar-left;
+        place-self: start end;
+    }
+
     score-select {
-        flex: 0 0 15rem;
+        grid-area: nav;
+        justify-self: center;
+        max-width: 24rem;
+    }
+}
+
+@media ((orientation: landscape) and (hover: none)) {
+    :root {
+        --maxTitleWidth: calc(25vh * var(--titleAspectRatio));
+        --outerPadding: 0.5rem;
+        --interItemPadding: 0.5rem;
+        --sidebarWidth: 1fr;
+    }
+
+    #cribtrainer {
+        gap: var(--interItemPadding) calc(4*var(--interItemPadding));
+        grid-template-rows: auto 1fr;
+        grid-template-areas:
+            "sidebar-left title sidebar-right"
+            ". view nav"
+    }
+
+    #start h2 {
+        grid-area: view;
+        grid-column: 1 / 3;
+        place-self: center;
+    }
+
+    #start nav {
+        grid-area: nav;
+        grid-column: 2 / 4;
+        place-self: center;
+    }
+
+    #cards::part(cut_card) {
+        place-self: center end;
+    }
+
+    #cards,
+    #play.view nav {
+        display: contents;
+    }
+
+    score-select {
+        place-self: center start;
         height: 50%;
+        margin-right: 2rem; /* notch */
     }
 }
