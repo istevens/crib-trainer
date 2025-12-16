@@ -120,7 +120,6 @@ a {
     text-align: center;
     font-size: 2rem;
     font-family: inherit;
-    cursor: pointer;
 }
 
 .view nav>*:not(score-select) {
@@ -128,6 +127,7 @@ a {
     color: var(--tableDecorColour);
     width: var(--buttonWidth);
     padding: var(--interItemPadding);
+    cursor: pointer;
 }
 
 .view nav>*:not(score-select):hover {
