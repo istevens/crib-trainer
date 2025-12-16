@@ -52,7 +52,16 @@ h1 a {
 a {
     text-decoration: none;
     color: inherit;
-    width: 100%;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+a:active {
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
 }
 
 #cribtrainer, [role=dialog], #scoreboard {
