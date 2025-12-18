@@ -6,6 +6,7 @@
     --successColour: chartreuse;
     --failureColour: red;
     --buttonWidth: 12rem;
+    --buttonPadding: 0.25em;
     --outerPadding: 0.5rem;
     --interItemPadding: 0.5rem;
     --outlineOffset: 10px;
@@ -127,7 +128,7 @@ a:active {
 
 .view nav>* {
     text-align: center;
-    font-size: 2rem;
+    font-size: 2em;
     font-family: inherit;
 }
 
@@ -135,7 +136,7 @@ a:active {
     background-color: transparent;
     color: var(--tableDecorColour);
     width: var(--buttonWidth);
-    padding: var(--interItemPadding);
+    padding: var(--buttonPadding);
     cursor: pointer;
 }
 
@@ -256,6 +257,15 @@ a:active {
         grid-area: nav;
         grid-column: 2 / 4;
         place-self: center;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: calc(2*var(--interItemPadding)) var(--interItemPadding);
+        justify-items: center;
+        align-items: center;
+    }
+
+    #start nav .primary {
+        grid-column: 1 / -1;
     }
 
     #cards::part(cut_card) {

@@ -18,7 +18,7 @@ export default class ScoreSelect extends HTMLElement {
             color: inherit;
             font-family: inherit;
             font-size: inherit;
-            padding: var(--interItemPadding);
+            padding: var(--buttonPadding);
             padding-right: 1.5em !important;
             background-color: transparent;
             background-image: var(--svgTrianglesInactive);
