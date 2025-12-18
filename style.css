@@ -121,7 +121,7 @@ a:active {
     grid-area: view;
     margin-top: var(--playTopMargin);
     margin-bottom: calc(2*var(--interItemPadding));
-    height: stretch;
+    align-self: stretch;
     max-width: calc(var(--maxTitleWidth) - 5rem);
     justify-self: center;
 }

@@ -22,10 +22,6 @@ export default defineComponent('score-overlay',
         visibility: hidden;
         position: absolute;
         inset: 0;
-        width: 100vw;
-        height: 100vh;
-        max-height: 100%;
-        max-width: 100%;
         filter: blur(0);
         font-weight: 700;
     }
