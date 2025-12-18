@@ -40,6 +40,8 @@
                 <score-select role="select" id="scoreSelect" min="0" max="29" autofocus tabindex="0"></score-select>
                 <button class="scoringButton" command="show-modal" commandfor="scoring">Scoring</button>
             </nav>
+
+            <score-overlay id="selectedScore"></score-overlay>
         </section>
 
         <custom-dialog role="dialog" id="about" title="About this game">
@@ -55,7 +57,6 @@
         </scoring-dialog>
         <tricks-dialog role="dialog" id="tricks"></tricks-dialog>
 
-        <score-overlay id="selectedScore"></score-overlay>
         <analytics-tracking gid="G-8JTHR1K2WP"></analytics-tracking>
     </div>
 

@@ -4,7 +4,7 @@ import defineComponent from "./SimpleTemplateComponent.js";
 export default defineComponent(
     'analytics-tracking',
     '',
-    '',
+    ':host { visibility: hidden; }',
     function(ev) {
         function processQueueAndEnableDirectTracking(e) {
             this._gtagReady = true;

@@ -38,7 +38,7 @@ class CribbageApp {
     }
 
     handWasScored(ev) {
-        var selected = ev.target.value;
+        var selected = parseInt(ev.target.value);
         var expected = this.play.hand.getScore(this.play.cutCard);
         var evPayload = {bubbles: true, detail: {
                 play: this.play,

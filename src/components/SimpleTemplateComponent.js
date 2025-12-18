@@ -49,12 +49,23 @@ class SimpleTemplateComponent extends HTMLElement {
     }
 
     render() {
-        const compiledTemplate = this._template.replace(
-            /\${(\w+)}/g,
-            (match, key) => `\${this._state[\'${key}\']}`
+        const handler = {
+            get(target, key) { return target[key] ?? ''; },
+            has(target, key) { return true; }
+        }
+        const proxy = new Proxy(this._state, handler);
+
+        const templateFunction = new Function(
+            'proxy',
+            `with(proxy) {
+                try {
+                    return \`${this._template}\`;
+                } catch(e) {
+                    return "";
+                }
+            }`
         );
-        const templateFunction = new Function(`return \`${compiledTemplate}\``);
-        const contents = templateFunction.call(this);
+        const contents = templateFunction(proxy);
         contents && (this.shadowRoot.innerHTML = contents);
     }
 
