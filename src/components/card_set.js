@@ -121,21 +121,26 @@ export default class CardSetComponent extends HTMLElement {
         style.replaceSync(CardSetComponent.STYLE);
         this.attachShadow({mode: "open"});
         this.shadowRoot.adoptedStyleSheets = [style];
+    }
 
+    connectedCallback() {
         let jitter = this.getAttribute('jitter');
         jitter = jitter == "" && 1 || jitter || 0;
         this.setAttribute('jitter', jitter);
         this.setAttribute('arrangeBy', this.getAttribute('arrangeBy') || 'row');
-    }
 
-    connectedCallback() {
         this.preloadCardBack();
     }
 
-    preloadCardBack() {
+    _extractCardBackUrl() {
         let url = getComputedStyle(this).getPropertyValue('--cardset-card-background-image').trim();
-        url = url.replace(/^url\(['"]?/, '');
-        url = url.replace(/['"]?\)$/, '');
+        let extractUrl = url => url.replace(/^url\(['"]?/, '').replace(/['"]?\)$/, '');
+        url = url && extractUrl(url);
+        return url;
+    }
+
+    preloadCardBack() {
+        const url = this._extractCardBackUrl();
         url && CardSetComponent.preloadImage(url);
     }
 

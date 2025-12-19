@@ -26,12 +26,24 @@ describe('testing preload for card-set back', () => {
         expect(link.getAttribute('href')).toBe(url);
     });
 
-    test('preloadCardBack calls preloadImage with url in style', () => {
-        const preloadSpy = jest.spyOn(CardSetComponent, 'preloadImage');
-        document.body.innerHTML = `<style>card-set { --cardset-card-background-image: url("${url}"); }</style>
-            <card-set cards="4C"></card-set>`;
-        expect(preloadSpy).toBeCalledWith(url);
-        preloadSpy.mockRestore();
+    function expectCardBackUrlToBeExtracted(urlContent, url) {
+        const el = document.createElement('card-set');
+        el.style.setProperty(
+            '--cardset-card-background-image',
+            `url(${urlContent})`
+        );
+        document.body.appendChild(el);
+
+        const extracted = el._extractCardBackUrl();
+        expect(extracted).toBe(url);
+    }
+
+    test('extracts url in style with quotes', () => {
+        expectCardBackUrlToBeExtracted(`"${url}"`, url);
+    });
+
+    test('extracts url in style sans quotes', () => {
+        expectCardBackUrlToBeExtracted(`${url}`, url);
     });
 
     test('preloadCardBack calls preloadImage with url in style sans quotes', () => {
