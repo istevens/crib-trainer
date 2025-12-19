@@ -129,7 +129,9 @@ export default class CardSetComponent extends HTMLElement {
         this.setAttribute('jitter', jitter);
         this.setAttribute('arrangeBy', this.getAttribute('arrangeBy') || 'row');
 
-        this.preloadCardBack();
+        window.requestAnimationFrame(() => {
+            this._cardBackReady = this.preloadCardBack();
+        });
     }
 
     _extractCardBackUrl() {
@@ -160,7 +162,7 @@ export default class CardSetComponent extends HTMLElement {
 
         var isPreloaded = url && url !== 'none';
         const urlMatch = url?.match(/url\(['"]?(.*?)['"]?\)/i);
-        url = urlMatch && urlMatch[1] || url ;
+        url = urlMatch && urlMatch[1] || url;
         isPreloaded = isPreloaded
             && !CardSetComponent.preloadedUrls.includes(url)
             && _preload(url);

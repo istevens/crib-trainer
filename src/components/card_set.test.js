@@ -46,11 +46,32 @@ describe('testing preload for card-set back', () => {
         expectCardBackUrlToBeExtracted(`${url}`, url);
     });
 
-    test('preloadCardBack calls preloadImage with url in style sans quotes', () => {
+    test('preloadCardBack is deferred until requestAnimationFrame', () => {
+        const gcsSpy = jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({
+            getPropertyValue: () => `url("${url}")`
+        }));
+
+        let rafCallback;
+        const rafSpy = jest
+            .spyOn(window, 'requestAnimationFrame')
+            .mockImplementation(cb => (rafCallback = cb));
+
         const preloadSpy = jest.spyOn(CardSetComponent, 'preloadImage');
-        document.body.innerHTML = `<style>card-set { --cardset-card-background-image: url(${url}); }</style>
-            <card-set cards="4C"></card-set>`;
-        expect(preloadSpy).toBeCalledWith(url);
+
+        document.body.innerHTML = `<style>
+            card-set {
+                --cardset-card-background-image: url("${url}");
+            }</style><card-set cards="4C"></card-set>`;
+
+        // preload must NOT have run yet
+        expect(preloadSpy).not.toHaveBeenCalled();
+
+        // now flush rAF manually
+        rafCallback();
+        rafSpy.mock.calls[0][0]();
+        expect(preloadSpy).toHaveBeenCalledWith(url);
         preloadSpy.mockRestore();
+        rafSpy.mockRestore();
+        gcsSpy.mockRestore();
     });
 });
