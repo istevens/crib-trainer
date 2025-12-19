@@ -113,7 +113,7 @@ export default class CardSetComponent extends HTMLElement {
 
     static observedAttributes = ['cards'];
     static STYLE_PREFIX = '--cardset-card-';
-    static preloadedUrls = new Array();
+    static preloadedUrls = new Map();
 
     constructor() {
         super();
@@ -148,26 +148,33 @@ export default class CardSetComponent extends HTMLElement {
 
     // @TODO: Refactor preloading once it's needed twice
     static preloadImage(url) {
-        var _preload = url => {
-            CardSetComponent.preloadedUrls.push(url);
-
+        const preloadAndDecode = (resolve, reject) => {
             const link = document.createElement('link');
             link.href = url;
             link.rel = 'preload';
             link.as = 'image';
-
             document.head.appendChild(link);
-            return true;
+
+            // force decode beforehand
+            const img = new Image();
+            img.src = url;
+            img.decode()
+                .then(() => resolve(true))
+                .catch(err => reject(err))
+        };
+
+        const loadFromCacheIfAvailable = () => {
+            let u = new URL(url, document.baseURI).href;
+            let p = this.preloadedUrls.get(u);
+            p = p || new Promise(preloadAndDecode);
+            this.preloadedUrls.set(url, p);
+            return p;
         }
 
-        var isPreloaded = url && url !== 'none';
-        const urlMatch = url?.match(/url\(['"]?(.*?)['"]?\)/i);
-        url = urlMatch && urlMatch[1] || url;
-        isPreloaded = isPreloaded
-            && !CardSetComponent.preloadedUrls.includes(url)
-            && _preload(url);
-
-        return isPreloaded;
+        var cannotPreload = !url || url === 'none';
+        let promise = cannotPreload && Promise.resolve(false);
+        promise = promise || loadFromCacheIfAvailable();
+        return promise;
     }
 
     cardTemplate(card, i, a) {

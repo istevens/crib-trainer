@@ -7,13 +7,23 @@ let CardSetComponent;
 beforeEach(async () => {
     const module = await import('./card_set.js');
     CardSetComponent = module.default;
+
 });
 
 describe('testing preload for card-set back', () => {
     let url;
+    let resolveDecode;
 
     beforeEach(() => {
         url = 'card-back.042b261a.svg';
+
+        const decodePromise = new Promise(r => (resolveDecode = r));
+
+        global.Image = class {
+            set src(v) { this._src = v; }
+            get src() { return this._src; }
+            decode() { return decodePromise; }
+        };
     });
 
     test('preloadImage adds url as a link to document', () => {
@@ -73,5 +83,21 @@ describe('testing preload for card-set back', () => {
         preloadSpy.mockRestore();
         rafSpy.mockRestore();
         gcsSpy.mockRestore();
+    });
+    test('card back preload only added once across components', () => {
+        jest.spyOn(window, 'requestAnimationFrame')
+            .mockImplementation(cb => cb());
+
+        document.body.innerHTML = `<style>
+            card-set {
+                --cardset-card-background-image: url("${url}");
+            } </style>
+            <card-set cards="AS"></card-set>
+            <card-set cards="KD"></card-set>`;
+
+        const links = document.head.querySelectorAll(
+            'link[rel="preload"][as="image"]'
+        );
+        expect(links.length).toBe(0);
     });
 });
