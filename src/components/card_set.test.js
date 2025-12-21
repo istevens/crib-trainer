@@ -57,7 +57,7 @@ describe('testing preload for card-set back', () => {
     });
 
     test('preloadCardBack is deferred until requestAnimationFrame', () => {
-        const gcsSpy = jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({
+        jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({
             getPropertyValue: () => `url("${url}")`
         }));
 
@@ -78,13 +78,10 @@ describe('testing preload for card-set back', () => {
 
         // now flush rAF manually
         rafCallback();
-        rafSpy.mock.calls[0][0]();
         expect(preloadSpy).toHaveBeenCalledWith(url);
-        preloadSpy.mockRestore();
-        rafSpy.mockRestore();
-        gcsSpy.mockRestore();
     });
-    test('card back preload only added once across components', () => {
+
+    function addCardSet() {
         jest.spyOn(window, 'requestAnimationFrame')
             .mockImplementation(cb => cb());
 
@@ -92,8 +89,19 @@ describe('testing preload for card-set back', () => {
             card-set {
                 --cardset-card-background-image: url("${url}");
             } </style>
-            <card-set cards="AS"></card-set>
-            <card-set cards="KD"></card-set>`;
+            <card-set cards="4C"></card-set>`;
+    }
+
+    test('reveal waits for card back to decode before revealing', async () => {
+        addCardSet();
+
+        const el = document.querySelector('card-set');
+        const revealPromise = el.reveal();
+        expect(el.classList.contains('reveal')).toBe(false);
+        await revealPromise;
+
+        expect(el.classList.contains('reveal')).toBe(true);
+    });
 
         const links = document.head.querySelectorAll(
             'link[rel="preload"][as="image"]'

@@ -167,7 +167,7 @@ export default class CardSetComponent extends HTMLElement {
             let u = new URL(url, document.baseURI).href;
             let p = this.preloadedUrls.get(u);
             p = p || new Promise(preloadAndDecode);
-            this.preloadedUrls.set(url, p);
+            this.preloadedUrls.set(u, p);
             return p;
         }
 
@@ -225,7 +225,8 @@ export default class CardSetComponent extends HTMLElement {
         return card;
     }
 
-    reveal() {
+    async reveal() {
+        await this._extractCardBackUrl;
         this.classList.add('reveal');
     }
 
