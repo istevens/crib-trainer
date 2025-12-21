@@ -7,33 +7,29 @@ let CardSetComponent;
 beforeEach(async () => {
     const module = await import('./card_set.js');
     CardSetComponent = module.default;
-
 });
 
 describe('testing preload for card-set back', () => {
-    let url;
-    let resolveDecode;
+
+    let url = 'card-back.042b261a.svg';
 
     beforeEach(() => {
-        url = 'card-back.042b261a.svg';
-
-        const decodePromise = new Promise(r => (resolveDecode = r));
+        jest.useFakeTimers();
 
         global.Image = class {
             set src(v) { this._src = v; }
             get src() { return this._src; }
-            decode() { return decodePromise; }
+            decode() { return Promise.resolve(); }
         };
     });
 
-    test('preloadImage adds url as a link to document', () => {
-        CardSetComponent.preloadImage(url);
+    afterEach(() => {
+        jest.useRealTimers();
+        jest.restoreAllMocks();
 
-        const link = document.querySelector('link');
-        expect(link).not.toBeNull();
-        expect(link.getAttribute('rel')).toBe('preload');
-        expect(link.as).toBe('image');
-        expect(link.getAttribute('href')).toBe(url);
+        CardSetComponent.preloadedUrls.clear();
+        document.body.innerHTML = '';
+        document.head.innerHTML = '';
     });
 
     function expectCardBackUrlToBeExtracted(urlContent, url) {
@@ -103,9 +99,35 @@ describe('testing preload for card-set back', () => {
         expect(el.classList.contains('reveal')).toBe(true);
     });
 
+    test('card back preload only added once across components', async () => {
+        jest.spyOn(window, 'requestAnimationFrame')
+            .mockImplementation(cb => setTimeout(cb, 0));
+
+        jest.spyOn(
+            CardSetComponent.prototype,
+            '_extractCardBackUrl').mockReturnValue(url);
+
+        const e1 = document.createElement('card-set');
+        const e2 = document.createElement('card-set');
+        document.body.appendChild(e1, e2)
+
+        jest.runAllTimers();
+        await Promise.resolve();
+
+        expect(CardSetComponent.preloadedUrls.size).toBe(1);
         const links = document.head.querySelectorAll(
-            'link[rel="preload"][as="image"]'
+            'link[rel="preload"]'
         );
-        expect(links.length).toBe(0);
+        expect(links.length).toBe(1);
+    });
+
+    test('preloadImage adds url as a link to document', () => {
+        addCardSet();
+
+        const link = document.querySelector('link');
+        expect(link).not.toBeNull();
+        expect(link.getAttribute('rel')).toBe('preload');
+        expect(link.as).toBe('image');
+        expect(link.getAttribute('href')).toBe(url);
     });
 });

@@ -147,7 +147,7 @@ export default class CardSetComponent extends HTMLElement {
     }
 
     // @TODO: Refactor preloading once it's needed twice
-    static preloadImage(url) {
+    static async preloadImage(url) {
         const preloadAndDecode = (resolve, reject) => {
             const link = document.createElement('link');
             link.href = url;
