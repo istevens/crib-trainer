@@ -34,8 +34,8 @@
 
         <g id="circles" fill="black" fill-opacity="0.2">
             <use href="#innerEllipse"/>
-            <circle r="20.5%" cx="50%" cy="28.90%"/>
-            <circle r="12%" cx="50%" cy="36%"/>
+            <circle r="21%" cx="50%" cy="28.90%"/>
+            <circle r="13%" cx="50%" cy="36%"/>
             <circle r="2%" cx="50%" cy="50%"/>
         </g>
 
