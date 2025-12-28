@@ -37,13 +37,6 @@ describe('testing queuing of analytics events until active gtag', () => {
         component.getAttribute = jest.fn().mockReturnValue('UA-TEST-ID');
     });
 
-    test('creates queue when no gtag', () => {
-        component.handleEvent({type: 'hashchange', newURL: '#foo', oldURL: '#bar'});
-
-        expect(component._initialized).toBe(true);
-        expect(Array.isArray(component._eventQueue)).toBe(true);
-    });
-
     test('new events go to queue when no gtag', () => {
         component.handleEvent({type: 'newRound'});
 
@@ -59,22 +52,28 @@ describe('testing queuing of analytics events until active gtag', () => {
     });
 
     test('queued events are sent to gtag when ready', () => {
+        jest.useFakeTimers();
+        window.gtag = jest.fn();
+        document.body.appendChild(component);
+
         component.handleEvent({ type: 'hashchange', newURL: '#foo', oldURL: '#bar' });
         component.handleEvent({ type: 'newRound' });
         component.handleEvent({ type: 'hashchange', newURL: '#test', oldURL: '#start' });
+        expect(component._eventQueue.length).toBe(3);
 
-        const originalSetTimeout = global.setTimeout;
-        global.setTimeout = jest.fn(callback => callback());
+        const gaScript = component.shadowRoot.querySelector('script[src*="googletagmanager"]');
+        gaScript?.onload()
+        expect(gaScript).toBeTruthy();
+        expect(gaScript.async).toBe(true);
 
-        expect(component._eventQueue.length).toBeGreaterThan(0);
-        const scriptGA = component.shadowRoot.appendChild.mock.calls.find(
-            call => call[0] && call[0].src && call[0].src.includes('googletagmanager')
-        )[0];
-        scriptGA.onload();
+        jest.advanceTimersByTime(200);
 
-        global.setTimeout = originalSetTimeout;
-
-        expect(window.gtag).toHaveBeenCalledTimes(3);
         expect(component._eventQueue).toHaveLength(0);
+        expect(window.gtag).toHaveBeenCalledTimes(3);
+        expect(window.gtag).toHaveBeenNthCalledWith(1, 'event', 'section_switched', expect.any(Object));
+        expect(window.gtag).toHaveBeenNthCalledWith(2, 'event', 'round_started', expect.any(Object));
+        expect(window.gtag).toHaveBeenNthCalledWith(3, 'event', 'section_switched', expect.any(Object));
+
+        jest.useRealTimers();
     });
 });
