@@ -82,12 +82,23 @@ export default class CardSetComponent extends HTMLElement {
             height: 100%;
             width: 100%;
             background: var(--cardset-card-background-colour, #d00) var(--cardset-card-background-image);
-            background-repeat: none;
+            background-repeat: no-repeat;
             background-position: center;
             background-size: 100%;
             transform: rotateY(0deg);
             border-radius: inherit;
             border: 0.01px solid;
+        }
+
+        :host(.hidden):is(.rendering) playing-card::before {
+            visibility: hidden;
+            opacity: 0;
+        }
+
+        :host(.hidden):not(.rendering) playing-card::before {
+            visibility: visible;
+            opacity: 1;
+            transition: opacity 0.2s ease-in;
         }
 
         :host(.hidden.reveal) playing-card img {
@@ -117,6 +128,7 @@ export default class CardSetComponent extends HTMLElement {
 
     constructor() {
         super();
+        this._cardBackReady = null;
         let style = new CSSStyleSheet();
         style.replaceSync(CardSetComponent.STYLE);
         this.attachShadow({mode: "open"});
@@ -128,10 +140,24 @@ export default class CardSetComponent extends HTMLElement {
         jitter = jitter == "" && 1 || jitter || 0;
         this.setAttribute('jitter', jitter);
         this.setAttribute('arrangeBy', this.getAttribute('arrangeBy') || 'row');
+        this.classList.add('rendering');
+        this.preloadCardBack();
+    }
 
-        window.requestAnimationFrame(() => {
-            this._cardBackReady = this.preloadCardBack();
-        });
+    attributeChangedCallback(name, oldVal, newVal) {
+        this.classList.add('rendering');
+        let shouldRender = name == 'cards' && newVal != oldVal;
+        let updateCount = c => this.style.setProperty(this.getCardStyleName('count'), c);
+        let render = async c => {
+            let newCards = newVal.split(',').map(x => x.trim()) || [];
+            updateCount(newCards.length);
+            this.renderCards(newCards);
+            this.cardNodes.forEach(x => this.jitterCard(x));
+            newCards.length == 1 && this.classList.add('single');
+            await this.preloadCardBack();
+            this.classList.remove('rendering');
+        }
+        shouldRender && render();
     }
 
     _extractCardBackUrl() {
@@ -142,20 +168,17 @@ export default class CardSetComponent extends HTMLElement {
     }
 
     preloadCardBack() {
+        if(this._cardBackReady) return this._cardBackReady;
+
         const url = this._extractCardBackUrl();
-        url && CardSetComponent.preloadImage(url);
+        const cbr = url && CardSetComponent.preloadImage(url);
+        this._cardBackReady = cbr;
+        return cbr;
     }
 
     // @TODO: Refactor preloading once it's needed twice
     static async preloadImage(url) {
         const preloadAndDecode = (resolve, reject) => {
-            const link = document.createElement('link');
-            link.href = url;
-            link.rel = 'preload';
-            link.as = 'image';
-            document.head.appendChild(link);
-
-            // force decode beforehand
             const img = new Image();
             img.src = url;
             img.decode()
@@ -225,8 +248,7 @@ export default class CardSetComponent extends HTMLElement {
         return card;
     }
 
-    async reveal() {
-        await this._extractCardBackUrl;
+    reveal() {
         this.classList.add('reveal');
     }
 
@@ -245,19 +267,6 @@ export default class CardSetComponent extends HTMLElement {
         shouldUpdateExisting && updateExisting() || createNew();
 
         return cards.length;
-    }
-
-    attributeChangedCallback(name, oldVal, newVal) {
-        let shouldRender = name == 'cards' && newVal != oldVal;
-        let newCards = newVal.split(',').map(x => x.trim()) || [];
-        let updateCount = c => this.style.setProperty(this.getCardStyleName('count'), c);
-        let render = c => {
-            updateCount(newCards.length);
-            this.renderCards(newCards);
-            this.cardNodes.forEach(x => this.jitterCard(x));
-            newCards.length == 1 && this.classList.add('single');
-        }
-        shouldRender && render();
     }
 }
 customElements.define("card-set", CardSetComponent);

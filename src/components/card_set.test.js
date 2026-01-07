@@ -52,31 +52,6 @@ describe('testing preload for card-set back', () => {
         expectCardBackUrlToBeExtracted(`${url}`, url);
     });
 
-    test('preloadCardBack is deferred until requestAnimationFrame', () => {
-        jest.spyOn(window, 'getComputedStyle').mockImplementation(() => ({
-            getPropertyValue: () => `url("${url}")`
-        }));
-
-        let rafCallback;
-        const rafSpy = jest
-            .spyOn(window, 'requestAnimationFrame')
-            .mockImplementation(cb => (rafCallback = cb));
-
-        const preloadSpy = jest.spyOn(CardSetComponent, 'preloadImage');
-
-        document.body.innerHTML = `<style>
-            card-set {
-                --cardset-card-background-image: url("${url}");
-            }</style><card-set cards="4C"></card-set>`;
-
-        // preload must NOT have run yet
-        expect(preloadSpy).not.toHaveBeenCalled();
-
-        // now flush rAF manually
-        rafCallback();
-        expect(preloadSpy).toHaveBeenCalledWith(url);
-    });
-
     function addCardSet() {
         jest.spyOn(window, 'requestAnimationFrame')
             .mockImplementation(cb => cb());
@@ -88,15 +63,14 @@ describe('testing preload for card-set back', () => {
             <card-set cards="4C"></card-set>`;
     }
 
-    test('reveal waits for card back to decode before revealing', async () => {
+    test('render waits for card back to decode before rendering', async () => {
         addCardSet();
 
         const el = document.querySelector('card-set');
-        const revealPromise = el.reveal();
-        expect(el.classList.contains('reveal')).toBe(false);
-        await revealPromise;
-
-        expect(el.classList.contains('reveal')).toBe(true);
+        el.setAttribute('cards', 'AC');
+        expect(el.classList).toContain('rendering');
+        await el._cardBackReady;
+        expect(el.classList).not.toContain('rendering');
     });
 
     test('card back preload only added once across components', async () => {
@@ -107,6 +81,7 @@ describe('testing preload for card-set back', () => {
             CardSetComponent.prototype,
             '_extractCardBackUrl').mockReturnValue(url);
 
+        expect(CardSetComponent.preloadedUrls.size).toBe(0);
         const e1 = document.createElement('card-set');
         const e2 = document.createElement('card-set');
         document.body.appendChild(e1, e2)
@@ -115,19 +90,28 @@ describe('testing preload for card-set back', () => {
         await Promise.resolve();
 
         expect(CardSetComponent.preloadedUrls.size).toBe(1);
-        const links = document.head.querySelectorAll(
-            'link[rel="preload"]'
-        );
-        expect(links.length).toBe(1);
     });
 
-    test('preloadImage adds url as a link to document', () => {
-        addCardSet();
+    test('should maintain "rendering" class until image is preloaded and decoded', async () => {
+        let resolveDecode;
+        const decodePromise = new Promise(resolve => { resolveDecode = resolve; });
 
-        const link = document.querySelector('link');
-        expect(link).not.toBeNull();
-        expect(link.getAttribute('rel')).toBe('preload');
-        expect(link.as).toBe('image');
-        expect(link.getAttribute('href')).toBe(url);
+        global.Image = class {
+            set src(v) { this._src = v; }
+            decode() { return decodePromise; }
+        };
+
+        jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
+        document.body.innerHTML = `
+            <style>card-set { --cardset-card-background-image: url("${url}"); }</style>
+            <card-set class="hidden" cards="AC"></card-set>
+        `;
+        const el = document.querySelector('card-set');
+
+        expect(el.classList.contains('rendering')).toBe(true);
+        await resolveDecode();
+        await Promise.resolve();
+        await Promise.resolve();
+        expect(el.classList.contains('rendering')).not.toBe(true);
     });
 });
