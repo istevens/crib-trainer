@@ -125,6 +125,7 @@ export default class CardSetComponent extends HTMLElement {
     static observedAttributes = ['cards'];
     static STYLE_PREFIX = '--cardset-card-';
     static preloadedUrls = new Map();
+    static warmer = null;
 
     constructor() {
         super();
@@ -136,11 +137,11 @@ export default class CardSetComponent extends HTMLElement {
     }
 
     connectedCallback() {
+        this.classList.add('rendering');
         let jitter = this.getAttribute('jitter');
         jitter = jitter == "" && 1 || jitter || 0;
         this.setAttribute('jitter', jitter);
         this.setAttribute('arrangeBy', this.getAttribute('arrangeBy') || 'row');
-        this.classList.add('rendering');
         this.preloadCardBack();
     }
 
@@ -176,6 +177,26 @@ export default class CardSetComponent extends HTMLElement {
         return cbr;
     }
 
+    static addToImageWarmer(url) {
+        let initWarmer = () => {
+            const WARMER_ID = 'card-set-warmer';
+            let warmer = document.getElementById(WARMER_ID);
+            let hasWarmer = warmer;
+            warmer = warmer || document.createElement('div');
+            warmer.id = WARMER_ID;
+            warmer.style = 'position:fixed;width:1px;height:1px;top:-10px;visibility:hidden;pointer-events:none;overflow:hidden';
+            !hasWarmer && document.body.appendChild(warmer);
+            return warmer;
+        }
+
+        const link = document.createElement('div');
+        link.classList.add('card-set-preload');
+        link.style.backgroundImage = `url("${url}")`;
+
+        CardSetComponent.warmer = CardSetComponent.warmer || initWarmer();
+        CardSetComponent.warmer.appendChild(link);
+    }
+
     // @TODO: Refactor preloading once it's needed twice
     static async preloadImage(url) {
         const preloadAndDecode = (resolve, reject) => {
@@ -184,6 +205,8 @@ export default class CardSetComponent extends HTMLElement {
             img.decode()
                 .then(() => resolve(true))
                 .catch(err => reject(err))
+
+            CardSetComponent.addToImageWarmer(url);
         };
 
         const loadFromCacheIfAvailable = () => {
