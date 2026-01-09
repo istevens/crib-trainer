@@ -70,9 +70,9 @@ describe('testing queuing of analytics events until active gtag', () => {
 
         expect(component._eventQueue).toHaveLength(0);
         expect(window.gtag).toHaveBeenCalledTimes(3);
-        expect(window.gtag).toHaveBeenNthCalledWith(1, 'event', 'section_switched', expect.any(Object));
+        expect(window.gtag).toHaveBeenNthCalledWith(1, 'event', 'screen_view', expect.any(Object));
         expect(window.gtag).toHaveBeenNthCalledWith(2, 'event', 'round_started', expect.any(Object));
-        expect(window.gtag).toHaveBeenNthCalledWith(3, 'event', 'section_switched', expect.any(Object));
+        expect(window.gtag).toHaveBeenNthCalledWith(3, 'event', 'screen_view', expect.any(Object));
 
         jest.useRealTimers();
     });

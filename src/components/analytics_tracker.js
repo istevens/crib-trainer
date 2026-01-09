@@ -1,4 +1,8 @@
 'use strict';
+let pkg;
+import('/package.json')
+    .then(module => (pkg = module))
+    .catch(module => (pkg = {})); // @TODO a controller for package.json access
 import * as Constants from "../constants.js";
 
 export default class AnalyticsComponent extends HTMLElement {
@@ -89,10 +93,11 @@ export default class AnalyticsComponent extends HTMLElement {
 
             [Constants.HASH_CHANGE]: e => {
                 const getSection = u => u && u.indexOf('#') > 0 && u.split('#')[1] || 'start';
-                this.trackEvent('section_switched', {
+                this.trackEvent('screen_view', {
                     event_category: 'Navigation',
-                    event_label: getSection(e.newURL),
-                    from_url: getSection(e.oldURL),
+                    app_name: `${pkg.name}`,
+                    screen_name: getSection(e.newURL),
+                    from_screen: getSection(e.oldURL),
                 });
             },
 
