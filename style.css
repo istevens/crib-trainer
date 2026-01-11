@@ -96,6 +96,7 @@ a:active {
         ". nav .";
     gap: var(--interItemPadding);
     place-items: center;
+    justify-content: center;
 
     background: fixed radial-gradient(circle at 50% 10rem, var(--tableColour) 0%, hsl(from var(--tableColour) h s calc(l * 0.75)) 40%, rgb(0,0,0) 100%);
     font-family: 'Public Sans', sans-serif;
@@ -157,9 +158,9 @@ a:active {
 #start h2 {
     grid-area: view;
     place-self: center;
-    max-width: calc(var(--maxTitleWidth) * 0.75);
     text-align: center;
-    font-size: 2rem;
+    margin: 0;
+    font-size: 5vh;
     font-weight: 700;
 }
 
@@ -244,24 +245,25 @@ a:active {
         grid-template-rows: auto 1fr;
         grid-template-areas:
             "sidebar-left title sidebar-right"
-            ". view nav"
+            "view view nav";
     }
 
     #start h2 {
         grid-area: view;
-        grid-column: 1 / 3;
-        place-self: center;
+        grid-column: 1 / span 2;
+        padding-left: 15%;
+        padding-right: 33%;
+        font-size: 4vw;
     }
 
     #start nav {
         grid-area: nav;
-        grid-column: 2 / 4;
-        place-self: center;
+        grid-column: 2 / span 2;
+        padding-left: 33%;
+        padding-right: 15%;
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: calc(2*var(--interItemPadding)) var(--interItemPadding);
         justify-items: center;
-        align-items: center;
     }
 
     #start nav .primary {
