@@ -37,15 +37,27 @@ export default defineComponent('score-overlay',
         filter: blur(0.25em);
     }
 
-    :host(.lowScore) {
+    :host(.lowScore.correct) {
+        font-size: clamp(12em, 62vw, 36em);
+    }
+
+    :host(.lowScore.incorrect) {
         font-size: clamp(14em, 72vw, 36em);
     }
 
-    :host(.mediumScore) {
+    :host(.mediumScore.correct) {
+        font-size: clamp(8em, 50vw, 36em);
+    }
+
+    :host(.mediumScore.incorrect) {
         font-size: clamp(12em, 56vw, 36em);
     }
 
-    :host(.highScore) {
+    :host(.highScore.correct) {
+        font-size: clamp(8em, 45vw, 36em);
+    }
+
+    :host(.highScore.incorrect) {
         font-size: clamp(10em, 48vw, 36em);
     }
 
