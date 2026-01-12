@@ -270,6 +270,11 @@ a:active {
         grid-column: 1 / -1;
     }
 
+    #cards::part(cut_card),
+    #play cribbage-cards::part(hand) {
+        max-height: min(15rem, 100%);
+    }
+
     #cards::part(cut_card) {
         place-self: center end;
     }

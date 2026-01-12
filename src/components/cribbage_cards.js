@@ -29,9 +29,8 @@ defineComponent(
 
     @media (orientation: landscape) and (hover: none) {
         :host {
-            --cardGroupingFactor: 6;
+            --cardGroupingFactor: 4;
             flex-direction: row !important;
-            max-width: calc(var(--maxTitleWidth) + 13rem);
             gap: 2rem;
         }
     }
