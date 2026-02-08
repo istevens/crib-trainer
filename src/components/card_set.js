@@ -171,8 +171,6 @@ export default class CardSetComponent extends HTMLElement {
 
     _extractCardBackUrl() {
         let url = getComputedStyle(this).getPropertyValue(this.getCardStyleName('background-image')).trim();
-        console.log('Detected URL:', url); // Check what JSDOM actually sees
-
         if(url == '') return null;
         url = url.replace(/^url\(['"]?/, '').replace(/['"]?\)$/, '');
         return url;

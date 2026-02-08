@@ -128,4 +128,14 @@ describe('testing preload for card-set back', () => {
         el.setAttribute('cards', '2H,3H');
         expect(el.classList.contains('rendering')).not.toBe(true);
     });
+
+    test('should not maintain "rendering" if no image to preload', async () => {
+        document.body.insertAdjacentHTML('beforeend', '<card-set class="hidden" cards="4C" style="--cardset-card-background-image: none;"></card-set>');
+        const el = document.querySelector('card-set');
+
+        expect(el.classList.contains('rendering')).toBe(true);
+        jest.runAllTimers();
+        await new Promise(setImmediate);
+        expect(el.classList.contains('rendering')).toBe(false);
+    });
 });
