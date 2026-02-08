@@ -1,4 +1,14 @@
 'use strict';
+
+if(window.CSS && CSS.registerProperty) {
+    CSS.registerProperty({
+        name: '--cardset-card-background-image',
+        syntax: '<url> | none',
+        inherits: true,
+        initialValue: 'none',
+    });
+}
+
 export default class CardSetComponent extends HTMLElement {
     static STYLE = `
         :host {
@@ -129,7 +139,6 @@ export default class CardSetComponent extends HTMLElement {
 
     constructor() {
         super();
-        this._cardBackReady = null;
         let style = new CSSStyleSheet();
         style.replaceSync(CardSetComponent.STYLE);
         this.attachShadow({mode: "open"});
@@ -137,44 +146,54 @@ export default class CardSetComponent extends HTMLElement {
     }
 
     connectedCallback() {
-        this.classList.add('rendering');
         let jitter = this.getAttribute('jitter');
         jitter = jitter == "" && 1 || jitter || 0;
         this.setAttribute('jitter', jitter);
         this.setAttribute('arrangeBy', this.getAttribute('arrangeBy') || 'row');
-        this.preloadCardBack();
+
+        this.classList.add('rendering');
+        requestAnimationFrame(() => {
+            this._ensureCardBackPreloaded();
+        });
     }
 
     attributeChangedCallback(name, oldVal, newVal) {
-        this.classList.add('rendering');
-        let shouldRender = name == 'cards' && newVal != oldVal;
-        let updateCount = c => this.style.setProperty(this.getCardStyleName('count'), c);
-        let render = async c => {
-            let newCards = newVal.split(',').map(x => x.trim()) || [];
-            updateCount(newCards.length);
-            this.renderCards(newCards);
-            this.cardNodes.forEach(x => this.jitterCard(x));
-            newCards.length == 1 && this.classList.add('single');
-            await this.preloadCardBack();
-            this.classList.remove('rendering');
-        }
-        shouldRender && render();
+        const shouldRender = name == 'cards' && newVal != oldVal;
+        if(!shouldRender) return;
+
+        const newCards = newVal.split(',').map(x => x.trim()) || [];
+        this.style.setProperty(this.getCardStyleName('count'), newCards.length);
+        this.renderCards(newCards);
+        this.cardNodes.forEach(x => this.jitterCard(x));
+        newCards.length == 1 && this.classList.add('single');
     }
 
     _extractCardBackUrl() {
-        let url = getComputedStyle(this).getPropertyValue('--cardset-card-background-image').trim();
-        let extractUrl = url => url.replace(/^url\(['"]?/, '').replace(/['"]?\)$/, '');
-        url = url && extractUrl(url);
+        let url = getComputedStyle(this).getPropertyValue(this.getCardStyleName('background-image')).trim();
+        console.log('Detected URL:', url); // Check what JSDOM actually sees
+
+        if(url == '') return null;
+        url = url.replace(/^url\(['"]?/, '').replace(/['"]?\)$/, '');
         return url;
     }
 
-    preloadCardBack() {
-        if(this._cardBackReady) return this._cardBackReady;
-
+    async _waitForCardBackUrl(maxFrames = 4) {
         const url = this._extractCardBackUrl();
-        const cbr = url && CardSetComponent.preloadImage(url);
-        this._cardBackReady = cbr;
-        return cbr;
+        if(url) return url;
+        await new Promise(requestAnimationFrame);
+        if(maxFrames > 0) return this._waitForCardBackUrl(maxFrames-1);
+        return null;
+    }
+
+    async _ensureCardBackPreloaded() {
+        const url = await this._waitForCardBackUrl();
+        if(!url || url == 'none') return this.classList.remove('rendering');
+
+        try {
+            await CardSetComponent.preloadImage(url);
+        } finally {
+            this.classList.remove('rendering');
+        }
     }
 
     static addToImageWarmer(url) {

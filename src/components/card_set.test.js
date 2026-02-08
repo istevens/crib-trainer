@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import {jest} from '@jest/globals';
+import {setImmediate} from 'timers'
 
 let CardSetComponent;
 beforeEach(async () => {
@@ -13,11 +14,12 @@ describe('testing preload for card-set back', () => {
 
     let url = 'card-back.042b261a.svg';
     let resolveDecode;
+    let decodePromise;
 
     beforeEach(() => {
         jest.useFakeTimers();
 
-        const decodePromise = new Promise(resolve => { resolveDecode = resolve; });
+        decodePromise = new Promise(resolve => { resolveDecode = resolve; });
         if(!window.HTMLImageElement.prototype.decode) {
             window.HTMLImageElement.prototype.decode = function() {
                 return decodePromise;
@@ -32,7 +34,7 @@ describe('testing preload for card-set back', () => {
         jest.restoreAllMocks();
 
         delete window.HTMLImageElement.prototype.decode;
-        CardSetComponent.preloadedUrls.clear();
+        CardSetComponent.preloadedUrls?.clear();
         CardSetComponent.warmer?.remove();
         CardSetComponent.warmer = null;
         document.body.innerHTML = '';
@@ -51,14 +53,6 @@ describe('testing preload for card-set back', () => {
         expect(extracted).toBe(url);
     }
 
-    test('extracts url in style with quotes', () => {
-        expectCardBackUrlToBeExtracted(`"${url}"`, url);
-    });
-
-    test('extracts url in style sans quotes', () => {
-        expectCardBackUrlToBeExtracted(`${url}`, url);
-    });
-
     function addCardSet() {
         document.body.insertAdjacentHTML('beforeend', `<style>
             card-set {
@@ -69,18 +63,23 @@ describe('testing preload for card-set back', () => {
         return el;
     }
 
+    test('extracts url in style with quotes', () => {
+        expectCardBackUrlToBeExtracted(`"${url}"`, url);
+    });
+
+    test('extracts url in style sans quotes', () => {
+        expectCardBackUrlToBeExtracted(`${url}`, url);
+    });
+
     test('render adds preloading to image warmer to pre-decode image', async () => {
         const el = addCardSet();
         expect(el.classList.contains('rendering')).toBe(true);
 
+        resolveDecode();
+        jest.runAllTimers();
+        await new Promise(setImmediate);
+
         let link = document.body.querySelector('#card-set-warmer .card-set-preload');
-        expect(link).not.toBeNull();
-
-        await resolveDecode();
-        await Promise.resolve();
-        await Promise.resolve();
-
-        link = document.body.querySelector('#card-set-warmer .card-set-preload');
         expect(link).not.toBeNull();
         expect(link.style.backgroundImage).toBe(`url(${url})`);
         expect(el.classList.contains('rendering')).toBe(false);
@@ -94,8 +93,8 @@ describe('testing preload for card-set back', () => {
         addCardSet();
         addCardSet();
 
-        await Promise.resolve();
-        await Promise.resolve();
+        jest.runAllTimers();
+        await new Promise(setImmediate);
 
         links = document.body.querySelectorAll('#card-set-warmer .card-set-preload');
         expect(CardSetComponent.preloadedUrls.size).toBe(1);
@@ -106,22 +105,23 @@ describe('testing preload for card-set back', () => {
         const el = addCardSet();
 
         expect(el.classList.contains('rendering')).toBe(true);
-        await resolveDecode();
+        resolveDecode();
         expect(el.classList.contains('rendering')).toBe(true);
-        await Promise.resolve();
+        jest.runAllTimers();
         expect(el.classList.contains('rendering')).toBe(true);
-        await Promise.resolve();
+        await new Promise(setImmediate);
         expect(el.classList.contains('rendering')).not.toBe(true);
     });
 
-    test('should re-enter rendering state when cards change', async () => {
+    test('should not re-enter rendering state when cards change but bg same', async () => {
         const el = addCardSet();
 
-        await resolveDecode();
-        await Promise.resolve(); await Promise.resolve();
+        resolveDecode();
+        jest.runAllTimers();
+        await new Promise(setImmediate);
 
         expect(el.classList.contains('rendering')).not.toBe(true);
         el.setAttribute('cards', '2H,3H');
-        expect(el.classList.contains('rendering')).toBe(true); // Should be back to true synchronously
+        expect(el.classList.contains('rendering')).not.toBe(true);
     });
 });
