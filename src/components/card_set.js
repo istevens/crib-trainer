@@ -153,6 +153,7 @@ export default class CardSetComponent extends HTMLElement {
 
         this.classList.add('rendering');
         requestAnimationFrame(() => {
+            import('/cardmeister.github.io/elements.cardmeister.min.js');
             this._ensureCardBackPreloaded();
         });
     }
