@@ -108,6 +108,16 @@ a:active {
 
 .view {
     display: contents;
+    visibility: collapse;
+}
+
+.view.activeContent {
+    visibility: visible;
+    display: contents;
+}
+
+.view.inactiveContent {
+    display: none;
 }
 
 .view nav {
@@ -149,10 +159,6 @@ a:active {
 :is(.view nav>*.primary):hover {
     color: var(--tableDecorColour);
     background-color: transparent;
-}
-
-.view:not(.activeContent) {
-    display: none;
 }
 
 #start h2 {

@@ -8,13 +8,21 @@ export default class UIController {
         dialog.showModal(this.app.play, expectedScore);
     }
 
-    switchSections() {
-        var location = window.location.hash.replace('#', '');
-        location = location || 'start';
-        var sections = ['.activeContent', '#' + location];
-        sections.map(x => {
-            this.app.root.querySelector(x)?.classList.toggle('activeContent');
-        });
-        location == 'play' && this.app.startNewRound();
+    switchViews () {
+        const _switchTo = x => {
+            x = this.app.root.querySelector(x);
+            if(!x) return;
+            let views = this.app.root.querySelectorAll('.view');
+            views.forEach(y => {
+                y.classList.remove('activeContent');
+                y.classList.add('inactiveContent');
+            });
+            x.classList.add('activeContent');
+            x.classList.remove('inactiveContent');
+        }
+
+        let v = window.location.hash || '#start';
+        _switchTo(v);
+        v == '#play' && this.app.startNewRound();
     };
 }

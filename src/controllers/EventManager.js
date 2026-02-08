@@ -19,7 +19,7 @@ export default class EventManager {
 
         root.addEventListener('change', e => app.handWasScored(e));
         scoreOverlay.addEventListener('transitionend', () => app.finishRound());
-        window.addEventListener(Constants.HASH_CHANGE, () => app.uiController.switchSections());
+        window.addEventListener(Constants.HASH_CHANGE, () => app.uiController.switchViews());
         _getEl('tricks').addEventListener(Constants.DIALOG_CLOSE, () => app.startNewRound());
 
         // Prevent double-tap to zoom, invocation of context menu
