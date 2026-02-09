@@ -15,6 +15,17 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;700&display=swap">
     <link rel="stylesheet" href="style.css"/>
     <link rel="manifest" href="manifest.json"/>
+    <script src="src/viewSwitcher.js"></script>
+    <script>
+        (function() {
+            const hash = window.location.hash || '#start';
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', () => window.switchToView(hash));
+            } else {
+                window.switchToView(hash);
+            }
+        })();
+    </script>
     <script defer type="module" src="src/components/index.js"></script>
     <script defer type="module" src="src/cribbage_trainer.js"></script>
 </head>

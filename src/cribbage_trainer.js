@@ -52,6 +52,5 @@ class CribbageApp {
 
     initialize() {
         this.eventManager.initialize();
-        this.uiController.switchViews();
     }
 }

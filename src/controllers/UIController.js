@@ -9,20 +9,8 @@ export default class UIController {
     }
 
     switchViews () {
-        const _switchTo = x => {
-            x = this.app.root.querySelector(x);
-            if(!x) return;
-            let views = this.app.root.querySelectorAll('.view');
-            views.forEach(y => {
-                y.classList.remove('activeContent');
-                y.classList.add('inactiveContent');
-            });
-            x.classList.add('activeContent');
-            x.classList.remove('inactiveContent');
-        }
-
-        let v = window.location.hash || '#start';
-        _switchTo(v);
-        v == '#play' && this.app.startNewRound();
+        const hash = window.location.hash || '#start';
+        window.switchToView(hash);
+        hash === '#play' && this.app.startNewRound();
     };
 }
