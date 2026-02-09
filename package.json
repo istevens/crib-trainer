@@ -6,7 +6,10 @@
     "scripts": {
         "build": "parcel build index.html",
         "test": "jest",
-        "start": "parcel index.html -p 8080"
+        "start": "parcel index.html -p 8080",
+        "chrome:launch": "/Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome --remote-debugging-port=9222 --user-data-dir=/tmp/lighthouse_debug --headless=new",
+        "lighthouse:run": "lighthouse http://127.0.0.1:8080 --port=9222",
+        "audit": "npm run chrome:launch & start-server-and-test start http://127.0.0.1:8080 lighthouse:run && killall 'Google Chrome'"
     },
     "author": "Ian Stevens",
     "license": "ISC",
@@ -18,6 +21,7 @@
         "jest-environment-jsdom": "^29.7.0",
         "jsdom": "^16.4.0",
         "parcel": "^2.13.2",
+        "start-server-and-test": "^2.1.3",
         "svgo": "^3.3.2"
     },
     "jest": {
