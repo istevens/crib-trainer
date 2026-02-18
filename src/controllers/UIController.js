@@ -8,9 +8,7 @@ export default class UIController {
         dialog.showModal(this.app.play, expectedScore);
     }
 
-    switchViews () {
-        const hash = window.location.hash || '#start';
-        window.switchToView(hash);
-        hash === '#play' && this.app.startNewRound();
+    switchViews() {
+        window.switchToView();
     };
 }

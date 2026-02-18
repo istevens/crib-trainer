@@ -56,9 +56,9 @@ describe('testing queuing of analytics events until active gtag', () => {
         window.gtag = jest.fn();
         document.body.appendChild(component);
 
-        component.handleEvent({ type: 'hashchange', newURL: '#foo', oldURL: '#bar' });
+        component.handleEvent({ type: 'viewSwitched', detail: { view: 'foo', previousView: 'bar' } });
         component.handleEvent({ type: 'newRound' });
-        component.handleEvent({ type: 'hashchange', newURL: '#test', oldURL: '#start' });
+        component.handleEvent({ type: 'viewSwitched', detail: { view: 'test', previousView: 'start' } });
         expect(component._eventQueue.length).toBe(3);
 
         const gaScript = component.shadowRoot.querySelector('script[src*="googletagmanager"]');

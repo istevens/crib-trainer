@@ -45,7 +45,7 @@ export default class AnalyticsComponent extends HTMLElement {
 
         document.addEventListener(Constants.SCORE_SELECTED, this);
         document.addEventListener(Constants.NEW_ROUND, this);
-        window.addEventListener(Constants.HASH_CHANGE, this);
+        document.addEventListener(Constants.VIEW_SWITCHED, this);
 
         const dialogs = document.querySelectorAll('[role=dialog]');
         const events = [Constants.DIALOG_OPEN, Constants.DIALOG_CLOSE];
@@ -91,13 +91,12 @@ export default class AnalyticsComponent extends HTMLElement {
                 });
             },
 
-            [Constants.HASH_CHANGE]: e => {
-                const getSection = u => u && u.indexOf('#') > 0 && u.split('#')[1] || 'start';
+            [Constants.VIEW_SWITCHED]: e => {
                 this.trackEvent('screen_view', {
                     event_category: 'Navigation',
                     app_name: `${pkg.name}`,
-                    screen_name: getSection(e.newURL),
-                    from_screen: getSection(e.oldURL),
+                    screen_name: e.detail.view,
+                    from_screen: e.detail.previousView,
                 });
             },
 

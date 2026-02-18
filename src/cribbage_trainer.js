@@ -52,5 +52,6 @@ class CribbageApp {
 
     initialize() {
         this.eventManager.initialize();
+        document.dispatchEvent(new CustomEvent(Constants.APP_INITIALIZED));
     }
 }
