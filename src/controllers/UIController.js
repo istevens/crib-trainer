@@ -9,6 +9,6 @@ export default class UIController {
     }
 
     switchViews() {
-        window.switchToView();
+        window.switchToActiveView();
     };
 }

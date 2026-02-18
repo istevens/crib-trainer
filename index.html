@@ -2,6 +2,31 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
+    <script src="src/viewSwitcher.js"></script>
+    <script>
+        (function() {
+            let targetId = window.location.hash;
+            targetId = targetId === "#play" && targetId || '#start';
+
+            const observer = new MutationObserver((mutations, obs) => {
+                const found = mutations.some(mutation =>
+                    Array.from(mutation.addedNodes).some(node =>
+                        node.id === targetId.slice(1)
+                    )
+                );
+
+                if(found) {
+                    window.switchToActiveView();
+                    obs.disconnect();
+                }
+            });
+
+            observer.observe(document.documentElement, {
+                childList: true,
+                subtree: true
+            });
+        })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://www.googletagmanager.com">
@@ -15,17 +40,6 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;700&display=swap">
     <link rel="stylesheet" href="style.css"/>
     <link rel="manifest" href="manifest.json"/>
-    <script src="src/viewSwitcher.js"></script>
-    <script>
-        (function() {
-            const hash = window.location.hash || '#start';
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', () => window.switchToView(hash));
-            } else {
-                window.switchToView(hash);
-            }
-        })();
-    </script>
     <script defer type="module" src="src/components/index.js"></script>
     <script defer type="module" src="src/cribbage_trainer.js"></script>
 </head>
