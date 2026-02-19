@@ -3,7 +3,7 @@ import defineComponent from "./SimpleTemplateComponent.js";
 
 defineComponent(
     'cribbage-cards',
-    '<card-set class="${cut_card_class}" part="cut_card" cards="${cut_card}"></card-set><card-set part="hand" cards="${hand}" jitter="3"></card-set>',
+    '<card-set class="${cut_card_class}" part="cut_card" cards="${cut_card}"></card-set><card-set part="hand" id="hand" exportparts="card" cards="${hand}" jitter="3"></card-set>',
     `
     :host {
         --cardGroupingFactor: 5;
@@ -19,12 +19,16 @@ defineComponent(
         pointer-events: none;
     }
 
-    :host::part(hand) {
+    #hand {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(0, calc(100% / var(--cardGroupingFactor))));
         justify-items: center;
         justify-content: center;
         width: 100%;
+    }
+
+    #hand([style*="-should-animate"]):not(.dealing)::part(card) {
+        visibility: hidden;
     }
 
     @media (orientation: landscape) and (hover: none) {
