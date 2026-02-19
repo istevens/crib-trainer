@@ -16,8 +16,10 @@
     },
     "author": "Ian Stevens",
     "license": "ISC",
+    "browserslist": "> 0.5%, last 2 versions, not dead",
     "devDependencies": {
         "@parcel/packager-raw-url": "^2.16.4",
+        "@parcel/transformer-inline-string": "^2.16.4",
         "@parcel/transformer-webmanifest": "^2.13.2",
         "construct-style-sheets-polyfill": "^3.1.0",
         "jest": "^29.7.0",
