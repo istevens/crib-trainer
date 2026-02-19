@@ -32,4 +32,25 @@
 
         return target;
     };
+
+    let targetId = window.location.hash;
+    targetId = targetId === "#play" && targetId || '#start';
+
+    const observer = new MutationObserver((mutations, obs) => {
+        const found = mutations.some(mutation =>
+            Array.from(mutation.addedNodes).some(node =>
+                node.id === targetId.slice(1)
+            )
+        );
+
+        if(found) {
+            window.switchToActiveView();
+            obs.disconnect();
+        }
+    });
+
+    observer.observe(document.documentElement, {
+        childList: true,
+        subtree: true
+    });
 })();
