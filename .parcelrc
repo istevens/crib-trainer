@@ -1,6 +1,7 @@
 {
-  "extends": "@parcel/config-default",
-  "transformers": {
-    "inline-js:*.js": ["...", "@parcel/transformer-inline-string"]
-  }
+    "extends": "@parcel/config-default",
+    "transformers": {
+        "inline-js:*.js": ["...", "@parcel/transformer-inline-string"],
+        "inline-css:*.css": ["...", "@parcel/transformer-inline-string"]
+    }
 }
