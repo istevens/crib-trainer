@@ -1,12 +1,13 @@
 (function() {
     let appInit = false;
-    let queuedEvent = null;
 
-    document.addEventListener('appInitialized', () => {
-        queuedEvent && document.dispatchEvent(queuedEvent);
-        queuedEvent = null;
-        appInit = true;
-    }, { once: true });
+    const appReady = new Promise((resolve) =>
+        document.addEventListener(
+            'appInitialized', 
+            () => resolve(true),
+            { once: true }
+        )
+    );
 
     window.switchToActiveView = function() {
         const start = '#start';
@@ -14,14 +15,15 @@
         target = document.querySelector(target);
         target = target || document.querySelector(start);
 
-        queuedEvent = new CustomEvent('viewSwitched', {
-            bubbles: true,
-            detail: {
-                view: target.id,
-                previousView: document.querySelector('.view.activeContent')?.id
-            }
-        });
-        appInit && queuedEvent && document.dispatchEvent(queuedEvent);
+        appReady.then(() => document.dispatchEvent(
+            new CustomEvent('viewSwitched', {
+                bubbles: true,
+                detail: {
+                    view: target.id,
+                    previousView: document.querySelector('.view.activeContent')?.id
+                }
+            })
+        ));
 
         document.querySelectorAll('.view').forEach(view => {
             const isActive = view === target;

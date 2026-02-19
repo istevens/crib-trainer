@@ -61,4 +61,40 @@ test.describe('View switching on page load', () => {
         ]);
         await expect(roundStarted).toBeTruthy();
     });
+
+    test('should properly switch view even if app initializes well after switchToActiveView is called', async ({ page }) => {
+        await page.addInitScript(() => {
+            document.addEventListener('appInitialized', (event) => {
+                event.stopImmediatePropagation();
+                setTimeout(() => 
+                    document.dispatchEvent(new CustomEvent('appInitialized')),
+                    500);
+            }, { once: true, capture: true });
+
+            let viewSwitchedEventDetail = null;
+            document.addEventListener('viewSwitched', (event) => {
+                viewSwitchedEventDetail = event.detail;
+            }, { once: true });
+
+            window.getViewSwitchedEvent = () => viewSwitchedEventDetail;
+        });
+
+        await page.goto('/#start');
+        const startView = page.locator('#start');
+        const playView = page.locator('#play');
+        await expect(startView).toHaveClass(/\bactiveContent\b/);
+        await expect(playView).toHaveClass(/\binactiveContent\b/);
+
+        // viewSwitched event should not have fired yet
+        let eventDetail = await page.evaluate(() => window.getViewSwitchedEvent());
+        expect(eventDetail).toBeNull();
+
+        // wait for it
+        await page.waitForFunction(() => window.getViewSwitchedEvent() !== null);
+
+        // view event should eventually fire
+        eventDetail = await page.evaluate(() => window.getViewSwitchedEvent());
+        expect(eventDetail).not.toBeNull();
+        expect(eventDetail.view).toBe('start');
+    });
 });
