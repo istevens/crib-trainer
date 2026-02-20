@@ -38,11 +38,11 @@ export default defineComponent('score-overlay',
     }
 
     :host(.lowScore.correct) {
-        font-size: clamp(12em, 62vw, 36em);
+        font-size: clamp(12em, 62vw, 30em);
     }
 
     :host(.lowScore.incorrect) {
-        font-size: clamp(14em, 72vw, 36em);
+        font-size: clamp(14em, 62vw, 30em);
     }
 
     :host(.mediumScore.correct) {

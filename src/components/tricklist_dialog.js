@@ -5,7 +5,7 @@ export default class TrickListDialogComponent extends CustomDialogComponent {
         :host, ::slotted(p) {
             font-size: 1rem;
             font-weight: 700;
-            --min-card-height: min(12vh, 3rem);
+            --min-card-height: min(10vh, 3rem);
             --max-card-height: min(20vh, 10rem);
         }
 
@@ -44,7 +44,7 @@ export default class TrickListDialogComponent extends CustomDialogComponent {
 
         .trickScore,
         .trickScore::before {
-            font-size: 2rem;
+            font-size: 1.5rem;
         }
 
         .trickList {
@@ -69,7 +69,7 @@ export default class TrickListDialogComponent extends CustomDialogComponent {
         .trickCategory ul {
             display: flex;
             flex-wrap: wrap;
-            gap: calc(2*var(--interItemPadding));
+            gap: calc(2*var(--interItemPadding)) var(--interItemPadding);
             justify-content: center;
         }
 
@@ -81,7 +81,7 @@ export default class TrickListDialogComponent extends CustomDialogComponent {
         @media (height > 42rem) {
             :host {
                 --outerPadding: 1rem;
-                --min-card-height: min(15vh, 5rem);
+                --min-card-height: min(10vh, 7vh);
             }
 
             :host, ::slotted(p) {
@@ -89,17 +89,10 @@ export default class TrickListDialogComponent extends CustomDialogComponent {
             }
         }
 
-        @media (height > 42rem) {
-            :host {
-                --interItemPadding: 0.75rem;
-                --min-card-height: min(10vh, 5rem);
-            }
-        }
-
         @media (height > 42rem) or (width > 40rem) /* maxTitleWidth */ {
             .trickScore,
             .trickScore::before {
-                font-size: 2.5rem;
+                font-size: 2rem;
             }
         }
 

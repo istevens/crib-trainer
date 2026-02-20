@@ -113,7 +113,7 @@ class TricksDialogComponent extends TrickListDialogComponent {
             }
 
             .trickList {
-                gap: calc(4*var(--interItemPadding));
+                gap: var(--interItemPadding);
             }
         }
     `;
