@@ -108,7 +108,7 @@ test.describe('View switching on page load', () => {
         await page.evaluate(() => { window.location.hash = '#play'; });
 
         // Execute script to see if view is caught after the fact
-        await page.addScriptTag({ path: './src/viewSwitcher.js' });
+        await page.addScriptTag({ path: './src/view_switcher.js' });
 
         const playView = page.locator('#play');
         await expect(playView).toHaveClass(/\bactiveContent\b/, { timeout: 3000 });
