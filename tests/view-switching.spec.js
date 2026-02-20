@@ -62,7 +62,7 @@ test.describe('View switching on page load', () => {
         await expect(roundStarted).toBeTruthy();
     });
 
-    test('should properly switch view even if app initializes well after switchToActiveView is called', async ({ page }) => {
+    test('should switch view even if app initializes well after switchToActiveView is called', async ({ page }) => {
         await page.addInitScript(() => {
             document.addEventListener('appInitialized', (event) => {
                 event.stopImmediatePropagation();
@@ -96,5 +96,21 @@ test.describe('View switching on page load', () => {
         eventDetail = await page.evaluate(() => window.getViewSwitchedEvent());
         expect(eventDetail).not.toBeNull();
         expect(eventDetail.view).toBe('start');
+    });
+
+    test('should switch view even if switchToActiveView called after target exists', async ({ page }) => {
+        // Need to set content manually and invoke hash manually
+        // as goto will populate the page with the app instead
+        await page.setContent(`
+            <div id="start" class="view"></div>
+            <div id="play" class="view"></div>
+        `);
+        await page.evaluate(() => { window.location.hash = '#play'; });
+
+        // Execute script to see if view is caught after the fact
+        await page.addScriptTag({ path: './src/viewSwitcher.js' });
+
+        const playView = page.locator('#play');
+        await expect(playView).toHaveClass(/\bactiveContent\b/, { timeout: 3000 });
     });
 });

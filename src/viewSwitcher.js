@@ -1,6 +1,4 @@
 (function() {
-    let appInit = false;
-
     const appReady = new Promise((resolve) =>
         document.addEventListener(
             'appInitialized', 
@@ -35,24 +33,40 @@
         return target;
     };
 
-    let targetId = window.location.hash;
-    targetId = targetId === "#play" && targetId || '#start';
+    const waitForViewBeforeSwitching = function() {
+        let targetId = window.location.hash?.slice(1);
+        targetId = targetId === "play" && targetId || 'start';
 
-    const observer = new MutationObserver((mutations, obs) => {
-        const found = mutations.some(mutation =>
-            Array.from(mutation.addedNodes).some(node =>
-                node.id === targetId.slice(1)
-            )
-        );
+        const switchView = (found=true, observer=null) => {
+            if(found) {
+                window.switchToActiveView();
+                observer?.disconnect();
+            }
+            return found;
+        };
 
-        if(found) {
-            window.switchToActiveView();
-            obs.disconnect();
+        const waitForView = (targetId) => {
+            const observer = new MutationObserver((mutations, obs) => {
+                const found = mutations.some(mutation =>
+                    Array.from(mutation.addedNodes).some(node => {
+                        return node.id === targetId
+                    })
+                );
+
+                switchView(found, obs);
+            });
+
+            observer.observe(document.documentElement, {
+                childList: true,
+                subtree: true
+            });
+
+            return true;
         }
-    });
 
-    observer.observe(document.documentElement, {
-        childList: true,
-        subtree: true
-    });
+        const needToWaitForView = !document.getElementById(targetId);
+        needToWaitForView && waitForView(targetId) || switchView();
+    }
+
+    waitForViewBeforeSwitching();
 })();
