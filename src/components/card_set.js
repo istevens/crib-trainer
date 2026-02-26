@@ -162,7 +162,7 @@ export default class CardSetComponent extends HTMLElement {
         const shouldRender = name == 'cards' && newVal != oldVal;
         if(!shouldRender) return;
 
-        const newCards = newVal.split(',').map(x => x.trim()) || [];
+        const newCards = newVal.split(',').map(x => x.trim()).filter(Boolean) || [];
         this.style.setProperty(this.getCardStyleName('count'), newCards.length);
         this.renderCards(newCards);
         this.cardNodes.forEach(x => this.jitterCard(x));

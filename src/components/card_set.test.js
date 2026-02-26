@@ -138,4 +138,13 @@ describe('testing preload for card-set back', () => {
         await new Promise(setImmediate);
         expect(el.classList.contains('rendering')).toBe(false);
     });
+
+    test('should have no cards if none specified', async () => {
+        document.body.insertAdjacentHTML('beforeend', '<card-set cards=""></card-set>');
+        const el = document.querySelector('card-set');
+
+        jest.runAllTimers();
+        const cards = el.shadowRoot.querySelectorAll('playing-card');
+        expect(cards).toHaveLength(0);
+    });
 });
