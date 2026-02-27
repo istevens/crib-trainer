@@ -49,3 +49,83 @@ h1 a {
     mask-repeat: no-repeat;
     mask-position: center;
 }
+
+a {
+    text-decoration: none;
+    color: inherit;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.view {
+    display: none;
+}
+
+.view:target,
+.view#start {
+    display: contents;
+}
+
+body:has(.view:target:not(#start)) #start {
+    display: none;
+}
+
+.view nav {
+    gap: 1rem;
+    flex: 0;
+    grid-area: nav;
+}
+
+.view nav>* {
+    text-align: center;
+    font-size: 2em;
+    font-family: inherit;
+}
+
+.view nav>*:not(score-select) {
+    background-color: transparent;
+    color: var(--tableDecorColour);
+    width: var(--buttonWidth);
+    padding: var(--buttonPadding);
+    cursor: pointer;
+}
+
+.view nav>*:not(score-select):hover {
+    background-color: var(--tableDecorColour);
+    color: black;
+}
+
+:is(.view nav>*.primary):hover {
+    color: var(--tableDecorColour);
+    background-color: transparent;
+}
+
+#start h2 {
+    grid-area: view;
+    place-self: center;
+    text-align: center;
+    margin: 0;
+    font-size: 5vh;
+    font-weight: 700;
+}
+
+
+@media ((hover: hover) and (width > 65rem)), ((hover: none) and (orientation: landscape) /* maxTitleWidth + sidebars of width buttonWidth and gap */ ) {
+    :root {
+        --outerPadding: 0.75rem;
+        --interItemPadding: 0.75rem;
+        --playTopMargin: calc(-0.35 * (var(--maxTitleWidth) / (var(--titleAspectRatio))));
+    }
+}
+
+@media ((orientation: landscape) and (hover: none)) {
+    :root {
+        --maxTitleWidth: calc(25vh * var(--titleAspectRatio));
+        --outerPadding: 0.5rem;
+        --interItemPadding: 0.5rem;
+        --sidebarWidth: 1fr;
+    }
+}

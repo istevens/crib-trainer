@@ -7,8 +7,4 @@ export default class UIController {
         const dialog = this.app.root.querySelector('#tricks');
         dialog.showModal(this.app.play, expectedScore);
     }
-
-    switchViews() {
-        window.switchToActiveView();
-    };
 }

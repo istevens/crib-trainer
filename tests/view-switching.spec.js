@@ -1,15 +1,15 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('View switching on page load', () => {
+    test.beforeEach(() => {
+        test.setTimeout(5000);
+    });
+
     async function expectUrlToMakeViewActiveAndOtherViewInactive(page, url, active, inactive) {
         await page.goto(url);
         const inactiveView = page.locator(inactive);
         const activeView = page.locator(active);
-        await expect(activeView).toHaveClass(/\bactiveContent\b/);
-        await expect(activeView).not.toHaveClass(/\binactiveContent\b/);
         await expect(activeView).toBeVisible();
-        await expect(inactiveView).toHaveClass(/\binactiveContent\b/);
-        await expect(inactiveView).not.toHaveClass(/\bactiveContent\b/);
         await expect(inactiveView).not.toBeVisible();
     }
 
@@ -25,6 +25,12 @@ test.describe('View switching on page load', () => {
         );
     });
 
+    test('should switch to start view with empty hash', async ({ page }) => {
+        await expectUrlToMakeViewActiveAndOtherViewInactive(
+            page, '/#', '#start', '#play',
+        );
+    });
+
     test('should switch to start view if hash is unknown', async ({ page }) => {
         await expectUrlToMakeViewActiveAndOtherViewInactive(
             page, '/#foobarbaz', '#start', '#play',
@@ -37,22 +43,14 @@ test.describe('View switching on page load', () => {
         );
     });
 
-    test('should start round if starting in play view', async ({ page }) => {
-        let roundStarted = false;
-        await page.exposeFunction('onNewRound', () => { roundStarted = true; });
-        await page.addInitScript(() => {
-            document.addEventListener('newRound', () => window.onNewRound(), {once: true});
-        });
-
+    test('should start deal cards if starting in play view', async ({ page }) => {
         await page.goto('/#play');
-        test.setTimeout(5000);
-        await expect.poll(() => roundStarted).toBeTruthy();
-
+        const hand = page.locator('#cards #hand');
+        await expect(hand).toHaveClass(/dealing/);
     });
 
     test('should start round if transitioning to play view', async ({ page }) => {
         await page.goto('/');
-        test.setTimeout(5000);
         const [roundStarted] = await Promise.all([
             page.evaluate(() => new Promise(
                 resolve => document.addEventListener("newRound", () => resolve(true), {once: true})
@@ -62,7 +60,7 @@ test.describe('View switching on page load', () => {
         await expect(roundStarted).toBeTruthy();
     });
 
-    test('should switch view even if app initializes well after switchToActiveView is called', async ({ page }) => {
+    test('should switch view even if app initializes after view is handled', async ({ page }) => {
         await page.addInitScript(() => {
             document.addEventListener('appInitialized', (event) => {
                 event.stopImmediatePropagation();
@@ -79,11 +77,9 @@ test.describe('View switching on page load', () => {
             window.getViewSwitchedEvent = () => viewSwitchedEventDetail;
         });
 
-        await page.goto('/#start');
+        await page.goto('/#start', { waitUntil: 'domcontentloaded' });
         const startView = page.locator('#start');
         const playView = page.locator('#play');
-        await expect(startView).toHaveClass(/\bactiveContent\b/);
-        await expect(playView).toHaveClass(/\binactiveContent\b/);
 
         // viewSwitched event should not have fired yet
         let eventDetail = await page.evaluate(() => window.getViewSwitchedEvent());
@@ -98,19 +94,28 @@ test.describe('View switching on page load', () => {
         expect(eventDetail.view).toBe('start');
     });
 
-    test('should switch view even if switchToActiveView called after target exists', async ({ page }) => {
-        // Need to set content manually and invoke hash manually
-        // as goto will populate the page with the app instead
-        await page.setContent(`
-            <div id="start" class="view"></div>
-            <div id="play" class="view"></div>
-        `);
-        await page.evaluate(() => { window.location.hash = '#play'; });
+    test('should send view switched event with previous view', async ({ page }) => {
+        const transition = () => new Promise(resolve => {
+            document.addEventListener("viewSwitched", e => {
+                resolve(e.detail);
+            }, { once: true });
+        });
 
-        // Execute script to see if view is caught after the fact
-        await page.addScriptTag({ path: './src/view_switcher.js' });
+        await page.goto('/');
 
-        const playView = page.locator('#play');
-        await expect(playView).toHaveClass(/\bactiveContent\b/, { timeout: 3000 });
+        // null -> play
+        page.on('framenavigated', () => console.log('Page Navigated!'));
+        let firstTransition = page.evaluate(transition);
+        await page.getByRole('button', { name: 'Play' }).click();
+        firstTransition = await firstTransition;
+        expect(firstTransition.previousView).toBe('start');
+        expect(firstTransition.view).toBe('play');
+
+        // play -> start
+        let secondTransition = page.evaluate(transition); 
+        await page.getByText('Crib Trainer').click();
+        secondTransition = await secondTransition;
+        expect(secondTransition.previousView).toBe('play');
+        expect(secondTransition.view).toBe('start');
     });
 });
