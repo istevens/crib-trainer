@@ -95,8 +95,8 @@ export default class AnalyticsComponent extends HTMLElement {
                 this.trackEvent('screen_view', {
                     event_category: 'Navigation',
                     app_name: `${pkg.name}`,
-                    screen_name: e.detail.view,
-                    from_screen: e.detail.previousView,
+                    page_name: e.detail.view,
+                    screen_name: e.detail.view
                 });
             },
 
