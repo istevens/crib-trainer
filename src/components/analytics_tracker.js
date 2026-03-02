@@ -13,7 +13,7 @@ export default class AnalyticsComponent extends HTMLElement {
         let style = new CSSStyleSheet();
         style.replaceSync(AnalyticsComponent.STYLE);
         this.attachShadow({mode: "open"});
-        this.shadowRoot.addEventListener = [style];
+        this.shadowRoot.adoptedStyleSheets = [style];
         this._gtagReady = false;
         this._eventQueue = [];
     }
