@@ -94,7 +94,7 @@ export default class AnalyticsComponent extends HTMLElement {
             [Constants.VIEW_SWITCHED]: e => {
                 this.trackEvent('screen_view', {
                     event_category: 'Navigation',
-                    app_name: `${pkg.name}`,
+                    app_name: `${pkg?.name}`,
                     page_name: e.detail.view,
                     screen_name: e.detail.view
                 });
