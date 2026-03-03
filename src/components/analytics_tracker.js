@@ -1,9 +1,6 @@
 'use strict';
-let pkg;
-import('/package.json')
-    .then(module => (pkg = module))
-    .catch(module => (pkg = {})); // @TODO a controller for package.json access
 import * as Constants from "../constants.js";
+const pkg = 'cribtrainer';
 
 export default class AnalyticsComponent extends HTMLElement {
     static STYLE = ':host { visibility: hidden; }';
@@ -94,7 +91,7 @@ export default class AnalyticsComponent extends HTMLElement {
             [Constants.VIEW_SWITCHED]: e => {
                 this.trackEvent('screen_view', {
                     event_category: 'Navigation',
-                    app_name: `${pkg?.name}`,
+                    app_name: `${pkg}`,
                     page_name: e.detail.view,
                     screen_name: e.detail.view
                 });

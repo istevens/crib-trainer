@@ -1,11 +1,6 @@
-document.addEventListener('DOMContentLoaded', () => {
-    import('./cribbage_scorer.js').then(module => {
-        const CribbageHand = module.default;
-        const app = new CribbageApp(CribbageHand);
-        app.initialize();
-    });
-});
-
+import '../cardmeister.github.io/elements.cardmeister.min.js';
+import './components/index.js'
+import CribbageHand from './cribbage_scorer.js';
 import * as Constants from "./constants.js";
 import EventManager from "./controllers/EventManager.js";
 import UIController from "./controllers/UIController.js";
@@ -55,3 +50,6 @@ class CribbageApp {
         document.dispatchEvent(new CustomEvent(Constants.APP_INITIALIZED));
     }
 }
+
+const app = new CribbageApp(CribbageHand);
+app.initialize();

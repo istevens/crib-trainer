@@ -6,7 +6,7 @@ import {setImmediate} from 'timers'
 
 let CardSetComponent;
 beforeEach(async () => {
-    jest.unstable_mockModule('/cardmeister.github.io/elements.cardmeister.min.js', () => ({
+    jest.unstable_mockModule('../../cardmeister.github.io/elements.cardmeister.min.js', () => ({
         default: {},
     }));
 

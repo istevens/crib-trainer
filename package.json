@@ -17,6 +17,10 @@
     "author": "Ian Stevens",
     "license": "ISC",
     "browserslist": "> 0.5%, last 2 versions, not dead",
+    "@parcel/bundler-default": {
+        "minBundleSize": 10000,
+        "http": 2
+    },
     "devDependencies": {
         "@parcel/packager-raw-url": "^2.16.4",
         "@parcel/transformer-inline-string": "^2.16.4",
