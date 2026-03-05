@@ -39,7 +39,7 @@ h1 a {
     aspect-ratio: var(--titleAspectRatio);
     color: transparent;
     background: var(--titleColour);
-    mask-image: url("/img/cribtrainer-arched.svg");
+    mask-image: url("data-url:/img/cribtrainer-arched.svg");
     mask-size: contain;
     mask-repeat: no-repeat;
     mask-position: center;
