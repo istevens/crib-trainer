@@ -16,11 +16,6 @@
     --sidebarWidth: minmax(0, var(--buttonWidth));
 }
 
-* {
-    -webkit-user-select: none;
-    user-select: none;
-}
-
 html {
     padding: 0;
     justify-content: center;
@@ -53,13 +48,41 @@ h1 a {
 a {
     text-decoration: none;
     color: inherit;
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
 }
 
+[role=dialog] {
+    display: none;
+}
+
+.stacked {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#cribtrainer {
+    background: fixed radial-gradient(circle at 50% 10rem, var(--tableColour) 0%, hsl(from var(--tableColour) h s calc(l * 0.75)) 40%, rgb(0,0,0) 100%);
+    display: grid;
+    grid-template-columns:
+        var(--sidebarWidth)
+        min(100%, var(--maxTitleWidth))
+        var(--sidebarWidth);
+    grid-template-rows: auto 1fr auto;
+    grid-template-areas:
+        "sidebar-left title sidebar-right"
+        ". view ."
+        ". nav .";
+    gap: var(--interItemPadding);
+    place-items: center;
+    justify-content: center;
+    font-family: 'Public Sans', sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    padding: var(--outerPadding);
+    box-sizing: border-box;
+}
+
+/* View switching */
 .view {
     display: none;
 }
@@ -93,16 +116,6 @@ body:has(.view:target:not(#start)) #start {
     cursor: pointer;
 }
 
-.view nav>*:not(score-select):hover {
-    background-color: var(--tableDecorColour);
-    color: black;
-}
-
-:is(.view nav>*.primary):hover {
-    color: var(--tableDecorColour);
-    background-color: transparent;
-}
-
 #start h2 {
     grid-area: view;
     place-self: center;
@@ -112,12 +125,67 @@ body:has(.view:target:not(#start)) #start {
     font-weight: 700;
 }
 
+#cards::part(cut_card), #cards::part(hand), .view nav>* {
+    border: var(--uiElementBorder);
+}
+
+#cards::part(cut_card),
+#cards::part(hand),
+.view nav>*,
+[role=dialog],
+#scoreboard {
+    border-radius: 11.5px;
+}
+
+.view nav>*.primary,
+#cards::part(cut_card) {
+    outline: var(--uiElementBorder);
+    outline-offset: var(--outlineOffset);
+    margin-bottom: var(--outlineOffset);
+}
+
+#cards {
+    --cardset-should-animate: 1;
+    grid-area: view;
+    margin-top: var(--playTopMargin);
+    margin-bottom: calc(2*var(--interItemPadding));
+}
+
+#cards,
+#scoreboard {
+    opacity: 0;
+}
+
+.view#play .scoringButton {
+    grid-area: nav;
+}
+
+.view nav>*.primary {
+    color: black;
+    background-color: var(--tableDecorColour);
+}
+
 
 @media ((hover: hover) and (width > 65rem)), ((hover: none) and (orientation: landscape) /* maxTitleWidth + sidebars of width buttonWidth and gap */ ) {
     :root {
         --outerPadding: 0.75rem;
         --interItemPadding: 0.75rem;
         --playTopMargin: calc(-0.35 * (var(--maxTitleWidth) / (var(--titleAspectRatio))));
+    }
+
+    #play nav {
+        display: contents;
+    }
+
+    .view#play .scoringButton {
+        grid-area: sidebar-left;
+        place-self: start end;
+    }
+
+    score-select {
+        grid-area: nav;
+        justify-self: center;
+        max-width: 24rem;
     }
 }
 
@@ -127,5 +195,35 @@ body:has(.view:target:not(#start)) #start {
         --outerPadding: 0.5rem;
         --interItemPadding: 0.5rem;
         --sidebarWidth: 1fr;
+    }
+
+    #cribtrainer {
+        gap: var(--interItemPadding) calc(4*var(--interItemPadding));
+        grid-template-rows: auto 1fr;
+        grid-template-areas:
+            "sidebar-left title sidebar-right"
+            "view view nav";
+    }
+
+    #start h2 {
+        grid-area: view;
+        grid-column: 1 / span 2;
+        padding-left: 15%;
+        padding-right: 33%;
+        font-size: 4vw;
+    }
+
+    #start nav {
+        grid-area: nav;
+        grid-column: 2 / span 2;
+        padding-left: 33%;
+        padding-right: 15%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        justify-items: center;
+    }
+
+    #start nav .primary {
+        grid-column: 1 / -1;
     }
 }

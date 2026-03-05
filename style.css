@@ -1,3 +1,16 @@
+* {
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+a {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
 a:active {
     -webkit-tap-highlight-color: transparent;
     outline: none;
@@ -7,84 +20,35 @@ a:active {
     touch-action: none;
 }
 
-[role=dialog] {
-    display: none;
-}
-
 :is(:hover, :focus) {
     outline: none;
 }
 
-.stacked {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-#cribtrainer {
-    display: grid;
-    grid-template-columns:
-        var(--sidebarWidth)
-        min(100%, var(--maxTitleWidth))
-        var(--sidebarWidth);
-    grid-template-rows: auto 1fr auto;
-    grid-template-areas:
-        "sidebar-left title sidebar-right"
-        ". view ."
-        ". nav .";
-    gap: var(--interItemPadding);
-    place-items: center;
-    justify-content: center;
-
-    background: fixed radial-gradient(circle at 50% 10rem, var(--tableColour) 0%, hsl(from var(--tableColour) h s calc(l * 0.75)) 40%, rgb(0,0,0) 100%);
-    font-family: 'Public Sans', sans-serif;
-    font-optical-sizing: auto;
-    font-weight: 400;
-    padding: var(--outerPadding);
-    box-sizing: border-box;
+#cards,
+#scoreboard {
+    opacity: 1;
+    transition: opacity 0.2s ease-in;
 }
 
 #cards {
-    --cardset-should-animate: 1;
     --cardset-card-background-image: url("/img/card-back.svg");
-    grid-area: view;
-    margin-top: var(--playTopMargin);
-    margin-bottom: calc(2*var(--interItemPadding));
-    align-self: stretch;
-    max-width: calc(var(--maxTitleWidth) - 5rem);
     justify-self: center;
-}
-
-.view#play .scoringButton {
-    grid-area: nav;
+    max-width: calc(var(--maxTitleWidth) - 5rem);
+    align-self: stretch;
 }
 
 #cards::part(cut_card), #cards::part(hand) {
     padding: var(--interItemPadding);
 }
 
-#cards::part(cut_card), #cards::part(hand), .view nav>* {
-    border: var(--uiElementBorder);
+:is(.view nav>*.primary):hover {
+    color: var(--tableDecorColour);
+    background-color: transparent;
 }
 
-#cards::part(cut_card),
-#cards::part(hand),
-.view nav>*,
-[role=dialog],
-#scoreboard {
-    border-radius: 11.5px;
-}
-
-.view nav>*.primary,
-#cards::part(cut_card) {
-    outline: var(--uiElementBorder);
-    outline-offset: var(--outlineOffset);
-    margin-bottom: var(--outlineOffset);
-}
-
-.view nav>*.primary {
-    color: black;
+.view nav>*:not(score-select):hover {
     background-color: var(--tableDecorColour);
+    color: black;
 }
 
 #scoreboard {
@@ -96,10 +60,6 @@ a:active {
 
 
 @media ((hover: hover) and (width > 65rem)), ((hover: none) and (orientation: landscape) /* maxTitleWidth + sidebars of width buttonWidth and gap */ ) {
-    #play nav {
-        display: contents;
-    }
-
     #scoreboard {
         grid-area: sidebar-right;
         place-self: start;
@@ -110,44 +70,9 @@ a:active {
         place-self: start end;
     }
 
-    score-select {
-        grid-area: nav;
-        justify-self: center;
-        max-width: 24rem;
-    }
 }
 
 @media ((orientation: landscape) and (hover: none)) {
-    #cribtrainer {
-        gap: var(--interItemPadding) calc(4*var(--interItemPadding));
-        grid-template-rows: auto 1fr;
-        grid-template-areas:
-            "sidebar-left title sidebar-right"
-            "view view nav";
-    }
-
-    #start h2 {
-        grid-area: view;
-        grid-column: 1 / span 2;
-        padding-left: 15%;
-        padding-right: 33%;
-        font-size: 4vw;
-    }
-
-    #start nav {
-        grid-area: nav;
-        grid-column: 2 / span 2;
-        padding-left: 33%;
-        padding-right: 15%;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        justify-items: center;
-    }
-
-    #start nav .primary {
-        grid-column: 1 / -1;
-    }
-
     #cards::part(cut_card),
     #play cribbage-cards::part(hand) {
         max-height: min(15rem, 100%);
