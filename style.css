@@ -31,7 +31,7 @@ a:active {
 }
 
 #cards {
-    --cardset-card-background-image: url("/img/card-back.svg");
+    --cardset-card-background-image: url("data-url:/img/card-back.svg");
     justify-self: center;
     max-width: calc(var(--maxTitleWidth) - 5rem);
     align-self: stretch;
