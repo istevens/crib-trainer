@@ -18,7 +18,7 @@ class CribbageApp {
     }
 
     startNewRound() {
-        this.play = this.CribbageHand.randomPlay();
+        this.play = this.CribbageHand.randomViablePlay();
 //        this.play = {cutCard: '5S', hand: this.CribbageHand.fromString('5C 5D 5H JS')};
 
         var evPayload = {bubbles: true, detail: {play: this.play}};

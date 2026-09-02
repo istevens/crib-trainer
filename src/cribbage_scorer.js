@@ -38,23 +38,28 @@ export default class CribbageHand {
         return { hand: new CribbageHand(dealt.slice(0, 4)), cutCard: dealt[4] };
     }
 
+    static randomViablePlay(deck = new ShuffledCardDeck(DECK)) {
+        const six = deck.draw(6);
+        return { hand: CribbageHand.findBestPlay(six), cutCard: deck.next().value };
+    }
+
     /**
      * Choose the best 4-card keep from a provided 6-card deal by maximizing
      * the expected score across all possible cut cards from the remaining deck.
-     * Returns { hand: CribbageHand, discards: string[], expectedScore: number, six: string[] }
+     * Returns CribbageHand.
      */
-    static seasonedFromSix(six) {
+    static findBestPlay(cards) {
         const combinations = (arr, k) => {
-            if (k === 0) return [[]];
-            if (arr.length === 0) return [];
+            if(k === 0) return [[]];
+            if(arr.length === 0) return [];
             const [first, ...rest] = arr;
-            const withFirst = combinations(rest, k - 1).map(c => [first, ...c]);
+            const withFirst = combinations(rest, k-1).map(c => [first, ...c]);
             const withoutFirst = combinations(rest, k);
             return withFirst.concat(withoutFirst);
         };
 
-        const remainingCuts = DECK.filter(c => !six.includes(c));
-        const keepCandidates = combinations(six, 4);
+        const remainingCuts = DECK.filter(c => !cards.includes(c));
+        const keepCandidates = combinations(cards, 4);
 
         const evaluated = keepCandidates.map(keep => {
             const hand = new CribbageHand(keep);
@@ -64,19 +69,8 @@ export default class CribbageHand {
         });
 
         const best = evaluated.reduce((b, cur) => (!b || cur.expected > b.expected) ? cur : b, null);
-
-        const discards = six.filter(c => !best.keep.includes(c));
-        return {
-            hand: new CribbageHand(best.keep),
-            discards,
-            expectedScore: best.expected,
-            six: six.slice()
-        };
-    }
-
-    static seasonedPlay(deck = new ShuffledCardDeck(DECK)) {
-        const six = deck.draw(6);
-        return CribbageHand.seasonedFromSix(six);
+        const hand = new CribbageHand(best.keep);
+        return hand;
     }
 
     findHisNobs(cutCard) {
