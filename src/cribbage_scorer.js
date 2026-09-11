@@ -1,9 +1,11 @@
 'use strict';
 
+import ShuffledCardDeck from './shuffled_card_deck.js';
+
 const JACK = 'J';
 const FACES = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', JACK, 'Q', 'K'];
 const SUITS = ['C', 'D', 'S', 'H'];
-const DECK = SUITS.flatMap(s => FACES.map(f => f+s));
+const DECK = SUITS.flatMap(s => FACES.map(f => f + s));
 const fv = a => !a && -1 || FACES.indexOf(a.slice(0, -1));
 const cardCompare = (a, b) => fv(a) < fv(b) && -1 || fv(a) > fv(b) && 1 || 0;
 
@@ -27,125 +29,121 @@ export default class CribbageHand {
     }
 
     static fromString(s) {
-        var hand = s.split(' ');
-        hand = new CribbageHand(hand);
-        return hand;
+        const hand = s.split(' ');
+        return new CribbageHand(hand);
     }
 
-    static randomPlay() {
-        function* dealCards(d) {
-            var drawRandomCard = () => {
-                var n = Math.random() * d.length;
-                var card = d.at(n);
-                d = d.toSpliced(n, 1);
-                return card;
-            }
+    static randomPlay(deck=new ShuffledCardDeck(DECK)) {
+        const dealt = deck.draw(5); // 4 for hand + 1 cut
+        return { hand: new CribbageHand(dealt.slice(0, 4)), cutCard: dealt[4] };
+    }
 
-            while(d.length > 0) {
-                yield drawRandomCard();
-            }
-        }
+    static randomViablePlay(deck=new ShuffledCardDeck(DECK)) {
+        const six = deck.draw(6);
+        return { hand: CribbageHand.findBestPlay(six), cutCard: deck.next().value };
+    }
 
-        var cards = dealCards(DECK);
-        var hand = new Array(4).fill().map(() => cards.next().value);
-        hand = new CribbageHand(hand);
-        var cutCard = cards.next().value;
+    /**
+     * Choose the best 4-card keep from a provided 6-card deal by maximizing
+     * the expected score across all possible cut cards from the remaining deck.
+     * Returns CribbageHand.
+     */
+    static findBestPlay(cards) {
+        const combinations = (arr, k) => {
+            if(k === 0) return [[]];
+            if(arr.length === 0) return [];
+            const [first, ...rest] = arr;
+            const withFirst = combinations(rest, k-1).map(c => [first, ...c]);
+            const withoutFirst = combinations(rest, k);
+            return withFirst.concat(withoutFirst);
+        };
 
-        return {hand: hand, cutCard: cutCard};
+        const remainingCuts = DECK.filter(c => !cards.includes(c));
+        const keepCandidates = combinations(cards, 4);
+
+        const evaluated = keepCandidates.map(keep => {
+            const hand = new CribbageHand(keep);
+            const total = remainingCuts.reduce((sum, cut) => sum + hand.getScore(cut), 0);
+            const expected = total / remainingCuts.length;
+            return { keep: keep.slice(), expected };
+        });
+
+        const best = evaluated.reduce((b, cur) => (!b || cur.expected > b.expected) ? cur : b, null);
+        const hand = new CribbageHand(best.keep);
+        return hand;
     }
 
     findHisNobs(cutCard) {
-        var cutSuit = cutCard.at(-1);
-        var jackOfCutSuit = JACK + cutSuit;
-        var jackOfCutSuitIsInHand = this.cards.includes(jackOfCutSuit);
-        var hisNobs = jackOfCutSuitIsInHand && [cutCard, jackOfCutSuit] || [];
-        return hisNobs;
+        const cutSuit = cutCard.at(-1);
+        const jackOfCutSuit = JACK + cutSuit;
+        const jackOfCutSuitIsInHand = this.cards.includes(jackOfCutSuit);
+        return jackOfCutSuitIsInHand ? [cutCard, jackOfCutSuit] : [];
     }
 
     _includeCutCardWithHand(cutCard) {
-        var hand = this.cards.slice();
-        hand = hand.concat(cutCard);
-        return hand;
+        return [...this.cards, cutCard];
     }
 
     findFlush(cutCard) {
-        var suits = new Set(this.cards.map(x => x.slice(-1)));
-        var hasOneSuit = x => x.size == 1;
-        var flushInHand = hasOneSuit(suits);
-        var suitOfCutCard = cutCard.slice(-1);
-        var flushWithCutCard = flushInHand && hasOneSuit(suits.add(suitOfCutCard));
-
-        var flush = flushWithCutCard && this._includeCutCardWithHand(cutCard)
-                || flushInHand && this.cards
-                || [];
-
-        return flush;
+        const suits = new Set(this.cards.map(c => c.slice(-1)));
+        if(suits.size !== 1) return [];
+        const [handSuit] = [...suits];
+        const cutSuit = cutCard.slice(-1);
+        return cutSuit === handSuit ? this._includeCutCardWithHand(cutCard) : this.cards;
     }
 
     _completeAndSortHand(cutCard) {
-        var hand = this._includeCutCardWithHand(cutCard);
-        hand = hand.toSorted(cardCompare);
-        return hand;
+        const hand = this._includeCutCardWithHand(cutCard);
+        return hand.toSorted(cardCompare);
     }
 
     _groupHandAndCutCardByFaceValue(cutCard) {
-        var hand = this._completeAndSortHand(cutCard);
-        var cardsMatch = (a, card) => cardCompare(a.at(-1).at(-1), card) == 0;
-        var appendToMultiple = (a, card) => a.slice(0,-1).concat([a.at(-1).concat([card])]);
-        var addCardToExisting = (a, card) => cardsMatch(a, card) && appendToMultiple(a, card);
-        var addCardToMultiple = (a, card) => addCardToExisting(a, card) || a.concat([[card]]);
-        var multiples = hand.reduce(addCardToMultiple, [[]]);
-        multiples = multiples.slice(1);
+        const hand = this._completeAndSortHand(cutCard);
+        const cardsMatch = (a, card) => cardCompare(a.at(-1).at(-1), card) == 0;
+        const appendToMultiple = (a, card) => a.slice(0, -1).concat([a.at(-1).concat([card])]);
+        const addCardToExisting = (a, card) => cardsMatch(a, card) && appendToMultiple(a, card);
+        const addCardToMultiple = (a, card) => addCardToExisting(a, card) || a.concat([[card]]);
+        const multiples = hand.reduce(addCardToMultiple, [[]]).slice(1);
         return multiples;
     }
 
     findMultiples(cutCard) {
-        var multiples = this._groupHandAndCutCardByFaceValue(cutCard);
-        multiples = multiples.filter(x => x.length > 1);
-        return multiples;
+        return this._groupHandAndCutCardByFaceValue(cutCard).filter(x => x.length > 1);
     }
 
     findRuns(cutCard) {
-        var hand = this._groupHandAndCutCardByFaceValue(cutCard);
-
-        var collateRuns = (runs, card) => {
-            var addedToRun = false;
-            var cardFollowsRun = r => r.slice(-1).every(x => 1 + fv(x) == fv(card[0]));
-            var addToRun = (c, r) => {addedToRun = true; return c.map(x => r.concat(x));};
-            runs = runs.flatMap(r => cardFollowsRun(r) && addToRun(card, r) || [r]);
-            runs = addedToRun && runs || runs.concat(addToRun(card, []));
-            return runs;
-        }
-        var runs = hand.reduce(collateRuns, [[]]);
-        runs = runs.filter(r => r.length > 2);
-        return runs;
+        const hand = this._groupHandAndCutCardByFaceValue(cutCard);
+        const collateRuns = (runs, card) => {
+            let addedToRun = false;
+            const cardFollowsRun = r => r.slice(-1).every(x => 1 + fv(x) == fv(card[0]));
+            const addToRun = (c, r) => { addedToRun = true; return c.map(x => r.concat(x)); };
+            let next = runs.flatMap(r => cardFollowsRun(r) && addToRun(card, r) || [r]);
+            next = addedToRun ? next : next.concat(addToRun(card, []));
+            return next;
+        };
+        return hand.reduce(collateRuns, [[]]).filter(r => r.length > 2);
     }
 
     findFifteens(cutCard) {
-        var hand = this._completeAndSortHand(cutCard);
-
-        var addCardToAll = (a, v) => a.concat(a.map(x => [v].concat(x)));
-        var cardScore = x => Math.min(10, 1 + fv(x));
-        var handTotal = a => a.reduce((x, y) => x + cardScore(y), 0);
-        var cardsAddToFifteen = a => handTotal(a) == 15;
-        var fifteens = hand.reduce(addCardToAll, [[]]);
-        fifteens = fifteens.filter(cardsAddToFifteen);
-
-        return fifteens;
+        const hand = this._completeAndSortHand(cutCard);
+        const addCardToAll = (a, v) => a.concat(a.map(x => [v].concat(x)));
+        const cardScore = x => Math.min(10, 1 + fv(x));
+        const handTotal = a => a.reduce((x, y) => x + cardScore(y), 0);
+        const cardsAddToFifteen = a => handTotal(a) == 15;
+        return hand.reduce(addCardToAll, [[]]).filter(cardsAddToFifteen);
     }
 
     getScore(cutCard) {
-        var t = this.getTricks(cutCard);
-        var score = Object.values(t).reduce((x,y) => x + y.score, 0);
-        return score;
+        const t = this.getTricks(cutCard);
+        return Object.values(t).reduce((x, y) => x + y.score, 0);
     }
 
     getTricks(cutCard) {
-        var multiples = this.findMultiples(cutCard);
-        var multipleOfLength = n => multiples.filter(x => x.length == n);
-        var arrayIfNotEmpty = x => x.length > 1 && [x] || x;
+        const multiples = this.findMultiples(cutCard);
+        const multipleOfLength = n => multiples.filter(x => x.length == n);
+        const arrayIfNotEmpty = x => x.length > 1 && [x] || x;
 
-        var tricks = {
+        const tricks = {
             fifteens: this.findFifteens(cutCard),
             pairs: multipleOfLength(2),
             triples: multipleOfLength(3),
@@ -155,13 +153,10 @@ export default class CribbageHand {
             'his nobs': arrayIfNotEmpty(this.findHisNobs(cutCard)),
         };
 
-        var tricksAndScores = Object.entries(tricks).filter(x => x[1].length > 0);
-        tricksAndScores = tricksAndScores.map(x => {
-            var tricks = [x[0], {data: x[1], score: SCORE_FNS[x[0]](x[1])}];
-            return tricks;
-        });
+        const tricksAndScores = Object.entries(tricks)
+            .filter(x => x[1].length > 0)
+            .map(x => [x[0], { data: x[1], score: SCORE_FNS[x[0]](x[1]) }]);
 
-        tricksAndScores = Object.fromEntries(tricksAndScores);
-        return tricksAndScores;
+        return Object.fromEntries(tricksAndScores);
     }
 }

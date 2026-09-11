@@ -45,6 +45,52 @@ describe('testing Hand.randomPlay', () => {
     });
 });
 
+describe('testing Hand.randomViablePlay', () => {
+    test('returns play with four cards in hand', () => {
+        var play = CribbageHand.randomViablePlay();
+        expect(play.hand.cards.length).toBe(4);
+    });
+
+    test('returns play with four cards have values', () => {
+        var play = CribbageHand.randomViablePlay();
+        expect(play.hand.cards).toEqual(
+            expect.arrayContaining([
+                expect.stringMatching(/[A12-9JQK]0?[SCDH]/)
+            ])
+        );
+    });
+
+    test('returns play with cut card', () => {
+        var play = CribbageHand.randomViablePlay();
+        expect(play.cutCard);
+    });
+
+    test('returns play with four cards have values', () => {
+        var play = CribbageHand.randomViablePlay();
+        expect(play.cutCard).toEqual(expect.stringMatching(/[A12-9JQK]0?[SCDH]/));
+    });
+});
+
+describe('testing Hand.findBestPlay', () => {
+    test('returns 3 J in hand', () => {
+        let hand = ['AC', 'AD', 'JC', 'JD', 'JH', '7C'];
+        hand = CribbageHand.findBestPlay(hand);
+        expect(hand.cards).toEqual(expect.arrayContaining(['JC', 'JD', 'JH']));
+    });
+
+    test('returns 2 cards part of potential run', () => {
+        let hand = ['AC', '2D', '9C', 'KD', 'JH', '6D'];
+        hand = CribbageHand.findBestPlay(hand);
+        expect(hand.cards).toEqual(expect.arrayContaining(['AC', '2D']));
+    });
+
+    test('recognizes potential 28-point hand', () => {
+        let hand = ['5C', '5D', '5H', '7D', 'JS', 'AC'];
+        hand = CribbageHand.findBestPlay(hand);
+        expect(hand.cards).toEqual(['5C', '5D', '5H', 'JS']);
+    });
+});
+
 describe('testing Hand.findHisNobs', () => {
     const expectNobsToBe = (p, e) => {
         var [h, c] = p;
