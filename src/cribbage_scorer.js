@@ -33,12 +33,12 @@ export default class CribbageHand {
         return new CribbageHand(hand);
     }
 
-    static randomPlay(deck = new ShuffledCardDeck(DECK)) {
+    static randomPlay(deck=new ShuffledCardDeck(DECK)) {
         const dealt = deck.draw(5); // 4 for hand + 1 cut
         return { hand: new CribbageHand(dealt.slice(0, 4)), cutCard: dealt[4] };
     }
 
-    static randomViablePlay(deck = new ShuffledCardDeck(DECK)) {
+    static randomViablePlay(deck=new ShuffledCardDeck(DECK)) {
         const six = deck.draw(6);
         return { hand: CribbageHand.findBestPlay(six), cutCard: deck.next().value };
     }
@@ -86,7 +86,7 @@ export default class CribbageHand {
 
     findFlush(cutCard) {
         const suits = new Set(this.cards.map(c => c.slice(-1)));
-        if (suits.size !== 1) return [];
+        if(suits.size !== 1) return [];
         const [handSuit] = [...suits];
         const cutSuit = cutCard.slice(-1);
         return cutSuit === handSuit ? this._includeCutCardWithHand(cutCard) : this.cards;
